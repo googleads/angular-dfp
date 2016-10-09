@@ -1,0 +1,32 @@
+{
+  "name": "angular-dfp",
+  "version": "1.0.0",
+  "description": "Semantic DoubleClick integration with AngularJs",
+  "main": "angular-dfp.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goldsborough/angular-dfp.git"
+  },
+  "keywords": [
+    "angular",
+    "doubleclick",
+    "google",
+    "ads"
+  ],
+  "author": "Peter Goldsborough",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/goldsborough/angular-dfp/issues"
+  },
+  "homepage": "https://github.com/goldsborough/angular-dfp#readme",
+  "devDependencies": {
+    "eslint": "^3.7.1",
+    "eslint-config-google": "^0.6.0"
+  },
+  "scripts": {
+    "build": "babel src --out-dir compiled"
+  }
+}

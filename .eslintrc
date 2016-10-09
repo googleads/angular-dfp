@@ -1,0 +1,18 @@
+installedESLint: true
+
+extends:
+  - google
+
+parserOptions:
+  ecmaVersion: 6
+
+env:
+  browser: true
+
+rules:
+  no-var: warn
+  max-statements-per-line: off
+  brace-style:
+    - error
+    - 1tbs
+    - allowSingleLine: true
