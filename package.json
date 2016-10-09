@@ -1,7 +1,7 @@
 {
   "name": "angular-dfp",
   "version": "1.0.0",
-  "description": "Semantic DoubleClick integration with AngularJs",
+  "description": "Semantic DoubleClick integration with AngularJS",
   "main": "angular-dfp.js",
   "scripts": {
     "build": "babel src --out-dir compiled"
