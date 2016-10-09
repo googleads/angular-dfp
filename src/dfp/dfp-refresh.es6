@@ -4,11 +4,11 @@
  * @license MIT
  */
 
-// eslint-disable-next-line no-use-before-define
-let googletag = googletag || {};
+// eslint-disable-next-line no-use-before-define, no-var
+var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-let angularDfp = (function(module) {
+(function(module) {
   /**
    * An error thrown by the `dfpRefresh` service.
    */
@@ -24,9 +24,9 @@ let angularDfp = (function(module) {
   * intervals, or have refresh call "barriers" (a fixed number of calls to wait
   * for) and global refresh intervals.
   *
-  * @param {object} $interval
+  * @param {Object} $interval
   *                 {@link http://docs.angularjs.org/api/ng.$interval}
-  * @param {function} parseDuration The duration parsing service.
+  * @param {Function} parseDuration The duration parsing service.
   */
   function dfpRefreshProvider($interval, parseDuration) {
       // Store reference
@@ -35,7 +35,7 @@ let angularDfp = (function(module) {
     /**
      * The milliseconds to wait after receiving a refresh request
      * to see if more requests come that we can buffer.
-     * @type {number}
+     * @type {Number}
      */
     self.bufferInterval = 1000;
 
@@ -44,7 +44,7 @@ let angularDfp = (function(module) {
     *  If a proxy timeout is set and times out but the amount has not
     *  yet been reached, the timeout will *not* be respected. That is,
     *  setting a barrier temporarily (disables) the timeout.
-    * @type {number}
+    * @type {Number}
     */
     self.bufferBarrier = null;
 
@@ -52,7 +52,7 @@ let angularDfp = (function(module) {
     *  If true, disables any barrier set once it was reached and re-enables
     *  any timeout. If false, the barrier must be manually
     *  disables via clearBarrier().
-    * @type {number}
+    * @type {boolean}
     */
     self.oneShotBarrier = true;
 
@@ -81,7 +81,7 @@ let angularDfp = (function(module) {
       function($rootScope, $interval, parseDuration) {
         /**
          * The possible buffering/refreshing options
-         * @type {Array}
+         * @type {!Object}
          */
         const Options = Object.freeze({
           REFRESH: 'refresh',
@@ -107,11 +107,11 @@ let angularDfp = (function(module) {
 
         /**
          * Stores the activity status of the buffering/refreshing options.
-         * @type {object}
+         * @type {Object}
          */
         const isEnabled = Object.seal({
           refresh: self.refreshInterval !== null,
-          interval: self.bufferInteval !== null,
+          interval: self.bufferInterval !== null,
           barrier: self.bufferBarrier !== null
         });
 
@@ -125,25 +125,33 @@ let angularDfp = (function(module) {
          *
          * @param  {googletag.Slot} slot  The adslot to refresh.
          * @param  {string|number=} interval The interval at which to refresh.
-         * @param  {function} callback A callback to be executed after the refresh.
+         * @param  {Function} callback A callback to be executed after the refresh.
          * @return {promise} A promise, resolved after the refresh call.
          */
         function dfpRefresh(slot, interval, callback) {
+          const deferred = Promise.defer();
+
           if (typeof interval === 'function') {
             callback = interval;
             interval = undefined;
-          } else if (interval !== undefined) {
-            return addSlotInterval({slot: slot, callback: callback}, interval);
           }
 
-          scheduleRefresh({slot: slot, callback: callback});
+          const task = {slot: slot, deferred: deferred};
+
+          if (interval === undefined) {
+            scheduleRefresh(task);
+          } else {
+            addSlotInterval(task, interval);
+          }
+
+          return deferred.promise;
         }
 
         /**
          * Cancels an interval set for a certain ad slot.
          * @param  {googletag.Slot} slot The ad slot to cancel the interval for.
          * @throws DFPRefreshError When the given slot has not interval associated.
-         * @return {function} The current `dfpRefresh` instance.
+         * @return {Function} The current `dfpRefresh` instance.
          */
         dfpRefresh.cancelInterval = function(slot) {
           if (!dfpRefresh.hasSlotInterval(slot)) {
@@ -157,6 +165,15 @@ let angularDfp = (function(module) {
         };
 
         /**
+         * Tests if the given slot has an interval set.
+         * @param  {googletag.Slot}  slot The slot to check.
+         * @return {!boolean} True if an interval is set for the slot, else false.
+         */
+        dfpRefresh.hasSlotInterval = function(slot) {
+          return slot in self.intervals;
+        };
+
+        /**
          * Sets a new value for the buffer interval.
          *
          * The buffer interval is the interval at which
@@ -164,7 +181,7 @@ let angularDfp = (function(module) {
          *
          * @param {string|number} interval An interval string or number
          *                                 (asis valid for `parseDuration`).
-         * @return {function} The current `dfpRefresh` instance.
+         * @return {Function} The current `dfpRefresh` instance.
          */
         dfpRefresh.setBufferInterval = function(interval) {
           self.bufferInterval = parseDuration(interval);
@@ -175,13 +192,13 @@ let angularDfp = (function(module) {
 
         /**
          * Clears any interval set for the buffering mechanism.
-         * @return {function} The current `dfpRefresh` instance.
+         * @return {Function} The current `dfpRefresh` instance.
          */
         dfpRefresh.clearBufferInterval = function() {
           if (!dfpRefresh.hasBufferInterval()) {
             console.warn("clearBufferInterval had no " +
                          "effect because no interval was set.");
-            return;
+            return dfpRefresh;
           }
 
           disableBufferInterval();
@@ -224,7 +241,7 @@ let angularDfp = (function(module) {
 
         /**
          * Returns the buffer interval setting (may be null).
-         * @return {number} The current buffer interval (in ms), if any.
+         * @return {Number} The current buffer interval (in ms), if any.
          */
         dfpRefresh.getBufferInterval = function() {
           return self.bufferInterval;
@@ -244,9 +261,9 @@ let angularDfp = (function(module) {
          * this method and the service will wait for 3 refresh calls before
          * actually refreshing them.
          *
-         * @param {number} numberOfAds The number of ads to wait for.
-         * @param {number=true} oneShot     Whether to uninstall the barrier after the first flush.
-         * @return {function} The current `dfpRefresh` instance.
+         * @param {Number} numberOfAds The number of ads to wait for.
+         * @param {Boolean=} oneShot     Whether to uninstall the barrier after the first flush.
+         * @return {Function} The current `dfpRefresh` instance.
          */
         dfpRefresh.setBufferBarrier = function(numberOfAds, oneShot) {
           self.bufferBarrier = numberOfAds;
@@ -258,13 +275,13 @@ let angularDfp = (function(module) {
 
         /**
          * Clears any buffer barrier set.
-         * @return {function} The current `dfpRefresh` instance.
+         * @return {Function} The current `dfpRefresh` instance.
          */
         dfpRefresh.clearBufferBarrier = function() {
           if (!dfpRefresh.hasBufferBarrier()) {
             console.warn("clearBufferBarrier had not effect because " +
                          "no barrier was set.");
-            return;
+            return dfpRefresh;
           }
 
           self.bufferBarrier = null;
@@ -275,7 +292,7 @@ let angularDfp = (function(module) {
 
         /**
          * Returns the any buffer barrier set.
-         * @return {number} The current barrier
+         * @return {Number} The current barrier
          *                  (number of ads to buffer before flushing).
          */
         dfpRefresh.getBufferBarrier = function() {
@@ -324,7 +341,7 @@ let angularDfp = (function(module) {
          *
          * @param {number|string} interval The new interval
          *                        (as valid for the `parseDuration` service.)
-         * @return {function} The current `dfpRefresh` instance.
+         * @return {Function} The current `dfpRefresh` instance.
          */
         dfpRefresh.setRefreshInterval = function(interval) {
           self.refreshInterval = parseDuration(interval);
@@ -360,7 +377,7 @@ let angularDfp = (function(module) {
 
         /**
          * Clears any refresh interval set.
-         * @return {function} The current `dfpRefresh` instance.
+         * @return {Function} The current `dfpRefresh` instance.
          */
         dfpRefresh.clearRefreshInterval = function() {
           if (!dfpRefresh.hasRefreshInterval()) {
@@ -376,7 +393,7 @@ let angularDfp = (function(module) {
 
         /**
          * Returns the current refresh interval, if any (may be `null`).
-         * @return {number} The current refresh interval.
+         * @return {Number} The current refresh interval.
          */
         dfpRefresh.getRefreshInterval = function() {
           return self.refreshInterval;
@@ -384,7 +401,7 @@ let angularDfp = (function(module) {
 
         /**
          * Checks if either of the buffering mechanisms are enabled.
-         * @return {Boolean} True if either the buffer barrier or
+         * @return {!boolean} True if either the buffer barrier or
          *                   interval are enabled, else false
          */
         dfpRefresh.isBuffering = function() {
@@ -398,14 +415,14 @@ let angularDfp = (function(module) {
          * determined by the prioritization algorithm.
          *
          * @param  {String}  option What to test activation for.
-         * @return {Boolean} True if the given option was ever
+         * @return {!boolean} True if the given option was ever
          *                   installed, else false.
          */
         dfpRefresh.has = function(option) {
           switch (option) {
-            case Option.REFRESH: return dfpRefresh.hasRefreshInterval();
-            case Option.INTERVAL: return dfpRefresh.hasBufferInterval();
-            case Option.BARRIER: return dfpRefresh.hasBufferBarrier();
+            case Options.REFRESH: return dfpRefresh.hasRefreshInterval();
+            case Options.INTERVAL: return dfpRefresh.hasBufferInterval();
+            case Options.BARRIER: return dfpRefresh.hasBufferBarrier();
             default: throw new DFPRefreshError(`Invalid option '${option}'`);
           }
         };
@@ -418,7 +435,7 @@ let angularDfp = (function(module) {
          * by the prioritization algorithm.
          *
          * @param  {String}  option What to test for.
-         * @return {Boolean} True if the option is enabled, else false.
+         * @return {!boolean} True if the option is enabled, else false.
          * @see dfpRefresh.Options
          * @throws DFPRefreshError if the option is not one of
          *         the DFPRefresh.Options members.
@@ -438,7 +455,7 @@ let angularDfp = (function(module) {
          * all three will be enabled (because their priority is equal to the
          * maximum), but when one has higher priority only that will run.
          *
-         * @param {String} option What to set the priority for.
+         * @param {!String} option What to set the priority for.
          * @param {Number} priority The priority to set.
          * @return {Function} The current dfpRefresh instance.
          * @see dfpRefresh.Options
@@ -521,7 +538,7 @@ let angularDfp = (function(module) {
         }
 
         /**
-         * Utility functino to check if a priority is valid and throw if not.
+         * Utility function to check if a priority is valid and throw if not.
          * @param  {*} priority The priority to check.
          * @throws DFPRefreshError if the priority is not valid.
          */
@@ -534,7 +551,7 @@ let angularDfp = (function(module) {
         /**
          * Enables or disables an option.
          * @param  {String} option The option to check.
-         * @param  {Boolean=true} yes Whether to enable or not.
+         * @param  {boolean=} yes Whether to enable or not.
          */
         function enable(option, yes) {
           if (yes === false) {
@@ -614,29 +631,29 @@ let angularDfp = (function(module) {
          * This function will either refresh all slots if called with no
          * arguments, or else all the slots passed in the array argument.
          *
-         * @param  {Array} slots [description]
+         * @param  {?Array=} tasks An array of `(slot, promise)` pairs.
          */
-        function refresh(slots) {
-          console.assert(slots === undefined || slots !== null);
+        function refresh(tasks) {
+          console.assert(tasks === undefined || tasks !== null);
 
-          // If 'slots' was not passed at all, we refresh all ads
-          if (slots === undefined) {
+          // If 'tasks' was not passed at all, we refresh all ads
+          if (tasks === undefined) {
             googletag.pubads().refresh();
           }
 
           // Do nothing for a null or empty buffer
-          if (slots.length === 0) return;
+          if (tasks.length === 0) return;
 
           // Refresh any non-null slots. Slots can be null when the buffer is
           // not empty when the refresh interval triggers. The buffer can then
           // not be cleared, because that might mess with barriers. We also
           // can't reduce the barrier, because it may not be one-shot (i.e.
           // persistent).
-          slots = slots.filter(pair => pair.slot !== null);
+          tasks = tasks.filter(pair => pair.slot !== null);
 
           googletag.cmd.push(() => {
-            googletag.pubads().refresh(slots.map(slot => slot.slot));
-            slots.forEach(slot => slot.promise.resolve());
+            googletag.pubads().refresh(tasks.map(task => task.slot));
+            tasks.forEach(task => task.deferred.resolve());
           });
         }
 
@@ -739,19 +756,13 @@ let angularDfp = (function(module) {
 
         /**
          * Adds an interval for a given slot.
-         * @param {googletag.Slot} slot The slot for which to add the interval.
-         * @param {String|Number} interval The interval duration to set.
-         * @return {Promise} The promise of the interval.
+         * @param {!Object} task The `(slot, promise)` object.
+         * @param {string|number} interval The interval duration to set.
          */
-        function addSlotInterval(slot, interval) {
-          // Add a periodic task to (possibly) refresh this slot
-          const task = () => { scheduleRefresh(slot); };
+        function addSlotInterval(task, interval) {
           interval = parseDuration(interval);
-
-          const promise = $interval(task, interval);
-          intervals[slot] = promise;
-
-          return promise;
+          const promise = $interval(() => { scheduleRefresh(task); }, interval);
+          intervals[task.slot] = promise;
         }
 
         /**
@@ -760,25 +771,25 @@ let angularDfp = (function(module) {
          * This function is basically a proxy to refresh(), as it may either
          * buffer the refresh call or do it immediately.
          *
-         * @param  {googletag.Slot} slot The slot to refresh.
+         * @param  {!Object} task The `(slot, promise)` object.
          * @see bufferRefresh()
          */
-        function scheduleRefresh(slot) {
+        function scheduleRefresh(task) {
           if (dfpRefresh.isBuffering()) {
-            bufferRefresh(slot);
+            bufferRefresh(task);
           } else {
-            refresh([slot]);
+            refresh([task]);
           }
         }
 
         /**
          * Buffers a refresh call for a slot.
-         * @param  {googletag.Slot} slot The slot to refresh.
+         * @param  {!Object} task The `(slot, promise)` object.
          */
-        function bufferRefresh(slot) {
-          buffer.push(slot);
+        function bufferRefresh(task) {
+          buffer.push(task);
 
-          if (!isEnabled[Options.Barrier]) return;
+          if (!isEnabled[Options.BARRIER]) return;
           if (buffer.length === self.bufferBarrier) {
             flushBuffer();
             if (self.oneShotBarrier) {
@@ -789,7 +800,8 @@ let angularDfp = (function(module) {
 
         // Unregister all listeners when the root scope dies
         $rootScope.$on('$destroy', function() {
-          angular.foreach(intervals, function(promise) {
+          // eslint-disable-next-line no-undef
+          intervals.forEach(promise => {
             $interval.cancel(promise);
           });
         });
@@ -802,4 +814,4 @@ let angularDfp = (function(module) {
 
   module.provider('dfpRefresh', [dfpRefreshProvider]);
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

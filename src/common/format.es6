@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-let angularDfp = (function(module) {
+(function(module) {
    /**
     * Formats a string similar to str.format in Python.
     *
@@ -29,4 +29,4 @@ let angularDfp = (function(module) {
     return dfpFormat;
   }]);
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

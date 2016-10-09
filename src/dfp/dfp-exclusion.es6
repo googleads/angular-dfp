@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-let angularDfp = (function(module) {
+(function(module) {
   /**
    * The `dfp-exclusion` directive.
    *
@@ -15,10 +15,10 @@ let angularDfp = (function(module) {
    *
    * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/2627086?hl=en}
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} ad The parent `dfp-ad` controller.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} ad The parent `dfp-ad` controller.
    */
   function dfpExclusionDirective(scope, element, attributes, ad) {
     ad.addExclusion(element.html());
@@ -33,4 +33,4 @@ let angularDfp = (function(module) {
   }]);
 
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

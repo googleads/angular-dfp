@@ -4,17 +4,20 @@
  * @license MIT
  */
 
-let angularDfpVideo = (function(module) {
+// eslint-disable-next-line no-undef, no-unused-vars
+let angularDfpVideo = angular.module('angularDfp');
+
+(function(module) {
   /**
    * The `dfp-video` directive.
    *
    * This directive enables video ads to be shown over videos,
    * using `videojs` and the IMA SDK.
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} $injector The Angular '$injector' service.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} $injector The Angular '$injector' service.
    */
   function dfpVideoDirective(scope, element, attributes, $injector) {
     const dfpIDGenerator = $injector.get('dfpIDGenerator');
@@ -25,11 +28,13 @@ let angularDfpVideo = (function(module) {
      // Generate an ID or check for uniqueness of an existing one (true = forVideo)
     dfpIDGenerator(element, true);
 
+    /* eslint-disable no-undef */
     /**
      * The videojs player object.
      * @type {videojs.Player}
      */
     const player = videojs(element.id);
+    /* eslint-enable no-undef */
 
      // Register the video slot with the IMA SDK
     player.ima({id: element.id, adTagUrl: scope.adTag});
@@ -47,5 +52,7 @@ let angularDfpVideo = (function(module) {
     };
   }]);
 
+  return module;
+
 // eslint-disable-next-line
-})(angularDfpVideo || angular.module('angularDfp'));
+})(angularDfpVideo);

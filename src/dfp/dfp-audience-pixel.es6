@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-let angularDfp = (function(module) {
+(function(module) {
   /**
    *
    * The `dfp-audience-pixel` tag.
@@ -18,10 +18,10 @@ let angularDfp = (function(module) {
    *
    * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/2508388?hl=en}
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} $injector The angular `$injector` service.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} $injector The angular `$injector` service.
    */
   function dfpAudiencePixelDirective(scope, element, attributes, $injector) {
     const format = $injector.get('dfpFormat');
@@ -68,4 +68,4 @@ let angularDfp = (function(module) {
   }]);
 
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

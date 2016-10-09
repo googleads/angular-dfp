@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-let angularDfp = (function(module) {
+(function(module) {
   /**
    * Defines the `dfp-script` directive.
    *
@@ -14,11 +14,11 @@ let angularDfp = (function(module) {
    * renamed, optionally) as well as a custom (optional) scope, to then perform
    * any further customizations.
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} ad The parent `dfp-ad` controller.
-   * @param {object} $injector The Angular `$injector` service.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} ad The parent `dfp-ad` controller.
+   * @param {Object} $injector The Angular `$injector` service.
    */
   function dfpScriptDirective(scope, element, attributes, ad, $injector) {
     const format = $injector.get('dfpFormat');
@@ -45,4 +45,4 @@ let angularDfp = (function(module) {
   }]);
 
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

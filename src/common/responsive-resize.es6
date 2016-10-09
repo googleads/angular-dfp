@@ -4,9 +4,7 @@
 * @license MIT
 */
 
-let dfp = (function(module) {
-  "use strict";
-
+(function(module) {
   /**
    * The factory of the `responsiveResize` service.
    *
@@ -15,11 +13,11 @@ let dfp = (function(module) {
    * containers' width. This ensures that centering ads, which is essential to
    * responsive ads, works well.
    *
-   * @param  {function} $interval {@link http://docs.angularjs.org/api/ng.$interval}
-   * @param  {function} $timeout  {@link http://docs.angularjs.org/api/ng.$timeout}
-   * @param  {object} $window  {@link http://docs.angularjs.org/api/ng.$window}
-   * @param {function} dfpRefresh The dfpRefresh service.
-   * @return {function} The `responsiveResize` service.
+   * @param  {Function} $interval {@link http://docs.angularjs.org/api/ng.$interval}
+   * @param  {Function} $timeout  {@link http://docs.angularjs.org/api/ng.$timeout}
+   * @param  {Object} $window  {@link http://docs.angularjs.org/api/ng.$window}
+   * @param {Function} dfpRefresh The dfpRefresh service.
+   * @return {Function} The `responsiveResize` service.
    */
   function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
     // Turn into jQLite element
@@ -45,7 +43,7 @@ let dfp = (function(module) {
 
     /**
      * Retrieves the iframe of the ad of the element.
-     * @return {object} An iframe HTML element.
+     * @return {Object} An iframe HTML element.
      */
       function queryIFrame() {
         return element.querySelector('div iframe');
@@ -61,7 +59,7 @@ let dfp = (function(module) {
      * dimensions remain unchanged. This distorts the element. As such, we
      * simply normalize these two dimensionss here.
      *
-     * @param  {object} iframe Optionally, the iframe to normalize
+     * @param  {Object} iframe Optionally, the iframe to normalize
      *                         (else it is queried).
      */
       function normalizeIFrame(iframe) {
@@ -134,7 +132,7 @@ let dfp = (function(module) {
       /**
        * Returns a function suitable for responsive resize-event watching.
        * @param  {googletag.Slot} slot The slot to make responsive.
-       * @return {function} A function to pass as an event
+       * @return {Function} A function to pass as an event
        *                    listener for (window) resize events.
        */
       function makeResponsive(slot) {
@@ -227,4 +225,4 @@ let dfp = (function(module) {
                      responsiveResizeFactory]);
 
   // eslint-disable-next-line
-})(dfp || angular.module('angularDfp'));
+})(angularDfp);

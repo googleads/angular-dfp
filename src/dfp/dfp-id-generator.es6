@@ -4,10 +4,10 @@
  * @license MIT
  */
 
-let angularDfp = (function(module) {
+(function(module) {
   /**
    * [dfpIDGeneratorFactory description]
-   * @return {function} The dfpIDGenerator service.
+   * @return {Function} The dfpIDGenerator service.
    */
   function dfpIDGeneratorFactory() {
     /**
@@ -18,7 +18,7 @@ let angularDfp = (function(module) {
 
     /**
      * Generates random IDs until unique one is found.
-     * @return {[type]}          [description]
+     * @return {Number} The unique numeric ID.
      */
     function generateID() {
       let id = null;
@@ -40,8 +40,8 @@ let angularDfp = (function(module) {
      * checked. If it is not unique or not set at all, a new unique, random ID
      * is generated for the element.
      *
-     * @param {object} element The element whose ID to check or assign.
-     * @return {number} The unique ID of the element, or a new generated one.
+     * @param {Object} element The element whose ID to check or assign.
+     * @return {Number} The unique ID of the element, or a new generated one.
      */
     function dfpIDGenerator(element) {
       if (element && element.id && !(element.id in generatedIDs)) {
@@ -56,7 +56,7 @@ let angularDfp = (function(module) {
 
     /**
      * Tests if an ID is taken.
-     * @param  {number} id The ID to test.
+     * @param  {Number} id The ID to test.
      * @return {boolean} True if the ID is not unique, else false.
      * @see dfpIDGenerator.isUnique()
      */
@@ -66,7 +66,7 @@ let angularDfp = (function(module) {
 
     /**
      * Tests if an ID is unique (not taken).
-     * @param  {number} id The ID to test.
+     * @param  {Number} id The ID to test.
      * @return {boolean} True if the ID is unique, else false.
      * @see dfpIDGenerator.isTaken()
      */
@@ -80,4 +80,4 @@ let angularDfp = (function(module) {
   module.factory('dfpIDGenerator', [dfpIDGeneratorFactory]);
 
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

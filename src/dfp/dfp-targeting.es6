@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-let angularDfp = (function(module) {
+(function(module) {
   /**
    * The controller for DFP targeting (key-value) directives.
    *
@@ -21,7 +21,7 @@ let angularDfp = (function(module) {
 
     /**
      * Verifies that the controller has a complete (valid) state.
-     * @return {Boolean} True if the directive has all required members,
+     * @return {!boolean} True if the directive has all required members,
      *                   else false.
      */
     this.isValid = function() {
@@ -32,7 +32,7 @@ let angularDfp = (function(module) {
 
     /**
      * Retrieves the public state of the controller for use by the directive.
-     * @return {object} The key and an array of values for the targeting.
+     * @return {Object} The key and an array of values for the targeting.
      */
     this.getState = function() {
       console.assert(this.isValid());
@@ -59,10 +59,10 @@ let angularDfp = (function(module) {
    * alternatively by specifying only a key and adding values via nested
    * `dfp-value` tags.
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} ad The parent `dfp-ad` controller.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} ad The parent `dfp-ad` controller.
    */
   function dfpTargetingDirective(scope, element, attributes, ad) {
     console.assert(ad !== undefined);
@@ -84,4 +84,4 @@ let angularDfp = (function(module) {
   }]);
 
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

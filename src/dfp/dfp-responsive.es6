@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-let angularDfp = (function(module) {
+(function(module) {
   /**
    * The controller for the `dfp-responsive` directive.
    */
@@ -28,7 +28,7 @@ let angularDfp = (function(module) {
 
     /**
      * Asserts if the state of the controller is valid.
-     * @return {Boolean} True if the state of the controller is
+     * @return {!boolean} True if the state of the controller is
      *                   ready to be fetched, else false.
      */
     function isValid() {
@@ -58,10 +58,10 @@ let angularDfp = (function(module) {
 
   /**
    * The directive for the responsive mapping.
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} ad The parent `dfp-ad` controller.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} ad The parent `dfp-ad` controller.
    */
   function dfpResponsiveDirective(scope, element, attributes, ad) {
     const mapping = scope.controller.getState();
@@ -80,4 +80,4 @@ let angularDfp = (function(module) {
   }]);
 
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

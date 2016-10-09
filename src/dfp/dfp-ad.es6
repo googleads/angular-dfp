@@ -4,11 +4,11 @@
  * @license MIT
  */
 
-// eslint-disable-next-line no-use-before-define
-let googletag = googletag || {};
+// eslint-disable-next-line no-use-before-define, no-var
+var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-let angularDfp = (function(module) {
+(function(module) {
   "use strict";
 
   /**
@@ -57,7 +57,7 @@ let angularDfp = (function(module) {
 
     /**
      * Returns the public state of the controller for use by the directive.
-     * @return {object} An object of all properties the directive will
+     * @return {Object} An object of all properties the directive will
      *                  need to create an ad slot.
      */
     this.getState = function() {
@@ -90,7 +90,7 @@ let angularDfp = (function(module) {
 
     /**
      * Registers a responsive mapping for the ad slot.
-     * @param {object} mapping A `{browserSize, adSizes}` mapping.
+     * @param {Object} mapping A `{browserSize, adSizes}` mapping.
      * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/3423562?hl=en}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.SizeMappingBuilder}
      */
@@ -100,7 +100,7 @@ let angularDfp = (function(module) {
 
     /**
      * Registers a targeting object for the ad slot.
-     * @param {object} targeting A {browserSize, adSizes} object.
+     * @param {Object} targeting A {browserSize, adSizes} object.
      * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/177383?hl=en}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PassbackSlot_setTargeting}
      */
@@ -140,10 +140,10 @@ let angularDfp = (function(module) {
    * standalone except for the necessity of (at least) one nested `dfp-size`
    * directive.
    *
-   * @param {object} scope          The Angular element scope.
-   * @param {object} element        The jQuery/jQlite element of the directive.
-   * @param {object} attributes     The attributes defined on the element.
-   * @param  {function} $injector {@link http://docs.angularjs.org/api/ng.$injector}
+   * @param {Object} scope          The Angular element scope.
+   * @param {Object} element        The jQuery/jQlite element of the directive.
+   * @param {Object} attributes     The attributes defined on the element.
+   * @param  {Function} $injector {@link http://docs.angularjs.org/api/ng.$injector}
    */
   function dfpAdDirective(scope, element, attributes, $injector) {
     let $window = $injector.get('$window');
@@ -260,4 +260,4 @@ let angularDfp = (function(module) {
   ]);
 
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

@@ -4,11 +4,11 @@
  * @license MIT
  */
 
-// eslint-disable-next-line no-use-before-define
-let googletag = googletag || {};
+// eslint-disable-next-line no-use-before-define, no-var
+var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-let angularDfp = (function(module) {
+(function(module) {
   "use strict";
 
   class DFPConfigurationError extends Error {}
@@ -28,34 +28,34 @@ let angularDfp = (function(module) {
    * tasks, injecting the GPT library asynchronously and providing the `then`
    * proxy to `googletag.cmd.push`.
    *
-   * @param {object} scriptInjector The script injection service.
+   * @param {Object} scriptInjector The script injection service.
    * @param {string} GPT_LIBRARY_URL The URL of the GPT library to inject.
    */
   function dfpProvider(scriptInjector, GPT_LIBRARY_URL) {
     /**
      * The doubleClickProvider function.
-     * @type {function}
+     * @type {Function}
      * @constant
      */
     const self = this;
 
     /**
      * Whether to enable Single Request Architecture (SRA) mode.
-     * @type {Boolean}
+     * @type {boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_enableSingleRequest}
      */
     self.enableSingleRequestArchitecture = true;
 
     /**
      * Whether to enable video ads.
-     * @type {Boolean}
+     * @type {!boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_enableVideoAds}
      */
     self.enableVideoAds = true;
 
     /**
      * Whether to collapse empty divs for which ad calls fail.
-     * @type {Boolean}
+     * @type {boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_collapseEmptyDivs}
      */
     self.collapseIfEmpty = true;
@@ -66,7 +66,7 @@ let angularDfp = (function(module) {
      * This is necessary if you want to be able to
      * manually refresh ads with refresh().
      *
-     * @type {Boolean}
+     * @type {boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_disableInitialLoad}
      */
     self.disableInitialLoad = true;
@@ -75,15 +75,15 @@ let angularDfp = (function(module) {
      * Whether to enable synchronous rendering.
      *
      * Rendering is asynchronous by default.
-     * @type {Boolean}
+     * @type {boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_enableSyncRendering}
      */
     self.enableSyncRendering = false;
 
     /**
      * Enables ad centering instead of left-alignment.
+     * @type {boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_setCentering}
-     * @type {Boolean}
      */
     self.centering = false;
 
@@ -118,7 +118,7 @@ let angularDfp = (function(module) {
 
     /**
      * Whether all ad slots should force safe frame by default.
-     * @type {Boolean}
+     * @type {boolean}
      */
     self.forceSafeFrame = false;
 
@@ -137,7 +137,7 @@ let angularDfp = (function(module) {
 
     /**
      * Whether or not we have loaded the GPT library yet.
-     * @type {Boolean}
+     * @type {!boolean}
      */
     let loaded = false;
 
@@ -249,7 +249,7 @@ let angularDfp = (function(module) {
 
     /**
      * Tests if the GPT library has been injected yet.
-     * @return {Boolean} [description]
+     * @return {boolean} [description]
      */
     dfp.hasLoaded = function() {
       return loaded;
@@ -257,7 +257,7 @@ let angularDfp = (function(module) {
 
     /**
      * Pushes a taks into GPT's asynchronous task queue.
-     * @param  {function} task The task function to execute in the queue.
+     * @param  {Function} task The task function to execute in the queue.
      */
     dfp.then = function(task) {
       googletag.cmd.push(task);
@@ -268,10 +268,9 @@ let angularDfp = (function(module) {
       return dfp;
     };
   }
-
   module.provider('dfp', [
     'scriptInjector', 'GPT_LIBRARY_URL', dfpProvider
   ]);
 
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

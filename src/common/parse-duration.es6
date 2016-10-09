@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-let angularDfp = (function(module) {
+(function(module) {
   /**
    * An error thrown by the `dfpParseDuration` service.
    */
@@ -20,15 +20,15 @@ let angularDfp = (function(module) {
    * This service allows parsing of strings specifying
    * durations, such as '2s' or '5min'.
    *
-   * @param {function} format The `format` service.
-   * @return {function} The `dfpParseDuration` service.
+   * @param {Function} format The `format` service.
+   * @return {Function} The `dfpParseDuration` service.
    */
   function dfpParseDurationFactory(format) {
     /**
      * Converts a given time in a given unit to milliseconds.
-     * @param  {number} time A time number in a certain unit.
-     * @param  {string} unit A string describing the unit (ms|s|min|h).
-     * @return {number} The time, in milliseconds.
+     * @param  {!number} time A time number in a certain unit.
+     * @param  {!string} unit A string describing the unit (ms|s|min|h).
+     * @return {!number} The time, in milliseconds.
      */
     function convertToMilliseconds(time, unit) {
       console.assert(/^(m?s|min|h)$/g.test(unit));
@@ -36,13 +36,15 @@ let angularDfp = (function(module) {
       if (unit === 'ms') return time;
       if (unit === 's') return time * 1000;
       if (unit === 'min') return time * 60 * 1000;
-      if (unit === 'h') return time * 60 * 60 * 1000;
+
+      // hours
+      return time * 60 * 60 * 1000;
     }
 
     /**
      * Converts a regular expression match into a duration.
-     * @param  {RegExp} match A regular expression match object.
-     * @return {number} The converted milliseconds.
+     * @param  {!Array} match A regular expression match object.
+     * @return {!number} The converted milliseconds.
      */
     function convert(match) {
       const time = parseInt(match[1], 10);
@@ -56,7 +58,7 @@ let angularDfp = (function(module) {
 
     /**
      * Given an interval string, returns the corresponding milliseconds.
-     * @param  {string} interval The string to parse.
+     * @param  {number|string} interval The string to parse.
      * @return {number} The corresponding number of milliseconds.
      */
     function dfpParseDuration(interval) {
@@ -70,7 +72,7 @@ let angularDfp = (function(module) {
         );
       }
 
-       // Convert any allowed time format into milliseconds
+      // Convert any allowed time format into milliseconds
       const match = interval.match(/(\d+)(m?s|min|h)?/);
 
       if (!match) {
@@ -86,4 +88,4 @@ let angularDfp = (function(module) {
   module.factory('dfpParseDuration', ['dfpFormat', dfpParseDurationFactory]);
 
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);

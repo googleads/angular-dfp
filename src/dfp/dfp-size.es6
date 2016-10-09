@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-let angularDfp = (function(module) {
+(function(module) {
   /**
    * The `dfp-size` directive.
    *
@@ -13,10 +13,10 @@ let angularDfp = (function(module) {
    * width and height dimension via attributes, or as any valid string size
    * (e.g. 'fluid') between the tags.
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} parent     The parent controller.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} parent     The parent controller.
    */
   function DFPSizeDirective(scope, element, attributes, parent) {
     // Only one of the two possible parents will be `null`
@@ -40,4 +40,4 @@ let angularDfp = (function(module) {
   }]);
 
 // eslint-disable-next-line
-})(angularDfp || angular.module('angularDfp'));
+})(angularDfp);
