@@ -23,7 +23,14 @@
     // Turn into jQLite element
     // eslint-disable-next-line
     $window = angular.element($window);
-    return function(element, boundaries) {
+
+    /**
+     * The `responsiveResize` service.
+     * @param  {HTMLElement} element The element to make responsive.
+     * @param {googletag.Slot} slot The ad slot to refresh responsively.
+     * @param  {Array=} boundaries The browser width boundaries at which to refresh.
+     */
+    function responsiveResize(element, slot, boundaries) {
       boundaries = boundaries || [320, 780, 1480];
       console.assert(Array.isArray(boundaries));
 
@@ -43,10 +50,10 @@
 
     /**
      * Retrieves the iframe of the ad of the element.
-     * @return {Object} An iframe HTML element.
+     * @return {HTMLElement} An iframe HTML element.
      */
       function queryIFrame() {
-        return element.querySelector('div iframe');
+        return element.find('div iframe');
       }
 
     /**
@@ -64,8 +71,8 @@
      */
       function normalizeIFrame(iframe) {
         iframe = iframe || queryIFrame();
-        iframe.style.width = iframe.width + 'px';
-        iframe.style.height = iframe.height + 'px';
+        iframe.css('width', iframe.attr('width') + 'px');
+        iframe.css('height', iframe.attr('height') + 'px');
       }
 
       /**
@@ -88,6 +95,51 @@
       }
 
       /**
+       * Polls for a change in the dimensions of the
+       * iframe and normalizes if a change was detected.
+       * @param  {!Object} initial The initial dimensions against
+       *                          which to compare.
+       */
+      function pollForChange(initial) {
+        // The iframe element may change between calls
+        const iframe = queryIFrame();
+
+        const change = ['width', 'height'].some(dimension => {
+          return iframe.attr(dimension) !== initial[dimension];
+        });
+
+        if (change) normalizeIFrame(iframe);
+      }
+
+      /**
+       * Starts polling for changes in the ad's dimensions.
+       * @param  {!Object} initial The initial dimensions against
+       *                          which to compare.
+       */
+      function startPolling(initial) {
+        // Poll for a change every `POLL_INTERVAL` milliseconds
+        const poll = $interval(() => pollForChange(initial), POLL_INTERVAL);
+
+        // Stop polling after `POLL_DURATION`
+        $timeout(() => $interval.cancel(poll), POLL_DURATION);
+      }
+
+      /**
+       * @return {Number} The initial width of the iframe.
+       */
+      function getIframeDimensions() {
+        const iframe = queryIFrame();
+        const dimensions = [iframe.css('width'), iframe.css('height')];
+
+        // Slice away the 'px' at the end, if set
+        let plain = dimensions.map(dimension => {
+          return dimension ? dimension.slice(0, -2) : null;
+        });
+
+        return {width: plain[0], height: plain[1]};
+      }
+
+      /**
        * Sets up the watching mechanisms for the responsive resizing.
        */
       function watchResize() {
@@ -102,23 +154,7 @@
         // captured and digested. Since changes to these dimensions will only
         // happen after a request, it is also not necessary to setup a resize
         // watch.
-
-        const iframe = queryIFrame();
-
-        // Get the width currently set in the style, without the 'px'
-        const initialWidth = iframe.style.width.slice(0, -2);
-
-        const poll = $interval(function() {
-          // The iframe element may change between calls
-          const iframe = queryIFrame();
-          if (iframe.width !== initialWidth) {
-            normalizeIFrame(iframe);
-          }
-        }, POLL_INTERVAL);
-
-        $timeout(function() {
-          $interval.cancel(poll);
-        }, POLL_DURATION);
+        startPolling(getIframeDimensions());
 
         // An additional resize listener helps for tricky cases
         // eslint-disable-next-line no-undef
@@ -197,9 +233,7 @@
           hideElement();
 
           // Refresh the ad slot now
-          dfpRefresh(slot, function() {
-            watchResize(index);
-          });
+          dfpRefresh(slot).then(() => { watchResize(index); });
 
           console.assert(index >= 0 && index < boundaries.length);
         }
@@ -217,10 +251,12 @@
       }
 
       $window.on('resize', makeResponsive(element));
-    };
+    }
+
+    return responsiveResize;
   }
 
-  module.addFactory('responsiveResize',
+  module.factory('responsiveResize',
                     ['$interval', '$timeout', '$window', 'dfpRefresh',
                      responsiveResizeFactory]);
 

@@ -9,7 +9,7 @@ var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
 // eslint-disable-next-line no-undef, no-unused-vars
-let angularDfp = angular.module('angularDfp');
+let angularDfp = angular.module('angularDfp', []);
 
 /**
  * @file
@@ -45,14 +45,61 @@ let angularDfp = angular.module('angularDfp');
 })(angularDfp);
 
 /**
- * @file Defines the `dfpParseDuration` service.
+* @file Defines the `scriptInjector` service.
+* @author Peter Goldsborough <peter@goldsborough.me>
+* @license MIT
+*/
+
+(function(module) {
+  'use strict';
+
+  /**
+  * The factory for the `httpError` service.
+  * @param  {Function} $log    The Angular `$log` service.
+  * @return {Function} The `httpError` service.
+  */
+  function httpErrorFactory($log) {
+    /**
+    * The `httpError` service.
+    * @param  {!Object} response An XHR response object.
+    * @param  {!string} message The error message to show.
+    */
+    function httpError(response, message) {
+      $log.error(`Error (${response.status})`);
+    }
+
+    /**
+     * Tests if a given HTTP response status is an error code.
+     * @param  {Number|!String}  code The response status code.
+     * @return {!Boolean} True if the code is an error code, else false.
+     */
+    httpError.isErrorCode = function(code) {
+      if (typeof code === 'number') {
+        return !(code >= 200 && code < 300);
+      }
+
+      console.assert(typeof code === 'string');
+
+      return code[0] !== '2';
+    };
+
+    return httpError;
+  }
+
+  module.factory('httpError', ['$log', httpErrorFactory]);
+
+  // eslint-disable-next-line
+})(angularDfp);
+
+/**
+ * @file Defines the `parseDuration` service.
  * @author Peter Goldsborough <peter@goldsborough.me>
  * @license MIT
  */
 
 (function(module) {
   /**
-   * An error thrown by the `dfpParseDuration` service.
+   * An error thrown by the `parseDuration` service.
    */
   class DFPDurationError extends Error {
     constructor(interval) {
@@ -61,15 +108,15 @@ let angularDfp = angular.module('angularDfp');
   }
 
   /**
-   * A factory for the `dfpParseDuration` service.
+   * A factory for the `parseDuration` service.
    *
    * This service allows parsing of strings specifying
    * durations, such as '2s' or '5min'.
    *
    * @param {Function} format The `format` service.
-   * @return {Function} The `dfpParseDuration` service.
+   * @return {Function} The `parseDuration` service.
    */
-  function dfpParseDurationFactory(format) {
+  function parseDurationFactory(format) {
     /**
      * Converts a given time in a given unit to milliseconds.
      * @param  {!number} time A time number in a certain unit.
@@ -107,7 +154,7 @@ let angularDfp = angular.module('angularDfp');
      * @param  {number|string} interval The string to parse.
      * @return {number} The corresponding number of milliseconds.
      */
-    function dfpParseDuration(interval) {
+    function parseDuration(interval) {
       if (typeof interval === 'number') {
         return interval;
       }
@@ -128,10 +175,10 @@ let angularDfp = angular.module('angularDfp');
       return convert(match);
     }
 
-    return dfpParseDuration;
+    return parseDuration;
   }
 
-  module.factory('dfpParseDuration', ['dfpFormat', dfpParseDurationFactory]);
+  module.factory('parseDuration', ['dfpFormat', parseDurationFactory]);
 
 // eslint-disable-next-line
 })(angularDfp);
@@ -161,7 +208,14 @@ let angularDfp = angular.module('angularDfp');
     // Turn into jQLite element
     // eslint-disable-next-line
     $window = angular.element($window);
-    return function(element, boundaries) {
+
+    /**
+     * The `responsiveResize` service.
+     * @param  {HTMLElement} element The element to make responsive.
+     * @param {googletag.Slot} slot The ad slot to refresh responsively.
+     * @param  {Array=} boundaries The browser width boundaries at which to refresh.
+     */
+    function responsiveResize(element, slot, boundaries) {
       boundaries = boundaries || [320, 780, 1480];
       console.assert(Array.isArray(boundaries));
 
@@ -181,10 +235,10 @@ let angularDfp = angular.module('angularDfp');
 
     /**
      * Retrieves the iframe of the ad of the element.
-     * @return {Object} An iframe HTML element.
+     * @return {HTMLElement} An iframe HTML element.
      */
       function queryIFrame() {
-        return element.querySelector('div iframe');
+        return element.find('div iframe');
       }
 
     /**
@@ -202,8 +256,8 @@ let angularDfp = angular.module('angularDfp');
      */
       function normalizeIFrame(iframe) {
         iframe = iframe || queryIFrame();
-        iframe.style.width = iframe.width + 'px';
-        iframe.style.height = iframe.height + 'px';
+        iframe.css('width', iframe.attr('width') + 'px');
+        iframe.css('height', iframe.attr('height') + 'px');
       }
 
       /**
@@ -226,6 +280,51 @@ let angularDfp = angular.module('angularDfp');
       }
 
       /**
+       * Polls for a change in the dimensions of the
+       * iframe and normalizes if a change was detected.
+       * @param  {!Object} initial The initial dimensions against
+       *                          which to compare.
+       */
+      function pollForChange(initial) {
+        // The iframe element may change between calls
+        const iframe = queryIFrame();
+
+        const change = ['width', 'height'].some(dimension => {
+          return iframe.attr(dimension) !== initial[dimension];
+        });
+
+        if (change) normalizeIFrame(iframe);
+      }
+
+      /**
+       * Starts polling for changes in the ad's dimensions.
+       * @param  {!Object} initial The initial dimensions against
+       *                          which to compare.
+       */
+      function startPolling(initial) {
+        // Poll for a change every `POLL_INTERVAL` milliseconds
+        const poll = $interval(() => pollForChange(initial), POLL_INTERVAL);
+
+        // Stop polling after `POLL_DURATION`
+        $timeout(() => $interval.cancel(poll), POLL_DURATION);
+      }
+
+      /**
+       * @return {Number} The initial width of the iframe.
+       */
+      function getIframeDimensions() {
+        const iframe = queryIFrame();
+        const dimensions = [iframe.css('width'), iframe.css('height')];
+
+        // Slice away the 'px' at the end, if set
+        let plain = dimensions.map(dimension => {
+          return dimension ? dimension.slice(0, -2) : null;
+        });
+
+        return {width: plain[0], height: plain[1]};
+      }
+
+      /**
        * Sets up the watching mechanisms for the responsive resizing.
        */
       function watchResize() {
@@ -240,23 +339,7 @@ let angularDfp = angular.module('angularDfp');
         // captured and digested. Since changes to these dimensions will only
         // happen after a request, it is also not necessary to setup a resize
         // watch.
-
-        const iframe = queryIFrame();
-
-        // Get the width currently set in the style, without the 'px'
-        const initialWidth = iframe.style.width.slice(0, -2);
-
-        const poll = $interval(function() {
-          // The iframe element may change between calls
-          const iframe = queryIFrame();
-          if (iframe.width !== initialWidth) {
-            normalizeIFrame(iframe);
-          }
-        }, POLL_INTERVAL);
-
-        $timeout(function() {
-          $interval.cancel(poll);
-        }, POLL_DURATION);
+        startPolling(getIframeDimensions());
 
         // An additional resize listener helps for tricky cases
         // eslint-disable-next-line no-undef
@@ -335,9 +418,7 @@ let angularDfp = angular.module('angularDfp');
           hideElement();
 
           // Refresh the ad slot now
-          dfpRefresh(slot, function() {
-            watchResize(index);
-          });
+          dfpRefresh(slot).then(() => { watchResize(index); });
 
           console.assert(index >= 0 && index < boundaries.length);
         }
@@ -355,14 +436,124 @@ let angularDfp = angular.module('angularDfp');
       }
 
       $window.on('resize', makeResponsive(element));
-    };
+    }
+
+    return responsiveResize;
   }
 
-  module.addFactory('responsiveResize',
+  module.factory('responsiveResize',
                     ['$interval', '$timeout', '$window', 'dfpRefresh',
                      responsiveResizeFactory]);
 
   // eslint-disable-next-line
+})(angularDfp);
+
+/**
+* @file Defines the `scriptInjector` service.
+* @author Peter Goldsborough <peter@goldsborough.me>
+* @license MIT
+*/
+
+(function(module) {
+  'use strict';
+
+  /**
+   * The factory for the `scriptInjector` service.
+   * @param {Function} $q The Angular `$q` service.
+   * @param {Function} httpError The `httpError` service.
+   * @return {Function} The `scriptInjector` service.
+   */
+  function scriptInjectorFactory($q, httpError) {
+    /**
+     * Creates an HTML script tag.
+     * @param  {!string} url The string of the script to inject.
+     * @return {HTMLElement} An `HTMLElement` ready for injection.
+     */
+    function createScript(url) {
+      const script = document.createElement('script');
+      const ssl = document.location.protocol === 'https:';
+
+      script.async = 'async';
+      script.type = 'text/javascript';
+      script.src = (ssl ? 'https:' : 'http:') + url;
+
+      return script;
+    }
+
+    /**
+     * Creates a promise, to be resolved after the script is loaded.
+     * @param  {HTMLElement} script The script tag.
+     * @param {!string} url The url of the request.
+     * @return {Promise} The promise for the asynchronous script injection.
+     */
+    function promiseScript(script, url) {
+      const deferred = $q.defer();
+
+      /**
+       * Resolves the promise.
+       */
+      function resolve() {
+        deferred.resolve();
+      }
+
+      /**
+       * Rejects the promise for a given faulty response.
+       * @param  {?Object} response The response object.
+       */
+      function reject(response) {
+        response = response || {status: 400};
+        httpError(response, 'loading script "{0}".', url);
+
+        // Reject the promise and pass the reponse
+        // object to the error callback (if any)
+        deferred.reject(response);
+      }
+
+      // IE
+      script.onreadystatechange = function() {
+        if (this.readyState === 4) {
+          if (httpError.isErrorCode(this.status)) {
+            reject(this);
+          } else {
+            resolve();
+          }
+        }
+      };
+
+      // Other browsers
+      script.onload = resolve;
+      script.onerror = reject;
+
+      return deferred.promise;
+    }
+
+    /**
+     * Injects a script tag into the DOM (at the end of <head>).
+     * @param  {HTMLElement} script The HTMLElement script.
+     */
+    function injectScript(script) {
+      const head = document.head || document.querySelector('head');
+      head.appendChild(script);
+    }
+
+    /**
+     * The `scriptInjector` service.
+     * @param  {!string} url The string to inject.
+     * @return {Promise} A promise, resolved after
+     *                   loading the script or reject on error.
+     */
+    function scriptInjector(url) {
+      const script = createScript(url);
+      injectScript(script);
+      return promiseScript(script);
+    }
+
+    return scriptInjector;
+  }
+
+  module.factory('scriptInjector', ['$q', 'httpError', scriptInjectorFactory]);
+
+// eslint-disable-next-line
 })(angularDfp);
 
 /**
@@ -412,6 +603,7 @@ googletag.cmd = googletag.cmd || [];
      */
     const scripts = [];
 
+    // TODO: Throw exceptions rather than asserting
     /**
      * Tests if the state of the directive is valid and complete.
      * @return {Boolean} True if the ad slot may be created, else false.
@@ -510,22 +702,18 @@ googletag.cmd = googletag.cmd || [];
    * @param {Object} scope          The Angular element scope.
    * @param {Object} element        The jQuery/jQlite element of the directive.
    * @param {Object} attributes     The attributes defined on the element.
+   * @param {Object} controller     The `dfpAdController` object.
    * @param  {Function} $injector {@link http://docs.angularjs.org/api/ng.$injector}
    */
-  function dfpAdDirective(scope, element, attributes, $injector) {
-    let $window = $injector.get('$window');
-    const doubleClick = $injector.get('doubleClick');
+  function dfpAdDirective(scope, element, attributes, controller, $injector) {
+    const dfp = $injector.get('dfp');
     const dfpIDGenerator = $injector.get('dfpIDGenerator');
     const dfpRefresh = $injector.get('dfpRefresh');
     const responsiveResize = $injector.get('responsiveResize');
 
-    const ad = scope.controller.getState();
+    const ad = controller.getState();
 
-    // Turn the window into a jQuery/jQlite object
-    // eslint-disable-next-line no-undef
-    $window = angular.element($window);
-
-    // Unpack jQuery object
+    const jQueryElement = element;
     element = element[0];
 
       // Generate an ID or check for uniqueness of an existing one
@@ -597,23 +785,27 @@ googletag.cmd = googletag.cmd || [];
       googletag.display(element.id);
 
       // Send to the refresh proxy
-      dfpRefresh(slot, ad.refresh, function() {
+      dfpRefresh(slot, ad.refresh).then(() => {
         if (ad.responsiveMapping.length > 0) {
-          $window.on('resize', responsiveResize(slot));
+          responsiveResize(jQueryElement);
         }
       });
     }
 
     // Push the ad slot definition into the command queue.
-    doubleClick.then(defineSlot);
+    dfp.then(defineSlot);
   }
 
   module.directive('dfpAd', ['$injector', function($injector) {
     return {
       restrict: 'AE',
       controller: dfpAdController,
+      controllerAs: 'controller',
       bindToController: true,
-      link: function() { dfpAdDirective.apply(arguments.concat($injector)); },
+      link: function() {
+        const args = Array.prototype.slice.call(arguments, 0, 4);
+        dfpAdDirective.apply(null, args.concat($injector));
+      },
       scope: {
         adUnit: '@',
         clickUrl: '@',
@@ -652,49 +844,39 @@ googletag.cmd = googletag.cmd || [];
    * @param {Object} scope The angular scope.
    * @param {Object} element The HTML element on which the directive is defined.
    * @param {Object} attributes The attributes of the element.
-   * @param {Object} $injector The angular `$injector` service.
    */
-  function dfpAudiencePixelDirective(scope, element, attributes, $injector) {
-    const format = $injector.get('dfpFormat');
-
+  function dfpAudiencePixelDirective(scope, element, attributes) {
     const axel = String(Math.random());
     const random = axel * 10000000000000;
 
     let adUnit = '';
     if (scope.adUnit) {
-      adUnit = format('dc_iu={0};', scope.adUnit);
+      adUnit = `dc_iu=${scope.adUnit}`;
     }
 
     let ppid = '';
     if (scope.ppid) {
-      ppid = format('ppid={0};', scope.ppid);
+      ppid = `ppid=${scope.ppid}`;
     }
 
     const pixel = document.createElement('img');
 
-    pixel.src = format(
-       'https://pubads.g.doubleclick.net/activity;ord={0};dc_seg={1};{2}{3}',
-       random,
-       scope.segmentId,
-       adUnit,
-       ppid
-     );
+    pixel.src = 'https://pubads.g.doubleclick.net/activity;ord=';
+    pixel.src += `${random};dc_seg=${scope.segmentId};${adUnit}${ppid}`;
 
     pixel.width = 1;
     pixel.height = 1;
     pixel.border = 0;
     pixel.style.visibility = 'hidden';
 
-    document.body.appendChild(pixel);
+    element.append(pixel);
   }
 
-  module.directive('dfpAudiencePixel', ['$injector', function($injector) {
+  module.directive('dfpAudiencePixel', [() => {
     return {
       restrict: 'E',
       scope: {adUnit: '@', segmentId: '@', ppid: '@'},
-      link: function() {
-        dfpAudiencePixelDirective.apply(arguments.concat($injector));
-      }
+      link: dfpAudiencePixelDirective
     };
   }]);
 
@@ -847,12 +1029,8 @@ googletag.cmd = googletag.cmd || [];
   * built in, such as being able to buffer refresh calls and flush at certain
   * intervals, or have refresh call "barriers" (a fixed number of calls to wait
   * for) and global refresh intervals.
-  *
-  * @param {Object} $interval
-  *                 {@link http://docs.angularjs.org/api/ng.$interval}
-  * @param {Function} parseDuration The duration parsing service.
   */
-  function dfpRefreshProvider($interval, parseDuration) {
+  function dfpRefreshProvider() {
       // Store reference
     const self = this;
 
@@ -893,24 +1071,25 @@ googletag.cmd = googletag.cmd || [];
      * @type {Object}
      */
     self.priority = {
-      refresh: 1,
-      interval: 1,
-      barrier: 1
+      REFRESH: 1,
+      INTERVAL: 1,
+      BARRIER: 1
     };
 
     self.$get = [
       '$rootScope',
       '$interval',
+      '$q',
       'parseDuration',
-      function($rootScope, $interval, parseDuration) {
+      function($rootScope, $interval, $q, parseDuration) {
         /**
          * The possible buffering/refreshing options
          * @type {!Object}
          */
         const Options = Object.freeze({
-          REFRESH: 'refresh',
-          INTERVAL: 'interval',
-          BARRIER: 'barrier'
+          REFRESH: 'REFRESH',
+          INTERVAL: 'INTERVAL',
+          BARRIER: 'BARRIER'
         });
 
         dfpRefresh.Options = Options;
@@ -949,23 +1128,19 @@ googletag.cmd = googletag.cmd || [];
          *
          * @param  {googletag.Slot} slot  The adslot to refresh.
          * @param  {string|number=} interval The interval at which to refresh.
-         * @param  {Function} callback A callback to be executed after the refresh.
+         * @param  {!boolean=} defer If an interval is passed and defer is false, a regular refresh call will be made immediately.
          * @return {promise} A promise, resolved after the refresh call.
          */
-        function dfpRefresh(slot, interval, callback) {
-          const deferred = Promise.defer();
-
-          if (typeof interval === 'function') {
-            callback = interval;
-            interval = undefined;
-          }
-
+        function dfpRefresh(slot, interval, defer) {
+          const deferred = $q.defer();
           const task = {slot: slot, deferred: deferred};
 
-          if (interval === undefined) {
-            scheduleRefresh(task);
-          } else {
+          if (interval) {
             addSlotInterval(task, interval);
+          }
+
+          if (!interval || !defer) {
+            scheduleRefresh(task);
           }
 
           return deferred.promise;
@@ -1463,6 +1638,7 @@ googletag.cmd = googletag.cmd || [];
           // If 'tasks' was not passed at all, we refresh all ads
           if (tasks === undefined) {
             googletag.pubads().refresh();
+            return;
           }
 
           // Do nothing for a null or empty buffer
@@ -1660,7 +1836,10 @@ googletag.cmd = googletag.cmd || [];
      *
      * @type {Array}
      */
-    const browserSize = Object.seal([this.browserWidth, this.browserHeight]);
+    const browserSize = Object.seal([
+      this.browserWidth,
+      this.browserHeight || 0
+    ]);
 
     /**
      * The ad sizes for the browser dimensions.
@@ -1674,6 +1853,7 @@ googletag.cmd = googletag.cmd || [];
      *                   ready to be fetched, else false.
      */
     function isValid() {
+      if (browserSize.some(value => typeof value !== 'number')) return false;
       return adSizes.length > 0;
     }
 
@@ -1715,6 +1895,7 @@ googletag.cmd = googletag.cmd || [];
       restrict: 'E',
       require: '^^dfpAd',
       controller: DFPResponsiveController,
+      controllerAs: 'controller',
       bindToController: true,
       link: dfpResponsiveDirective,
       scope: {browserWidth: '=', browserHeight: '='}
@@ -1765,7 +1946,8 @@ googletag.cmd = googletag.cmd || [];
       require: '^^dfpAd',
       scope: {slotAs: '@', scope: '='},
       link: function() {
-        dfpScriptDirective.apply(arguments.concat($injector));
+        const args = Array.prototype.slice.call(arguments, 0, 4);
+        dfpScriptDirective.apply(null, args.concat($injector));
       }
     };
   }]);
@@ -1797,6 +1979,8 @@ googletag.cmd = googletag.cmd || [];
     // Only one of the two possible parents will be `null`
     // Pick the most nested parent (`dfp-responsive`)
     parent = parent[1] || parent[0];
+
+    console.assert(parent);
 
     if (scope.width && scope.height) {
       parent.addSize([scope.width, scope.height]);
@@ -1896,6 +2080,7 @@ googletag.cmd = googletag.cmd || [];
       restrict: 'E',
       require: '^^dfpAd', // require dfp-ad as parent
       controller: dfpTargetingController,
+      controllerAs: 'controller',
       bindToController: true,
       scope: {key: '@', value: '@'},
       link: dfpTargetingDirective
@@ -1986,7 +2171,8 @@ let angularDfpVideo = angular.module('angularDfp');
       restrict: 'AE',
       scope: {adTag: '@'},
       link: function() {
-        dfpVideoDirective.apply(arguments.concat($injector));
+        const args = Array.prototype.slice.call(arguments, 0, 4);
+        dfpVideoDirective.apply(null, args.concat($injector));
       }
     };
   }]);
@@ -2026,10 +2212,9 @@ googletag.cmd = googletag.cmd || [];
    * tasks, injecting the GPT library asynchronously and providing the `then`
    * proxy to `googletag.cmd.push`.
    *
-   * @param {Object} scriptInjector The script injection service.
    * @param {string} GPT_LIBRARY_URL The URL of the GPT library to inject.
    */
-  function dfpProvider(scriptInjector, GPT_LIBRARY_URL) {
+  function dfpProvider(GPT_LIBRARY_URL) {
     /**
      * The doubleClickProvider function.
      * @type {Function}
@@ -2134,6 +2319,12 @@ googletag.cmd = googletag.cmd || [];
     self.safeFrameConfig = null;
 
     /**
+     * Whether to download the GPT library.
+     * @type {!boolean}
+     */
+    self.loadGPT = true;
+
+    /**
      * Whether or not we have loaded the GPT library yet.
      * @type {!boolean}
      */
@@ -2201,12 +2392,12 @@ googletag.cmd = googletag.cmd || [];
       pubads.setPublisherProvidedId(self.ppid);
     }
 
-    /**
-     * The configuration function called to initialize the doubleClick service.
-     */
-    function dfp() {
-      // Push the initial configuration into the command queue.
-      googletag.cmd.push(function() {
+    // Fear not this syntax, my son!
+    this.$get = ['scriptInjector', scriptInjector => {
+      /**
+       * Sets up the GPT and DFP services.
+       */
+      function setup() {
         const pubads = googletag.pubads();
 
         if (self.enableSingleRequestArchitecture) {
@@ -2218,7 +2409,7 @@ googletag.cmd = googletag.cmd || [];
         }
 
         if (self.collapseIfEmpty) {
-          pubads.collapseIfEmpty();
+          pubads.collapseEmptyDivs();
         }
 
         if (self.disableInitialLoad) {
@@ -2238,37 +2429,42 @@ googletag.cmd = googletag.cmd || [];
         addSafeFrameConfig(pubads);
 
         googletag.enableServices();
-      });
+      }
 
-      scriptInjector(GPT_LIBRARY_URL).then(function() {
-        loaded = true;
-      });
-    }
+      /**
+      * The configuration function called to initialize the doubleClick service.
+      */
+      function dfp() {
+        googletag.cmd.push(setup);
 
-    /**
-     * Tests if the GPT library has been injected yet.
-     * @return {boolean} [description]
-     */
-    dfp.hasLoaded = function() {
-      return loaded;
-    };
+        if (self.loadGPT) {
+          scriptInjector(GPT_LIBRARY_URL).then(() => {
+            loaded = true;
+          });
+        }
+      }
 
-    /**
-     * Pushes a taks into GPT's asynchronous task queue.
-     * @param  {Function} task The task function to execute in the queue.
-     */
-    dfp.then = function(task) {
-      googletag.cmd.push(task);
-    };
+      /**
+      * Tests if the GPT library has been injected yet.
+      * @return {boolean} [description]
+      */
+      dfp.hasLoaded = function() {
+        return loaded;
+      };
 
-    // The factory function
-    this.$get = function() {
+      /**
+      * Pushes a taks into GPT's asynchronous task queue.
+      * @param  {Function} task The task function to execute in the queue.
+      */
+      dfp.then = function(task) {
+        googletag.cmd.push(task);
+      };
+
       return dfp;
-    };
+    }];
   }
-  module.provider('dfp', [
-    'scriptInjector', 'GPT_LIBRARY_URL', dfpProvider
-  ]);
+
+  module.provider('dfp', ['GPT_LIBRARY_URL', dfpProvider]);
 
 // eslint-disable-next-line
 })(angularDfp);

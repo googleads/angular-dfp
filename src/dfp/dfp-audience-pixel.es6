@@ -21,49 +21,39 @@
    * @param {Object} scope The angular scope.
    * @param {Object} element The HTML element on which the directive is defined.
    * @param {Object} attributes The attributes of the element.
-   * @param {Object} $injector The angular `$injector` service.
    */
-  function dfpAudiencePixelDirective(scope, element, attributes, $injector) {
-    const format = $injector.get('dfpFormat');
-
+  function dfpAudiencePixelDirective(scope, element, attributes) {
     const axel = String(Math.random());
     const random = axel * 10000000000000;
 
     let adUnit = '';
     if (scope.adUnit) {
-      adUnit = format('dc_iu={0};', scope.adUnit);
+      adUnit = `dc_iu=${scope.adUnit}`;
     }
 
     let ppid = '';
     if (scope.ppid) {
-      ppid = format('ppid={0};', scope.ppid);
+      ppid = `ppid=${scope.ppid}`;
     }
 
     const pixel = document.createElement('img');
 
-    pixel.src = format(
-       'https://pubads.g.doubleclick.net/activity;ord={0};dc_seg={1};{2}{3}',
-       random,
-       scope.segmentId,
-       adUnit,
-       ppid
-     );
+    pixel.src = 'https://pubads.g.doubleclick.net/activity;ord=';
+    pixel.src += `${random};dc_seg=${scope.segmentId};${adUnit}${ppid}`;
 
     pixel.width = 1;
     pixel.height = 1;
     pixel.border = 0;
     pixel.style.visibility = 'hidden';
 
-    document.body.appendChild(pixel);
+    element.append(pixel);
   }
 
-  module.directive('dfpAudiencePixel', ['$injector', function($injector) {
+  module.directive('dfpAudiencePixel', [() => {
     return {
       restrict: 'E',
       scope: {adUnit: '@', segmentId: '@', ppid: '@'},
-      link: function() {
-        dfpAudiencePixelDirective.apply(arguments.concat($injector));
-      }
+      link: dfpAudiencePixelDirective
     };
   }]);
 

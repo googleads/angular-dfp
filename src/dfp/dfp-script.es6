@@ -39,7 +39,8 @@
       require: '^^dfpAd',
       scope: {slotAs: '@', scope: '='},
       link: function() {
-        dfpScriptDirective.apply(arguments.concat($injector));
+        const args = Array.prototype.slice.call(arguments, 0, 4);
+        dfpScriptDirective.apply(null, args.concat($injector));
       }
     };
   }]);

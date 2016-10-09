@@ -47,7 +47,8 @@ let angularDfpVideo = angular.module('angularDfp');
       restrict: 'AE',
       scope: {adTag: '@'},
       link: function() {
-        dfpVideoDirective.apply(arguments.concat($injector));
+        const args = Array.prototype.slice.call(arguments, 0, 4);
+        dfpVideoDirective.apply(null, args.concat($injector));
       }
     };
   }]);

@@ -45,6 +45,7 @@ googletag.cmd = googletag.cmd || [];
      */
     const scripts = [];
 
+    // TODO: Throw exceptions rather than asserting
     /**
      * Tests if the state of the directive is valid and complete.
      * @return {Boolean} True if the ad slot may be created, else false.
@@ -143,22 +144,18 @@ googletag.cmd = googletag.cmd || [];
    * @param {Object} scope          The Angular element scope.
    * @param {Object} element        The jQuery/jQlite element of the directive.
    * @param {Object} attributes     The attributes defined on the element.
+   * @param {Object} controller     The `dfpAdController` object.
    * @param  {Function} $injector {@link http://docs.angularjs.org/api/ng.$injector}
    */
-  function dfpAdDirective(scope, element, attributes, $injector) {
-    let $window = $injector.get('$window');
-    const doubleClick = $injector.get('doubleClick');
+  function dfpAdDirective(scope, element, attributes, controller, $injector) {
+    const dfp = $injector.get('dfp');
     const dfpIDGenerator = $injector.get('dfpIDGenerator');
     const dfpRefresh = $injector.get('dfpRefresh');
     const responsiveResize = $injector.get('responsiveResize');
 
-    const ad = scope.controller.getState();
+    const ad = controller.getState();
 
-    // Turn the window into a jQuery/jQlite object
-    // eslint-disable-next-line no-undef
-    $window = angular.element($window);
-
-    // Unpack jQuery object
+    const jQueryElement = element;
     element = element[0];
 
       // Generate an ID or check for uniqueness of an existing one
@@ -230,23 +227,27 @@ googletag.cmd = googletag.cmd || [];
       googletag.display(element.id);
 
       // Send to the refresh proxy
-      dfpRefresh(slot, ad.refresh, function() {
+      dfpRefresh(slot, ad.refresh).then(() => {
         if (ad.responsiveMapping.length > 0) {
-          $window.on('resize', responsiveResize(slot));
+          responsiveResize(jQueryElement);
         }
       });
     }
 
     // Push the ad slot definition into the command queue.
-    doubleClick.then(defineSlot);
+    dfp.then(defineSlot);
   }
 
   module.directive('dfpAd', ['$injector', function($injector) {
     return {
       restrict: 'AE',
       controller: dfpAdController,
+      controllerAs: 'controller',
       bindToController: true,
-      link: function() { dfpAdDirective.apply(arguments.concat($injector)); },
+      link: function() {
+        const args = Array.prototype.slice.call(arguments, 0, 4);
+        dfpAdDirective.apply(null, args.concat($injector));
+      },
       scope: {
         adUnit: '@',
         clickUrl: '@',

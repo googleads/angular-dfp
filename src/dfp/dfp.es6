@@ -28,10 +28,9 @@ googletag.cmd = googletag.cmd || [];
    * tasks, injecting the GPT library asynchronously and providing the `then`
    * proxy to `googletag.cmd.push`.
    *
-   * @param {Object} scriptInjector The script injection service.
    * @param {string} GPT_LIBRARY_URL The URL of the GPT library to inject.
    */
-  function dfpProvider(scriptInjector, GPT_LIBRARY_URL) {
+  function dfpProvider(GPT_LIBRARY_URL) {
     /**
      * The doubleClickProvider function.
      * @type {Function}
@@ -136,6 +135,12 @@ googletag.cmd = googletag.cmd || [];
     self.safeFrameConfig = null;
 
     /**
+     * Whether to download the GPT library.
+     * @type {!boolean}
+     */
+    self.loadGPT = true;
+
+    /**
      * Whether or not we have loaded the GPT library yet.
      * @type {!boolean}
      */
@@ -203,12 +208,12 @@ googletag.cmd = googletag.cmd || [];
       pubads.setPublisherProvidedId(self.ppid);
     }
 
-    /**
-     * The configuration function called to initialize the doubleClick service.
-     */
-    function dfp() {
-      // Push the initial configuration into the command queue.
-      googletag.cmd.push(function() {
+    // Fear not this syntax, my son!
+    this.$get = ['scriptInjector', scriptInjector => {
+      /**
+       * Sets up the GPT and DFP services.
+       */
+      function setup() {
         const pubads = googletag.pubads();
 
         if (self.enableSingleRequestArchitecture) {
@@ -220,7 +225,7 @@ googletag.cmd = googletag.cmd || [];
         }
 
         if (self.collapseIfEmpty) {
-          pubads.collapseIfEmpty();
+          pubads.collapseEmptyDivs();
         }
 
         if (self.disableInitialLoad) {
@@ -240,37 +245,42 @@ googletag.cmd = googletag.cmd || [];
         addSafeFrameConfig(pubads);
 
         googletag.enableServices();
-      });
+      }
 
-      scriptInjector(GPT_LIBRARY_URL).then(function() {
-        loaded = true;
-      });
-    }
+      /**
+      * The configuration function called to initialize the doubleClick service.
+      */
+      function dfp() {
+        googletag.cmd.push(setup);
 
-    /**
-     * Tests if the GPT library has been injected yet.
-     * @return {boolean} [description]
-     */
-    dfp.hasLoaded = function() {
-      return loaded;
-    };
+        if (self.loadGPT) {
+          scriptInjector(GPT_LIBRARY_URL).then(() => {
+            loaded = true;
+          });
+        }
+      }
 
-    /**
-     * Pushes a taks into GPT's asynchronous task queue.
-     * @param  {Function} task The task function to execute in the queue.
-     */
-    dfp.then = function(task) {
-      googletag.cmd.push(task);
-    };
+      /**
+      * Tests if the GPT library has been injected yet.
+      * @return {boolean} [description]
+      */
+      dfp.hasLoaded = function() {
+        return loaded;
+      };
 
-    // The factory function
-    this.$get = function() {
+      /**
+      * Pushes a taks into GPT's asynchronous task queue.
+      * @param  {Function} task The task function to execute in the queue.
+      */
+      dfp.then = function(task) {
+        googletag.cmd.push(task);
+      };
+
       return dfp;
-    };
+    }];
   }
-  module.provider('dfp', [
-    'scriptInjector', 'GPT_LIBRARY_URL', dfpProvider
-  ]);
+
+  module.provider('dfp', ['GPT_LIBRARY_URL', dfpProvider]);
 
 // eslint-disable-next-line
 })(angularDfp);

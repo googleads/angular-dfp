@@ -18,7 +18,10 @@
      *
      * @type {Array}
      */
-    const browserSize = Object.seal([this.browserWidth, this.browserHeight]);
+    const browserSize = Object.seal([
+      this.browserWidth,
+      this.browserHeight || 0
+    ]);
 
     /**
      * The ad sizes for the browser dimensions.
@@ -32,6 +35,7 @@
      *                   ready to be fetched, else false.
      */
     function isValid() {
+      if (browserSize.some(value => typeof value !== 'number')) return false;
       return adSizes.length > 0;
     }
 
@@ -73,6 +77,7 @@
       restrict: 'E',
       require: '^^dfpAd',
       controller: DFPResponsiveController,
+      controllerAs: 'controller',
       bindToController: true,
       link: dfpResponsiveDirective,
       scope: {browserWidth: '=', browserHeight: '='}

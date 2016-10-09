@@ -1,12 +1,12 @@
 /**
- * @file Defines the `dfpParseDuration` service.
+ * @file Defines the `parseDuration` service.
  * @author Peter Goldsborough <peter@goldsborough.me>
  * @license MIT
  */
 
 (function(module) {
   /**
-   * An error thrown by the `dfpParseDuration` service.
+   * An error thrown by the `parseDuration` service.
    */
   class DFPDurationError extends Error {
     constructor(interval) {
@@ -15,15 +15,15 @@
   }
 
   /**
-   * A factory for the `dfpParseDuration` service.
+   * A factory for the `parseDuration` service.
    *
    * This service allows parsing of strings specifying
    * durations, such as '2s' or '5min'.
    *
    * @param {Function} format The `format` service.
-   * @return {Function} The `dfpParseDuration` service.
+   * @return {Function} The `parseDuration` service.
    */
-  function dfpParseDurationFactory(format) {
+  function parseDurationFactory(format) {
     /**
      * Converts a given time in a given unit to milliseconds.
      * @param  {!number} time A time number in a certain unit.
@@ -61,7 +61,7 @@
      * @param  {number|string} interval The string to parse.
      * @return {number} The corresponding number of milliseconds.
      */
-    function dfpParseDuration(interval) {
+    function parseDuration(interval) {
       if (typeof interval === 'number') {
         return interval;
       }
@@ -82,10 +82,10 @@
       return convert(match);
     }
 
-    return dfpParseDuration;
+    return parseDuration;
   }
 
-  module.factory('dfpParseDuration', ['dfpFormat', dfpParseDurationFactory]);
+  module.factory('parseDuration', ['dfpFormat', parseDurationFactory]);
 
 // eslint-disable-next-line
 })(angularDfp);

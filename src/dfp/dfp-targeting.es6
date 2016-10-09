@@ -77,6 +77,7 @@
       restrict: 'E',
       require: '^^dfpAd', // require dfp-ad as parent
       controller: dfpTargetingController,
+      controllerAs: 'controller',
       bindToController: true,
       scope: {key: '@', value: '@'},
       link: dfpTargetingDirective

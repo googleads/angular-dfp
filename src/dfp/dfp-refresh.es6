@@ -23,12 +23,8 @@ googletag.cmd = googletag.cmd || [];
   * built in, such as being able to buffer refresh calls and flush at certain
   * intervals, or have refresh call "barriers" (a fixed number of calls to wait
   * for) and global refresh intervals.
-  *
-  * @param {Object} $interval
-  *                 {@link http://docs.angularjs.org/api/ng.$interval}
-  * @param {Function} parseDuration The duration parsing service.
   */
-  function dfpRefreshProvider($interval, parseDuration) {
+  function dfpRefreshProvider() {
       // Store reference
     const self = this;
 
@@ -69,24 +65,25 @@ googletag.cmd = googletag.cmd || [];
      * @type {Object}
      */
     self.priority = {
-      refresh: 1,
-      interval: 1,
-      barrier: 1
+      REFRESH: 1,
+      INTERVAL: 1,
+      BARRIER: 1
     };
 
     self.$get = [
       '$rootScope',
       '$interval',
+      '$q',
       'parseDuration',
-      function($rootScope, $interval, parseDuration) {
+      function($rootScope, $interval, $q, parseDuration) {
         /**
          * The possible buffering/refreshing options
          * @type {!Object}
          */
         const Options = Object.freeze({
-          REFRESH: 'refresh',
-          INTERVAL: 'interval',
-          BARRIER: 'barrier'
+          REFRESH: 'REFRESH',
+          INTERVAL: 'INTERVAL',
+          BARRIER: 'BARRIER'
         });
 
         dfpRefresh.Options = Options;
@@ -125,23 +122,19 @@ googletag.cmd = googletag.cmd || [];
          *
          * @param  {googletag.Slot} slot  The adslot to refresh.
          * @param  {string|number=} interval The interval at which to refresh.
-         * @param  {Function} callback A callback to be executed after the refresh.
+         * @param  {!boolean=} defer If an interval is passed and defer is false, a regular refresh call will be made immediately.
          * @return {promise} A promise, resolved after the refresh call.
          */
-        function dfpRefresh(slot, interval, callback) {
-          const deferred = Promise.defer();
-
-          if (typeof interval === 'function') {
-            callback = interval;
-            interval = undefined;
-          }
-
+        function dfpRefresh(slot, interval, defer) {
+          const deferred = $q.defer();
           const task = {slot: slot, deferred: deferred};
 
-          if (interval === undefined) {
-            scheduleRefresh(task);
-          } else {
+          if (interval) {
             addSlotInterval(task, interval);
+          }
+
+          if (!interval || !defer) {
+            scheduleRefresh(task);
           }
 
           return deferred.promise;
@@ -639,6 +632,7 @@ googletag.cmd = googletag.cmd || [];
           // If 'tasks' was not passed at all, we refresh all ads
           if (tasks === undefined) {
             googletag.pubads().refresh();
+            return;
           }
 
           // Do nothing for a null or empty buffer

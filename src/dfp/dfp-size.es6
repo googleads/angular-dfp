@@ -23,6 +23,8 @@
     // Pick the most nested parent (`dfp-responsive`)
     parent = parent[1] || parent[0];
 
+    console.assert(parent);
+
     if (scope.width && scope.height) {
       parent.addSize([scope.width, scope.height]);
     } else {

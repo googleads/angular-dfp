@@ -60,7 +60,17 @@ gulp.task('docs', () => {
 const del = require('del');
 
 gulp.task('clean', () => {
-  return del(['build', 'enum-class.min.js']);
+  return del([
+    'angular-dfp.min.js',
+    'angular-dfp.js',
+    'docs',
+    'angular-dfp.es6'
+  ]);
 });
 
-gulp.task('default', ['lint', 'transpile', 'compile', 'docs'], function() { });
+gulp.task('demo', ['transpile'], () => {
+  return gulp.src('angular-dfp*.js')
+             .pipe(gulp.dest('demo/static'));
+});
+
+gulp.task('default', ['lint', 'transpile', 'compile', 'docs', 'demo']);
