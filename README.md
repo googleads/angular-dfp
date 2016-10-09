@@ -35,7 +35,7 @@ Ever seen DFP like this?
 
 ## Demo
 
-A live demo can be found at [angular-dfp-demo.appspot.com](angular-dfp-demo.appspot.com).
+A live demo can be found at [angular-dfp-demo.appspot.com](http://angular-dfp-demo.appspot.com).
 
 ## License
 
