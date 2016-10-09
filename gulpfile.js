@@ -63,4 +63,4 @@ gulp.task('clean', () => {
   return del(['build', 'enum-class.min.js']);
 });
 
-gulp.task('default', ['lint', 'test', 'compile', 'docs'], function() { });
+gulp.task('default', ['lint', 'transpile', 'compile', 'docs'], function() { });

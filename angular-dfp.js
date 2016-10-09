@@ -14,11 +14,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 * @license MIT
 */
 
-// eslint-disable-next-line no-use-before-define
+// eslint-disable-next-line no-use-before-define, no-var
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-// eslint-disable-next-line
+// eslint-disable-next-line no-undef, no-unused-vars
 var angularDfp = angular.module('angularDfp');
 
 /**
@@ -82,17 +82,17 @@ var angularDfp = angular.module('angularDfp');
    * This service allows parsing of strings specifying
    * durations, such as '2s' or '5min'.
    *
-   * @param {function} format The `format` service.
-   * @return {function} The `dfpParseDuration` service.
+   * @param {Function} format The `format` service.
+   * @return {Function} The `dfpParseDuration` service.
    */
 
 
   function dfpParseDurationFactory(format) {
     /**
      * Converts a given time in a given unit to milliseconds.
-     * @param  {number} time A time number in a certain unit.
-     * @param  {string} unit A string describing the unit (ms|s|min|h).
-     * @return {number} The time, in milliseconds.
+     * @param  {!number} time A time number in a certain unit.
+     * @param  {!string} unit A string describing the unit (ms|s|min|h).
+     * @return {!number} The time, in milliseconds.
      */
     function convertToMilliseconds(time, unit) {
       console.assert(/^(m?s|min|h)$/g.test(unit));
@@ -100,13 +100,15 @@ var angularDfp = angular.module('angularDfp');
       if (unit === 'ms') return time;
       if (unit === 's') return time * 1000;
       if (unit === 'min') return time * 60 * 1000;
-      if (unit === 'h') return time * 60 * 60 * 1000;
+
+      // hours
+      return time * 60 * 60 * 1000;
     }
 
     /**
      * Converts a regular expression match into a duration.
-     * @param  {RegExp} match A regular expression match object.
-     * @return {number} The converted milliseconds.
+     * @param  {!Array} match A regular expression match object.
+     * @return {!number} The converted milliseconds.
      */
     function convert(match) {
       var time = parseInt(match[1], 10);
@@ -120,7 +122,7 @@ var angularDfp = angular.module('angularDfp');
 
     /**
      * Given an interval string, returns the corresponding milliseconds.
-     * @param  {string} interval The string to parse.
+     * @param  {number|string} interval The string to parse.
      * @return {number} The corresponding number of milliseconds.
      */
     function dfpParseDuration(interval) {
@@ -157,8 +159,6 @@ var angularDfp = angular.module('angularDfp');
 */
 
 (function (module) {
-  "use strict";
-
   /**
    * The factory of the `responsiveResize` service.
    *
@@ -167,13 +167,12 @@ var angularDfp = angular.module('angularDfp');
    * containers' width. This ensures that centering ads, which is essential to
    * responsive ads, works well.
    *
-   * @param  {function} $interval {@link http://docs.angularjs.org/api/ng.$interval}
-   * @param  {function} $timeout  {@link http://docs.angularjs.org/api/ng.$timeout}
-   * @param  {object} $window  {@link http://docs.angularjs.org/api/ng.$window}
-   * @param {function} dfpRefresh The dfpRefresh service.
-   * @return {function} The `responsiveResize` service.
+   * @param  {Function} $interval {@link http://docs.angularjs.org/api/ng.$interval}
+   * @param  {Function} $timeout  {@link http://docs.angularjs.org/api/ng.$timeout}
+   * @param  {Object} $window  {@link http://docs.angularjs.org/api/ng.$window}
+   * @param {Function} dfpRefresh The dfpRefresh service.
+   * @return {Function} The `responsiveResize` service.
    */
-
   function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
     // Turn into jQLite element
     // eslint-disable-next-line
@@ -198,7 +197,7 @@ var angularDfp = angular.module('angularDfp');
 
       /**
        * Retrieves the iframe of the ad of the element.
-       * @return {object} An iframe HTML element.
+       * @return {Object} An iframe HTML element.
        */
       function queryIFrame() {
         return element.querySelector('div iframe');
@@ -214,7 +213,7 @@ var angularDfp = angular.module('angularDfp');
        * dimensions remain unchanged. This distorts the element. As such, we
        * simply normalize these two dimensionss here.
        *
-       * @param  {object} iframe Optionally, the iframe to normalize
+       * @param  {Object} iframe Optionally, the iframe to normalize
        *                         (else it is queried).
        */
       function normalizeIFrame(iframe) {
@@ -287,7 +286,7 @@ var angularDfp = angular.module('angularDfp');
       /**
        * Returns a function suitable for responsive resize-event watching.
        * @param  {googletag.Slot} slot The slot to make responsive.
-       * @return {function} A function to pass as an event
+       * @return {Function} A function to pass as an event
        *                    listener for (window) resize events.
        */
       function makeResponsive(slot) {
@@ -386,6 +385,10 @@ var angularDfp = angular.module('angularDfp');
  * @license MIT
  */
 
+// eslint-disable-next-line no-use-before-define, no-var
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+
 (function (module) {
   "use strict";
 
@@ -436,7 +439,7 @@ var angularDfp = angular.module('angularDfp');
 
     /**
      * Returns the public state of the controller for use by the directive.
-     * @return {object} An object of all properties the directive will
+     * @return {Object} An object of all properties the directive will
      *                  need to create an ad slot.
      */
     this.getState = function () {
@@ -469,7 +472,7 @@ var angularDfp = angular.module('angularDfp');
 
     /**
      * Registers a responsive mapping for the ad slot.
-     * @param {object} mapping A `{browserSize, adSizes}` mapping.
+     * @param {Object} mapping A `{browserSize, adSizes}` mapping.
      * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/3423562?hl=en}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.SizeMappingBuilder}
      */
@@ -479,7 +482,7 @@ var angularDfp = angular.module('angularDfp');
 
     /**
      * Registers a targeting object for the ad slot.
-     * @param {object} targeting A {browserSize, adSizes} object.
+     * @param {Object} targeting A {browserSize, adSizes} object.
      * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/177383?hl=en}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PassbackSlot_setTargeting}
      */
@@ -519,10 +522,10 @@ var angularDfp = angular.module('angularDfp');
    * standalone except for the necessity of (at least) one nested `dfp-size`
    * directive.
    *
-   * @param {object} scope          The Angular element scope.
-   * @param {object} element        The jQuery/jQlite element of the directive.
-   * @param {object} attributes     The attributes defined on the element.
-   * @param  {function} $injector {@link http://docs.angularjs.org/api/ng.$injector}
+   * @param {Object} scope          The Angular element scope.
+   * @param {Object} element        The jQuery/jQlite element of the directive.
+   * @param {Object} attributes     The attributes defined on the element.
+   * @param  {Function} $injector {@link http://docs.angularjs.org/api/ng.$injector}
    */
   function dfpAdDirective(scope, element, attributes, $injector) {
     var $window = $injector.get('$window');
@@ -664,10 +667,10 @@ var angularDfp = angular.module('angularDfp');
    *
    * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/2508388?hl=en}
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} $injector The angular `$injector` service.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} $injector The angular `$injector` service.
    */
   function dfpAudiencePixelDirective(scope, element, attributes, $injector) {
     var format = $injector.get('dfpFormat');
@@ -727,10 +730,10 @@ var angularDfp = angular.module('angularDfp');
    *
    * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/2627086?hl=en}
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} ad The parent `dfp-ad` controller.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} ad The parent `dfp-ad` controller.
    */
   function dfpExclusionDirective(scope, element, attributes, ad) {
     ad.addExclusion(element.html());
@@ -756,7 +759,7 @@ var angularDfp = angular.module('angularDfp');
 (function (module) {
   /**
    * [dfpIDGeneratorFactory description]
-   * @return {function} The dfpIDGenerator service.
+   * @return {Function} The dfpIDGenerator service.
    */
   function dfpIDGeneratorFactory() {
     /**
@@ -767,7 +770,7 @@ var angularDfp = angular.module('angularDfp');
 
     /**
      * Generates random IDs until unique one is found.
-     * @return {[type]}          [description]
+     * @return {Number} The unique numeric ID.
      */
     function generateID() {
       var id = null;
@@ -789,8 +792,8 @@ var angularDfp = angular.module('angularDfp');
      * checked. If it is not unique or not set at all, a new unique, random ID
      * is generated for the element.
      *
-     * @param {object} element The element whose ID to check or assign.
-     * @return {number} The unique ID of the element, or a new generated one.
+     * @param {Object} element The element whose ID to check or assign.
+     * @return {Number} The unique ID of the element, or a new generated one.
      */
     function dfpIDGenerator(element) {
       if (element && element.id && !(element.id in generatedIDs)) {
@@ -805,7 +808,7 @@ var angularDfp = angular.module('angularDfp');
 
     /**
      * Tests if an ID is taken.
-     * @param  {number} id The ID to test.
+     * @param  {Number} id The ID to test.
      * @return {boolean} True if the ID is not unique, else false.
      * @see dfpIDGenerator.isUnique()
      */
@@ -815,7 +818,7 @@ var angularDfp = angular.module('angularDfp');
 
     /**
      * Tests if an ID is unique (not taken).
-     * @param  {number} id The ID to test.
+     * @param  {Number} id The ID to test.
      * @return {boolean} True if the ID is unique, else false.
      * @see dfpIDGenerator.isTaken()
      */
@@ -836,6 +839,10 @@ var angularDfp = angular.module('angularDfp');
  * @author Peter Goldsborough <peter@goldsborough.me>
  * @license MIT
  */
+
+// eslint-disable-next-line no-use-before-define, no-var
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
 
 (function (module) {
   /**
@@ -863,9 +870,9 @@ var angularDfp = angular.module('angularDfp');
   * intervals, or have refresh call "barriers" (a fixed number of calls to wait
   * for) and global refresh intervals.
   *
-  * @param {object} $interval
+  * @param {Object} $interval
   *                 {@link http://docs.angularjs.org/api/ng.$interval}
-  * @param {function} parseDuration The duration parsing service.
+  * @param {Function} parseDuration The duration parsing service.
   */
 
 
@@ -876,7 +883,7 @@ var angularDfp = angular.module('angularDfp');
     /**
      * The milliseconds to wait after receiving a refresh request
      * to see if more requests come that we can buffer.
-     * @type {number}
+     * @type {Number}
      */
     self.bufferInterval = 1000;
 
@@ -885,7 +892,7 @@ var angularDfp = angular.module('angularDfp');
     *  If a proxy timeout is set and times out but the amount has not
     *  yet been reached, the timeout will *not* be respected. That is,
     *  setting a barrier temporarily (disables) the timeout.
-    * @type {number}
+    * @type {Number}
     */
     self.bufferBarrier = null;
 
@@ -893,7 +900,7 @@ var angularDfp = angular.module('angularDfp');
     *  If true, disables any barrier set once it was reached and re-enables
     *  any timeout. If false, the barrier must be manually
     *  disables via clearBarrier().
-    * @type {number}
+    * @type {boolean}
     */
     self.oneShotBarrier = true;
 
@@ -918,7 +925,7 @@ var angularDfp = angular.module('angularDfp');
     self.$get = ['$rootScope', '$interval', 'parseDuration', function ($rootScope, $interval, parseDuration) {
       /**
        * The possible buffering/refreshing options
-       * @type {Array}
+       * @type {!Object}
        */
       var Options = Object.freeze({
         REFRESH: 'refresh',
@@ -944,11 +951,11 @@ var angularDfp = angular.module('angularDfp');
 
       /**
        * Stores the activity status of the buffering/refreshing options.
-       * @type {object}
+       * @type {Object}
        */
       var isEnabled = Object.seal({
         refresh: self.refreshInterval !== null,
-        interval: self.bufferInteval !== null,
+        interval: self.bufferInterval !== null,
         barrier: self.bufferBarrier !== null
       });
 
@@ -962,25 +969,33 @@ var angularDfp = angular.module('angularDfp');
        *
        * @param  {googletag.Slot} slot  The adslot to refresh.
        * @param  {string|number=} interval The interval at which to refresh.
-       * @param  {function} callback A callback to be executed after the refresh.
+       * @param  {Function} callback A callback to be executed after the refresh.
        * @return {promise} A promise, resolved after the refresh call.
        */
       function dfpRefresh(slot, interval, callback) {
+        var deferred = Promise.defer();
+
         if (typeof interval === 'function') {
           callback = interval;
           interval = undefined;
-        } else if (interval !== undefined) {
-          return addSlotInterval({ slot: slot, callback: callback }, interval);
         }
 
-        scheduleRefresh({ slot: slot, callback: callback });
+        var task = { slot: slot, deferred: deferred };
+
+        if (interval === undefined) {
+          scheduleRefresh(task);
+        } else {
+          addSlotInterval(task, interval);
+        }
+
+        return deferred.promise;
       }
 
       /**
        * Cancels an interval set for a certain ad slot.
        * @param  {googletag.Slot} slot The ad slot to cancel the interval for.
        * @throws DFPRefreshError When the given slot has not interval associated.
-       * @return {function} The current `dfpRefresh` instance.
+       * @return {Function} The current `dfpRefresh` instance.
        */
       dfpRefresh.cancelInterval = function (slot) {
         if (!dfpRefresh.hasSlotInterval(slot)) {
@@ -994,6 +1009,15 @@ var angularDfp = angular.module('angularDfp');
       };
 
       /**
+       * Tests if the given slot has an interval set.
+       * @param  {googletag.Slot}  slot The slot to check.
+       * @return {!boolean} True if an interval is set for the slot, else false.
+       */
+      dfpRefresh.hasSlotInterval = function (slot) {
+        return slot in self.intervals;
+      };
+
+      /**
        * Sets a new value for the buffer interval.
        *
        * The buffer interval is the interval at which
@@ -1001,7 +1025,7 @@ var angularDfp = angular.module('angularDfp');
        *
        * @param {string|number} interval An interval string or number
        *                                 (asis valid for `parseDuration`).
-       * @return {function} The current `dfpRefresh` instance.
+       * @return {Function} The current `dfpRefresh` instance.
        */
       dfpRefresh.setBufferInterval = function (interval) {
         self.bufferInterval = parseDuration(interval);
@@ -1012,12 +1036,12 @@ var angularDfp = angular.module('angularDfp');
 
       /**
        * Clears any interval set for the buffering mechanism.
-       * @return {function} The current `dfpRefresh` instance.
+       * @return {Function} The current `dfpRefresh` instance.
        */
       dfpRefresh.clearBufferInterval = function () {
         if (!dfpRefresh.hasBufferInterval()) {
           console.warn("clearBufferInterval had no " + "effect because no interval was set.");
-          return;
+          return dfpRefresh;
         }
 
         disableBufferInterval();
@@ -1060,13 +1084,12 @@ var angularDfp = angular.module('angularDfp');
 
       /**
        * Returns the buffer interval setting (may be null).
-       * @return {number} The current buffer interval (in ms), if any.
+       * @return {Number} The current buffer interval (in ms), if any.
        */
       dfpRefresh.getBufferInterval = function () {
         return self.bufferInterval;
       };
 
-      /* eslint-disable valid-jsdoc */
       /**
        * Sets a buffer barrier.
        *
@@ -1081,9 +1104,9 @@ var angularDfp = angular.module('angularDfp');
        * this method and the service will wait for 3 refresh calls before
        * actually refreshing them.
        *
-       * @param {number} numberOfAds The number of ads to wait for.
-       * @param {number=true} oneShot     Whether to uninstall the barrier after the first flush.
-       * @return {function} The current `dfpRefresh` instance.
+       * @param {Number} numberOfAds The number of ads to wait for.
+       * @param {Boolean=} oneShot     Whether to uninstall the barrier after the first flush.
+       * @return {Function} The current `dfpRefresh` instance.
        */
       dfpRefresh.setBufferBarrier = function (numberOfAds, oneShot) {
         self.bufferBarrier = numberOfAds;
@@ -1092,16 +1115,15 @@ var angularDfp = angular.module('angularDfp');
 
         return dfpRefresh;
       };
-      /* eslint-enable valid-jsdoc */
 
       /**
        * Clears any buffer barrier set.
-       * @return {function} The current `dfpRefresh` instance.
+       * @return {Function} The current `dfpRefresh` instance.
        */
       dfpRefresh.clearBufferBarrier = function () {
         if (!dfpRefresh.hasBufferBarrier()) {
           console.warn("clearBufferBarrier had not effect because " + "no barrier was set.");
-          return;
+          return dfpRefresh;
         }
 
         self.bufferBarrier = null;
@@ -1112,7 +1134,7 @@ var angularDfp = angular.module('angularDfp');
 
       /**
        * Returns the any buffer barrier set.
-       * @return {number} The current barrier
+       * @return {Number} The current barrier
        *                  (number of ads to buffer before flushing).
        */
       dfpRefresh.getBufferBarrier = function () {
@@ -1161,7 +1183,7 @@ var angularDfp = angular.module('angularDfp');
        *
        * @param {number|string} interval The new interval
        *                        (as valid for the `parseDuration` service.)
-       * @return {function} The current `dfpRefresh` instance.
+       * @return {Function} The current `dfpRefresh` instance.
        */
       dfpRefresh.setRefreshInterval = function (interval) {
         self.refreshInterval = parseDuration(interval);
@@ -1197,7 +1219,7 @@ var angularDfp = angular.module('angularDfp');
 
       /**
        * Clears any refresh interval set.
-       * @return {function} The current `dfpRefresh` instance.
+       * @return {Function} The current `dfpRefresh` instance.
        */
       dfpRefresh.clearRefreshInterval = function () {
         if (!dfpRefresh.hasRefreshInterval()) {
@@ -1212,7 +1234,7 @@ var angularDfp = angular.module('angularDfp');
 
       /**
        * Returns the current refresh interval, if any (may be `null`).
-       * @return {number} The current refresh interval.
+       * @return {Number} The current refresh interval.
        */
       dfpRefresh.getRefreshInterval = function () {
         return self.refreshInterval;
@@ -1220,7 +1242,7 @@ var angularDfp = angular.module('angularDfp');
 
       /**
        * Checks if either of the buffering mechanisms are enabled.
-       * @return {Boolean} True if either the buffer barrier or
+       * @return {!boolean} True if either the buffer barrier or
        *                   interval are enabled, else false
        */
       dfpRefresh.isBuffering = function () {
@@ -1234,16 +1256,16 @@ var angularDfp = angular.module('angularDfp');
        * determined by the prioritization algorithm.
        *
        * @param  {String}  option What to test activation for.
-       * @return {Boolean} True if the given option was ever
+       * @return {!boolean} True if the given option was ever
        *                   installed, else false.
        */
       dfpRefresh.has = function (option) {
         switch (option) {
-          case Option.REFRESH:
+          case Options.REFRESH:
             return dfpRefresh.hasRefreshInterval();
-          case Option.INTERVAL:
+          case Options.INTERVAL:
             return dfpRefresh.hasBufferInterval();
-          case Option.BARRIER:
+          case Options.BARRIER:
             return dfpRefresh.hasBufferBarrier();
           default:
             throw new DFPRefreshError('Invalid option \'' + option + '\'');
@@ -1258,7 +1280,7 @@ var angularDfp = angular.module('angularDfp');
        * by the prioritization algorithm.
        *
        * @param  {String}  option What to test for.
-       * @return {Boolean} True if the option is enabled, else false.
+       * @return {!boolean} True if the option is enabled, else false.
        * @see dfpRefresh.Options
        * @throws DFPRefreshError if the option is not one of
        *         the DFPRefresh.Options members.
@@ -1278,7 +1300,7 @@ var angularDfp = angular.module('angularDfp');
        * all three will be enabled (because their priority is equal to the
        * maximum), but when one has higher priority only that will run.
        *
-       * @param {String} option What to set the priority for.
+       * @param {!String} option What to set the priority for.
        * @param {Number} priority The priority to set.
        * @return {Function} The current dfpRefresh instance.
        * @see dfpRefresh.Options
@@ -1361,7 +1383,7 @@ var angularDfp = angular.module('angularDfp');
       }
 
       /**
-       * Utility functino to check if a priority is valid and throw if not.
+       * Utility function to check if a priority is valid and throw if not.
        * @param  {*} priority The priority to check.
        * @throws DFPRefreshError if the priority is not valid.
        */
@@ -1371,11 +1393,10 @@ var angularDfp = angular.module('angularDfp');
         }
       }
 
-      /* eslint-disable valid-jsdoc */
       /**
        * Enables or disables an option.
        * @param  {String} option The option to check.
-       * @param  {Boolean=true} yes Whether to enable or not.
+       * @param  {boolean=} yes Whether to enable or not.
        */
       function enable(option, yes) {
         if (yes === false) {
@@ -1394,7 +1415,6 @@ var angularDfp = angular.module('angularDfp');
             console.assert(false);
         }
       }
-      /* eslint-enable valid-jsdoc */
 
       /**
        * Disables the given option.
@@ -1468,34 +1488,34 @@ var angularDfp = angular.module('angularDfp');
        * This function will either refresh all slots if called with no
        * arguments, or else all the slots passed in the array argument.
        *
-       * @param  {Array} slots [description]
+       * @param  {?Array=} tasks An array of `(slot, promise)` pairs.
        */
-      function refresh(slots) {
-        console.assert(slots === undefined || slots !== null);
+      function refresh(tasks) {
+        console.assert(tasks === undefined || tasks !== null);
 
-        // If 'slots' was not passed at all, we refresh all ads
-        if (slots === undefined) {
+        // If 'tasks' was not passed at all, we refresh all ads
+        if (tasks === undefined) {
           googletag.pubads().refresh();
         }
 
         // Do nothing for a null or empty buffer
-        if (slots.length === 0) return;
+        if (tasks.length === 0) return;
 
         // Refresh any non-null slots. Slots can be null when the buffer is
         // not empty when the refresh interval triggers. The buffer can then
         // not be cleared, because that might mess with barriers. We also
         // can't reduce the barrier, because it may not be one-shot (i.e.
         // persistent).
-        slots = slots.filter(function (pair) {
+        tasks = tasks.filter(function (pair) {
           return pair.slot !== null;
         });
 
         googletag.cmd.push(function () {
-          googletag.pubads().refresh(slots.map(function (slot) {
-            return slot.slot;
+          googletag.pubads().refresh(tasks.map(function (task) {
+            return task.slot;
           }));
-          slots.forEach(function (slot) {
-            return slot.promise.resolve();
+          tasks.forEach(function (task) {
+            return task.deferred.resolve();
           });
         });
       }
@@ -1599,21 +1619,15 @@ var angularDfp = angular.module('angularDfp');
 
       /**
        * Adds an interval for a given slot.
-       * @param {googletag.Slot} slot The slot for which to add the interval.
-       * @param {String|Number} interval The interval duration to set.
-       * @return {Promise} The promise of the interval.
+       * @param {!Object} task The `(slot, promise)` object.
+       * @param {string|number} interval The interval duration to set.
        */
-      function addSlotInterval(slot, interval) {
-        // Add a periodic task to (possibly) refresh this slot
-        var task = function task() {
-          scheduleRefresh(slot);
-        };
+      function addSlotInterval(task, interval) {
         interval = parseDuration(interval);
-
-        var promise = $interval(task, interval);
-        intervals[slot] = promise;
-
-        return promise;
+        var promise = $interval(function () {
+          scheduleRefresh(task);
+        }, interval);
+        intervals[task.slot] = promise;
       }
 
       /**
@@ -1622,25 +1636,25 @@ var angularDfp = angular.module('angularDfp');
        * This function is basically a proxy to refresh(), as it may either
        * buffer the refresh call or do it immediately.
        *
-       * @param  {googletag.Slot} slot The slot to refresh.
+       * @param  {!Object} task The `(slot, promise)` object.
        * @see bufferRefresh()
        */
-      function scheduleRefresh(slot) {
+      function scheduleRefresh(task) {
         if (dfpRefresh.isBuffering()) {
-          bufferRefresh(slot);
+          bufferRefresh(task);
         } else {
-          refresh([slot]);
+          refresh([task]);
         }
       }
 
       /**
        * Buffers a refresh call for a slot.
-       * @param  {googletag.Slot} slot The slot to refresh.
+       * @param  {!Object} task The `(slot, promise)` object.
        */
-      function bufferRefresh(slot) {
-        buffer.push(slot);
+      function bufferRefresh(task) {
+        buffer.push(task);
 
-        if (!isEnabled[Options.Barrier]) return;
+        if (!isEnabled[Options.BARRIER]) return;
         if (buffer.length === self.bufferBarrier) {
           flushBuffer();
           if (self.oneShotBarrier) {
@@ -1652,7 +1666,7 @@ var angularDfp = angular.module('angularDfp');
       // Unregister all listeners when the root scope dies
       $rootScope.$on('$destroy', function () {
         // eslint-disable-next-line no-undef
-        angular.foreach(intervals, function (promise) {
+        intervals.forEach(function (promise) {
           $interval.cancel(promise);
         });
       });
@@ -1697,7 +1711,7 @@ var angularDfp = angular.module('angularDfp');
 
     /**
      * Asserts if the state of the controller is valid.
-     * @return {Boolean} True if the state of the controller is
+     * @return {!boolean} True if the state of the controller is
      *                   ready to be fetched, else false.
      */
     function isValid() {
@@ -1727,10 +1741,10 @@ var angularDfp = angular.module('angularDfp');
 
   /**
    * The directive for the responsive mapping.
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} ad The parent `dfp-ad` controller.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} ad The parent `dfp-ad` controller.
    */
   function dfpResponsiveDirective(scope, element, attributes, ad) {
     var mapping = scope.controller.getState();
@@ -1767,11 +1781,11 @@ var angularDfp = angular.module('angularDfp');
    * renamed, optionally) as well as a custom (optional) scope, to then perform
    * any further customizations.
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} ad The parent `dfp-ad` controller.
-   * @param {object} $injector The Angular `$injector` service.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} ad The parent `dfp-ad` controller.
+   * @param {Object} $injector The Angular `$injector` service.
    */
   function dfpScriptDirective(scope, element, attributes, ad, $injector) {
     var format = $injector.get('dfpFormat');
@@ -1811,10 +1825,10 @@ var angularDfp = angular.module('angularDfp');
    * width and height dimension via attributes, or as any valid string size
    * (e.g. 'fluid') between the tags.
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} parent     The parent controller.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} parent     The parent controller.
    */
   function DFPSizeDirective(scope, element, attributes, parent) {
     // Only one of the two possible parents will be `null`
@@ -1863,7 +1877,7 @@ var angularDfp = angular.module('angularDfp');
 
     /**
      * Verifies that the controller has a complete (valid) state.
-     * @return {Boolean} True if the directive has all required members,
+     * @return {!boolean} True if the directive has all required members,
      *                   else false.
      */
     this.isValid = function () {
@@ -1874,7 +1888,7 @@ var angularDfp = angular.module('angularDfp');
 
     /**
      * Retrieves the public state of the controller for use by the directive.
-     * @return {object} The key and an array of values for the targeting.
+     * @return {Object} The key and an array of values for the targeting.
      */
     this.getState = function () {
       console.assert(this.isValid());
@@ -1901,10 +1915,10 @@ var angularDfp = angular.module('angularDfp');
    * alternatively by specifying only a key and adding values via nested
    * `dfp-value` tags.
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} ad The parent `dfp-ad` controller.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} ad The parent `dfp-ad` controller.
    */
   function dfpTargetingDirective(scope, element, attributes, ad) {
     console.assert(ad !== undefined);
@@ -1941,10 +1955,10 @@ var angularDfp = angular.module('angularDfp');
    * The `dfp-value` directive allows specifying multiple values for a single
    * key when nested in a `dfp-targeting` directive.
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} parent     The parent (`dfp-targeting`) controller.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} parent     The parent (`dfp-targeting`) controller.
    */
   function dfpValueDirective(scope, element, attributes, parent) {
     parent.addValue(element.html());
@@ -1966,17 +1980,20 @@ var angularDfp = angular.module('angularDfp');
  * @license MIT
  */
 
-var angularDfpVideo = function (module) {
+// eslint-disable-next-line no-undef, no-unused-vars
+var angularDfpVideo = angular.module('angularDfp');
+
+(function (module) {
   /**
    * The `dfp-video` directive.
    *
    * This directive enables video ads to be shown over videos,
    * using `videojs` and the IMA SDK.
    *
-   * @param {object} scope The angular scope.
-   * @param {object} element The HTML element on which the directive is defined.
-   * @param {object} attributes The attributes of the element.
-   * @param {object} $injector The Angular '$injector' service.
+   * @param {Object} scope The angular scope.
+   * @param {Object} element The HTML element on which the directive is defined.
+   * @param {Object} attributes The attributes of the element.
+   * @param {Object} $injector The Angular '$injector' service.
    */
   function dfpVideoDirective(scope, element, attributes, $injector) {
     var dfpIDGenerator = $injector.get('dfpIDGenerator');
@@ -2011,14 +2028,20 @@ var angularDfpVideo = function (module) {
     };
   }]);
 
+  return module;
+
   // eslint-disable-next-line
-}(angularDfpVideo || angular.module('angularDfp'));
+})(angularDfpVideo);
 
 /**
  * @file Defines the doubleClick service.
  * @author Peter Goldsborough <peter@goldsborough.me>
  * @license MIT
  */
+
+// eslint-disable-next-line no-use-before-define, no-var
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
 
 (function (module) {
   "use strict";
@@ -2049,34 +2072,34 @@ var angularDfpVideo = function (module) {
    * tasks, injecting the GPT library asynchronously and providing the `then`
    * proxy to `googletag.cmd.push`.
    *
-   * @param {object} scriptInjector The script injection service.
+   * @param {Object} scriptInjector The script injection service.
    * @param {string} GPT_LIBRARY_URL The URL of the GPT library to inject.
    */
   function dfpProvider(scriptInjector, GPT_LIBRARY_URL) {
     /**
      * The doubleClickProvider function.
-     * @type {function}
+     * @type {Function}
      * @constant
      */
     var self = this;
 
     /**
      * Whether to enable Single Request Architecture (SRA) mode.
-     * @type {Boolean}
+     * @type {boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_enableSingleRequest}
      */
     self.enableSingleRequestArchitecture = true;
 
     /**
      * Whether to enable video ads.
-     * @type {Boolean}
+     * @type {!boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_enableVideoAds}
      */
     self.enableVideoAds = true;
 
     /**
      * Whether to collapse empty divs for which ad calls fail.
-     * @type {Boolean}
+     * @type {boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_collapseEmptyDivs}
      */
     self.collapseIfEmpty = true;
@@ -2087,7 +2110,7 @@ var angularDfpVideo = function (module) {
      * This is necessary if you want to be able to
      * manually refresh ads with refresh().
      *
-     * @type {Boolean}
+     * @type {boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_disableInitialLoad}
      */
     self.disableInitialLoad = true;
@@ -2096,15 +2119,15 @@ var angularDfpVideo = function (module) {
      * Whether to enable synchronous rendering.
      *
      * Rendering is asynchronous by default.
-     * @type {Boolean}
+     * @type {boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_enableSyncRendering}
      */
     self.enableSyncRendering = false;
 
     /**
      * Enables ad centering instead of left-alignment.
+     * @type {boolean}
      * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_setCentering}
-     * @type {Boolean}
      */
     self.centering = false;
 
@@ -2139,7 +2162,7 @@ var angularDfpVideo = function (module) {
 
     /**
      * Whether all ad slots should force safe frame by default.
-     * @type {Boolean}
+     * @type {boolean}
      */
     self.forceSafeFrame = false;
 
@@ -2158,7 +2181,7 @@ var angularDfpVideo = function (module) {
 
     /**
      * Whether or not we have loaded the GPT library yet.
-     * @type {Boolean}
+     * @type {!boolean}
      */
     var loaded = false;
 
@@ -2269,7 +2292,7 @@ var angularDfpVideo = function (module) {
 
     /**
      * Tests if the GPT library has been injected yet.
-     * @return {Boolean} [description]
+     * @return {boolean} [description]
      */
     dfp.hasLoaded = function () {
       return loaded;
@@ -2277,7 +2300,7 @@ var angularDfpVideo = function (module) {
 
     /**
      * Pushes a taks into GPT's asynchronous task queue.
-     * @param  {function} task The task function to execute in the queue.
+     * @param  {Function} task The task function to execute in the queue.
      */
     dfp.then = function (task) {
       googletag.cmd.push(task);

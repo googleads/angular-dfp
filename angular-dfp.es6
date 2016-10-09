@@ -143,8 +143,6 @@ let angularDfp = angular.module('angularDfp');
 */
 
 (function(module) {
-  "use strict";
-
   /**
    * The factory of the `responsiveResize` service.
    *
