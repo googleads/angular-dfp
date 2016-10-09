@@ -50,3 +50,15 @@ jspm_packages
 
 .tags
 .tags1
+*.jar
+transpiled/
+build/
+
+# Created by https://www.gitignore.io/api/bower
+
+### Bower ###
+bower_components
+.bower-cache
+.bower-registry
+.bower-tmp
+docs

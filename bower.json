@@ -1,0 +1,24 @@
+{
+  "name": "enum-class",
+  "description": "Strongly typed enums in ES6",
+  "main": "enum-class.js",
+  "authors": [
+    "Peter Goldsborough"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "enum",
+    "es6"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "closure-compiler": "^0.2.12"
+  }
+}
