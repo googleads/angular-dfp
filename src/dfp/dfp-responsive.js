@@ -28,6 +28,7 @@
 *
 * @module dfp-responsive
 * @author Peter Goldsborough <peter@goldsborough.me>
+* @author Jaime González García <vintharas@google.com>
 * @license Apache
 * Copyright 2016 Google Inc.
 *
