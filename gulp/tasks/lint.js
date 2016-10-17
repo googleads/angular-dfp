@@ -1,7 +1,7 @@
 /**
-* @file Gulp task configuration.
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @license Apache
+ * @file Gulp lint task configuration.
+ * @author Peter Goldsborough <peter@goldsborough.me>
+ * @license Apache
  * Copyright 2016 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,13 @@
 */
 
 const gulp = require('gulp');
-require('require-dir')('./gulp/tasks', {recurse: true});
+const eslint = require('gulp-eslint');
 
-gulp.task('default', ['lint', 'transpile', 'compile', 'docs', 'demo']);
+const config = require('../config').lint;
+
+gulp.task('lint', () => {
+  return gulp.src(config.src)
+        .pipe(eslint())
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError());
+});

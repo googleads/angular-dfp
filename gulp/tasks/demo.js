@@ -1,7 +1,7 @@
 /**
-* @file Gulp task configuration.
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @license Apache
+ * @file Gulp demo task configuration.
+ * @author Peter Goldsborough <peter@goldsborough.me>
+ * @license Apache
  * Copyright 2016 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,8 @@
 */
 
 const gulp = require('gulp');
-require('require-dir')('./gulp/tasks', {recurse: true});
+const config = require('../config').demo;
 
-gulp.task('default', ['lint', 'transpile', 'compile', 'docs', 'demo']);
+gulp.task('demo', ['transpile'], () =>
+  gulp.src(config.src).pipe(gulp.dest(config.dest))
+);

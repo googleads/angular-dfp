@@ -32,6 +32,8 @@
     "gulp-closure-compiler": "^0.4.0",
     "gulp-concat": "^2.6.0",
     "gulp-esdoc": "^0.3.0",
-    "gulp-rename": "^1.2.2"
+    "gulp-eslint": "^3.0.1",
+    "gulp-rename": "^1.2.2",
+    "require-dir": "^0.3.1"
   }
 }

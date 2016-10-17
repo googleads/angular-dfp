@@ -1,7 +1,7 @@
 /**
-* @file Gulp task configuration.
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @license Apache
+ * @file Gulp transpile task configuration.
+ * @author Peter Goldsborough <peter@goldsborough.me>
+ * @license Apache
  * Copyright 2016 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,14 @@
 */
 
 const gulp = require('gulp');
-require('require-dir')('./gulp/tasks', {recurse: true});
+const babel = require('gulp-babel');
+const rename = require('gulp-rename');
 
-gulp.task('default', ['lint', 'transpile', 'compile', 'docs', 'demo']);
+const config = require('../config').transpile;
+
+gulp.task('transpile', ['concat'], () =>
+  gulp.src(config.src)
+      .pipe(babel({presets: ['es2015']}))
+      .pipe(rename(path => { path.extname = '.js'; return path; }))
+      .pipe(gulp.dest(config.dest))
+);

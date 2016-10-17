@@ -1,7 +1,7 @@
 /**
-* @file Gulp task configuration.
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @license Apache
+ * @file Gulp docs task configuration.
+ * @author Peter Goldsborough <peter@goldsborough.me>
+ * @license Apache
  * Copyright 2016 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,17 @@
 */
 
 const gulp = require('gulp');
-require('require-dir')('./gulp/tasks', {recurse: true});
+const esdoc = require('gulp-esdoc');
 
-gulp.task('default', ['lint', 'transpile', 'compile', 'docs', 'demo']);
+const config = require('../config').docs;
+
+gulp.task('docs', () => {
+  gulp.src(config.src)
+    .pipe(esdoc({
+      destination: config.dest,
+      unexportIdentifier: true,
+      autoPrivate: true,
+      access: ['public', 'protected', 'private'],
+      includeSource: true
+    }));
+});

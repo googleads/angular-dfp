@@ -1,7 +1,7 @@
 /**
-* @file Gulp task configuration.
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @license Apache
+ * @file Gulp compile task configuration.
+ * @author Peter Goldsborough <peter@goldsborough.me>
+ * @license Apache
  * Copyright 2016 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,21 @@
 */
 
 const gulp = require('gulp');
-require('require-dir')('./gulp/tasks', {recurse: true});
+const closureCompiler = require('gulp-closure-compiler');
 
-gulp.task('default', ['lint', 'transpile', 'compile', 'docs', 'demo']);
+const config = require('../config').compile;
+
+/* eslint-disable camelcase */
+gulp.task('compile', ['concat'], () => {
+  return gulp.src(config.src)
+    .pipe(closureCompiler({
+      fileName: config.output,
+      compilerFlags: {
+        warning_level: 'DEFAULT',
+        language_in: 'ES6',
+        language_out: 'ES5',
+        jscomp_off: 'checkVars'
+      }
+    }))
+    .pipe(gulp.dest(config.dest));
+});
