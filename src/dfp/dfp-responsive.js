@@ -98,8 +98,8 @@
     this.getState = function() {
       console.assert(isValid());
       return Object.freeze({
-        browserSize: browserSize,
-        adSizes: adSizes
+        browserSize,
+        adSizes
       });
     };
   }

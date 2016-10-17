@@ -75,7 +75,7 @@
       console.assert(this.isValid());
       return Object.freeze({
         key: this.key,
-        values: values
+        values
       });
     };
 

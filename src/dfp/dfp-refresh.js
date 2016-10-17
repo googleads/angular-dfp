@@ -145,7 +145,7 @@ googletag.cmd = googletag.cmd || [];
         */
         function dfpRefresh(slot, interval, defer) {
           const deferred = $q.defer();
-          const task = {slot: slot, deferred: deferred};
+          const task = {slot, deferred};
 
           if (interval) {
             addSlotInterval(task, interval);

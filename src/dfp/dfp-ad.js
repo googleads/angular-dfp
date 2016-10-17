@@ -101,16 +101,16 @@ googletag.cmd = googletag.cmd || [];
     this.getState = function() {
       console.assert(this.isValid());
       return Object.freeze({
-        sizes: sizes,
-        responsiveMapping: responsiveMapping,
-        targeting: targetings,
-        exclusions: exclusions,
+        sizes,
+        responsiveMapping,
+        targetings,
+        exclusions,
         adUnit: this.adUnit,
         forceSafeFrame: this.forceSafeFrame,
         safeFrameConfig: this.safeFrameConfig,
         clickUrl: this.clickUrl,
         refresh: this.refresh,
-        scripts: scripts,
+        scripts,
         collapseIfEmpty: this.collapseIfEmpty
       });
     };
