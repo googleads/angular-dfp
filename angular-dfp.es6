@@ -1,7 +1,20 @@
 /**
 * @file Entry point to `angularDfp`.
 * @author Peter Goldsborough <peter@goldsborough.me>
-* @license MIT
+* @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
 */
 
 // eslint-disable-next-line no-use-before-define, no-var
@@ -14,7 +27,20 @@ let angularDfp = angular.module('angularDfp', []);
 /**
  * @file
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 (function(module) {
@@ -47,7 +73,20 @@ let angularDfp = angular.module('angularDfp', []);
 /**
 * @file Defines the `scriptInjector` service.
 * @author Peter Goldsborough <peter@goldsborough.me>
-* @license MIT
+* @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
 */
 
 (function(module) {
@@ -94,7 +133,20 @@ let angularDfp = angular.module('angularDfp', []);
 /**
  * @file Defines the `parseDuration` service.
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 (function(module) {
@@ -186,7 +238,20 @@ let angularDfp = angular.module('angularDfp', []);
 /**
 * @file Defines the responsiveResize service.
 * @author Peter Goldsborough <peter@goldsborough.me>
-* @license MIT
+* @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
 */
 
 (function(module) {
@@ -451,7 +516,20 @@ let angularDfp = angular.module('angularDfp', []);
 /**
 * @file Defines the `scriptInjector` service.
 * @author Peter Goldsborough <peter@goldsborough.me>
-* @license MIT
+* @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
 */
 
 (function(module) {
@@ -559,7 +637,20 @@ let angularDfp = angular.module('angularDfp', []);
 /**
  * @file Defines the `dfp-ad` directive.
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 // eslint-disable-next-line no-use-before-define, no-var
@@ -824,7 +915,20 @@ googletag.cmd = googletag.cmd || [];
 /**
  * @file Defines the `dfp-audience-pixel` directive.
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 (function(module) {
@@ -886,7 +990,20 @@ googletag.cmd = googletag.cmd || [];
 /**
  * @file Defines the `dfp-exclusion` directive.
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 (function(module) {
@@ -923,7 +1040,20 @@ googletag.cmd = googletag.cmd || [];
 /**
  * @file An ID generating service.
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 (function(module) {
@@ -1007,7 +1137,20 @@ googletag.cmd = googletag.cmd || [];
 /**
  * @file
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 // eslint-disable-next-line no-use-before-define, no-var
@@ -1819,7 +1962,20 @@ googletag.cmd = googletag.cmd || [];
 /**
  * @file
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 (function(module) {
@@ -1908,7 +2064,20 @@ googletag.cmd = googletag.cmd || [];
 /**
  * @file Defines the `dfp-script` directive.
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 (function(module) {
@@ -1958,7 +2127,20 @@ googletag.cmd = googletag.cmd || [];
 /**
  * @file
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 (function(module) {
@@ -2004,7 +2186,20 @@ googletag.cmd = googletag.cmd || [];
 /**
  * @file Defines the controller and directive for the dfp-targeting tag.
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 (function(module) {
@@ -2093,7 +2288,20 @@ googletag.cmd = googletag.cmd || [];
 /**
  * @file
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 (function(module) {
@@ -2125,7 +2333,20 @@ googletag.cmd = googletag.cmd || [];
 /**
  * @file Defines the `dfp-video` directive.
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 // eslint-disable-next-line no-undef, no-unused-vars
@@ -2185,7 +2406,20 @@ let angularDfpVideo = angular.module('angularDfp');
 /**
  * @file Defines the doubleClick service.
  * @author Peter Goldsborough <peter@goldsborough.me>
- * @license MIT
+ * @license Apache
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 // eslint-disable-next-line no-use-before-define, no-var
