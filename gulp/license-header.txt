@@ -1,6 +1,6 @@
 /**
- * @file Gulp transpile task configuration.
  * @author Peter Goldsborough <peter@goldsborough.me>
+ * @author Jaime González García <vintharas@google.com>
  * @license Apache
  * Copyright 2016 Google Inc.
  *
@@ -15,17 +15,4 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-
-const gulp = require('gulp');
-const babel = require('gulp-babel');
-const rename = require('gulp-rename');
-
-const config = require('../config').transpile;
-
-gulp.task('transpile', ['concat'], () =>
-  gulp.src(config.src)
-      .pipe(babel({presets: ['es2015']}))
-      .pipe(rename(path => { path.extname = '.js'; return path; }))
-      .pipe(gulp.dest(config.dest))
-);
+ */
