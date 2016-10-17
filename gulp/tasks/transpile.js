@@ -26,6 +26,9 @@ const config = require('../config').transpile;
 gulp.task('transpile', ['concat'], () =>
   gulp.src(config.src)
       .pipe(babel({presets: ['es2015']}))
-      .pipe(rename(path => { path.extname = '.js'; return path; }))
+      .pipe(rename(path => {
+        path.basename = path.basename.replace(/\.es6/g, '');
+        return path;
+      }))
       .pipe(gulp.dest(config.dest))
 );

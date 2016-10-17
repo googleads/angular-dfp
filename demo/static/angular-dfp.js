@@ -77,7 +77,7 @@ var angularDfp = angular.module('angularDfp', []);
     function DFPDurationError(interval) {
       _classCallCheck(this, DFPDurationError);
 
-      return _possibleConstructorReturn(this, (DFPDurationError.__proto__ || Object.getPrototypeOf(DFPDurationError)).call(this, "Invalid interval: '" + interval + "'"));
+      return _possibleConstructorReturn(this, (DFPDurationError.__proto__ || Object.getPrototypeOf(DFPDurationError)).call(this, 'Invalid interval: \'' + interval + '\''));
     }
 
     return DFPDurationError;
