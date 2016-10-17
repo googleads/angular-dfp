@@ -1,4 +1,25 @@
 /**
+* @file A directive for supplying additional JavaScript to configure an ad slot.
+*
+* Since our library does not cover all parts of the GPT library, it may be
+* necessary to add your own, additional JavaScript to further configure an
+* ad slot. For this, the `dfp-script` directive allows writing inline or
+* external JS and manipulate the ad slot. More precisely, the library will
+* inject the slot object (which can be renamed) into the scope of the
+* JavaScript. Moreover, you may inject your own `scope` object that will
+* be available inside the script.
+*
+* The `dfp-script` tag must be nested directly under the main `dfp-ad` tag.
+*
+* @example <caption>Example usage of the `dfp-script` directive.</caption>
+* <dfp-ad ad-unit="path/to/my/ad-unit">
+*   <dfp-script slot-as="mySlot" scope="{ path: 'spaghetti' }">
+*     if (mySlot.getAdUnitPath() == scope.path) {
+*       mySlot.clearTargeting();
+*     }
+*   </dfp-script>
+* </dfp-ad>
+*
 * @module dfp-script
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
@@ -16,6 +37,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
+// TODO: allows specifying `src="/path/to/javascript"`
 
 // eslint-disable-next-line valid-jsdoc
 (/** @lends module:dfp-script */ function(module) {

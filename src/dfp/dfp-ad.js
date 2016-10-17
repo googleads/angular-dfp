@@ -1,4 +1,26 @@
 /**
+* @file The primary directive for specifying an ad slot using the library.
+*
+* This directive is repsponsible for collecting all nested configuration options
+* and ultimately making the ad call. All other tags in the library, except
+* `dfp-video` and `dfp-audience-pixel` can and must be nested under this tag.
+*
+* @example <caption>Example usage of the `dfp-ad` directive.</caption>
+* <dfp-ad force-safe-frame
+*         collapse-if-empty
+*         refresh='3s'
+*         ad-unit="/path/to/my/ad-unit">
+*   <dfp-size width="728" height="90"></dfp-size>
+*   <dfp-targeting key="sport" value="football"></dfp-targeting>
+*   <dfp-targeting key="food">
+*     <dfp-value>chicken</dfp-value>
+*     <dfp-value>meatballs</dfp-value>
+*   </dfp-targeting>
+*   <dfp-responsive browser-width="320" browser-height="0">
+*     <dfp-size width=320 height=50></dfp-size>
+*   </dfp-responsive>
+* </dfp-ad>
+*
 * @module dfp-ad
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
@@ -24,7 +46,6 @@ googletag.cmd = googletag.cmd || [];
 // eslint-disable-next-line valid-jsdoc
 (/** @lends module:dfp-ad */ function(module) {
   'use strict';
-
 
   /**
   * The controller for the `dfp-ad` directive.

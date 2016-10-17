@@ -12,7 +12,7 @@ Ever seen DFP like this?
 <dfp-ad force-safe-frame
         collapse-if-empty
         refresh='3s'
-        ad-unit="/35096353/pub-showcase">
+        ad-unit="/path/to/my/ad-unit">
   <dfp-size width="728" height="90"></dfp-size>
   <dfp-targeting key="sport" value="football"></dfp-targeting>
   <dfp-targeting key="food">

@@ -11,7 +11,7 @@
 * nested `dfp-value` tags.
 *
 * @example
-* <dfp-ad ad-unit="/35096353/pub-showcase">
+* <dfp-ad ad-unit="path/to/my/ad-unit">
 *   <dfp-targeting key="sport" value="quidditch"></dfp-targeting>
 *   <dfp-targeting key="food">
 *     <dfp-value>chicken</dfp-value>

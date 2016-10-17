@@ -1,4 +1,20 @@
 /**
+* @file Defines a value for a targeting key.
+*
+* This directive can be used in conjuction with the `dfp-targeting` directive
+* when you want to supply more than one value for a key (if you only want one
+* key, just use the `key` attribute on `dfp-targeting`).
+*
+* The value itself is taken from the inner contents of the `dfp-value` tag.
+*
+* @example <caption>Example usage of the `dfp-ad` directive.</caption>
+* <dfp-ad ad-unit="/path/to/my/ad-unit">
+*   <dfp-targeting key="food">
+*     <dfp-value>spam</dfp-value>
+*     <dfp-value>ham</dfp-value>
+*   </dfp-targeting>
+* </dfp-ad>
+*
 * @module dfp-value
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache

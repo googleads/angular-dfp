@@ -1,4 +1,28 @@
 /**
+* @file A directive for specifying an ad size.
+*
+* A `dfp-size` directive specifies a `(width, height)` pair of ad dimensions.
+* This directive can not be defined on its own, but is only valid:
+*
+* 1. when nested directly under a `dfp-ad` directive, or
+* 2. when nested directly under a `dfp-responsive` directive.
+*
+* In the former case, the `dfp-size` directive specifies a fixed ad-slot size as
+* would be passed as the second parameter to the
+* `googletag.pubads().defineSlot()`` method. In the latter case, the directive
+* specifies a size mapping member for certain browser dimensions.
+*
+* @example <caption>Example usage of the `dfp-size` directive.</caption>
+* <dfp-ad ad-unit="path/to/my/ad-unit">
+*   <dfp-size width=728 height=90></dfp-size>
+*   <dfp-responsive browser-width=1024 browser-height=800>
+*     <dfp-size width=320 height=50></dfp-size>
+*   </dfp-responsive>
+* </dfp-ad>
+*
+* @see [dfp-ad]{@link module:dfp-ad}
+* @see [dfp-responsive]{@link module:dfp-responsive}
+*
 * @module dfp-size
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
