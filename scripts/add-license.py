@@ -1,7 +1,12 @@
-/**
-* @file Entry point to `angularDfp`.
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @license Apache
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import os
+import re
+
+# pylint: disable=W0311
+
+license_text = """* @license Apache
  * Copyright 2016 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +20,22 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+"""
 
-*/
 
-// eslint-disable-next-line no-use-before-define, no-var
-var googletag = googletag || {};
-googletag.cmd = googletag.cmd || [];
+def process(contents):
+    return re.sub(r'\* @license MIT', license_text, contents)
 
-// eslint-disable-next-line no-undef, no-unused-vars
-let angularDfp = angular.module('angularDfp', []);
+
+def main():
+  for directory, _, filenames in os.walk('src'):
+    for filename in filenames:
+      path = os.path.join(directory, filename)
+      with open(path, 'r') as source:
+        original = source.read()
+      result = process(original)
+      with open(path, 'w') as destination:
+          destination.write(result)
+
+if __name__ == '__main__':
+    main()
