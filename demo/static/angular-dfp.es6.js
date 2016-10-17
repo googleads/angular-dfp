@@ -24,21 +24,6 @@ let angularDfp = angular.module('angularDfp', []);
 
 
 (function(module) {
-  function dfpFormat(string) {
-    const args = Array.prototype.slice.call(arguments, 1);
-
-    return string.replace(/{(\d+)}/g, function(match, index) {
-      return index < args.length ? args[index] : match;
-    });
-  }
-
-  module.factory('dfpFormat', [function() {
-    return dfpFormat;
-  }]);
-})(angularDfp);
-
-
-(function(module) {
   'use strict';
 
   function httpErrorFactory($log) {
@@ -67,11 +52,11 @@ let angularDfp = angular.module('angularDfp', []);
 (function(module) {
   class DFPDurationError extends Error {
     constructor(interval) {
-      super(`Invalid interval: '${interval}'`);
+      super(`Invalid interval: '${interval}'ls`);
     }
   }
 
-  function parseDurationFactory(format) {
+  function parseDurationFactory() {
     function convertToMilliseconds(time, unit) {
       console.assert(/^(m?s|min|h)$/g.test(unit));
 
@@ -96,9 +81,7 @@ let angularDfp = angular.module('angularDfp', []);
       }
 
       if (typeof interval !== 'string') {
-        throw new TypeError(
-          format("'{0}' must be of number or string type", interval)
-        );
+        throw new TypeError(`'${interval}' must be of number or string type`);
       }
 
       const match = interval.match(/(\d+)(m?s|min|h)?/);
@@ -113,7 +96,7 @@ let angularDfp = angular.module('angularDfp', []);
     return parseDuration;
   }
 
-  module.factory('parseDuration', ['dfpFormat', parseDurationFactory]);
+  module.factory('parseDuration', parseDurationFactory);
 
 })(angularDfp);
 
@@ -450,8 +433,7 @@ googletag.cmd = googletag.cmd || [];
       controller: dfpAdController,
       controllerAs: 'controller',
       bindToController: true,
-      link: function() {
-        const args = Array.prototype.slice.call(arguments, 0, 4);
+      link: function(...args) {
         dfpAdDirective.apply(null, args.concat($injector));
       },
       scope: {
@@ -1038,8 +1020,7 @@ googletag.cmd = googletag.cmd || [];
       restrict: 'E',
       require: '^^dfpAd',
       scope: {slotAs: '@', scope: '='},
-      link: function() {
-        const args = Array.prototype.slice.call(arguments, 0, 4);
+      link: function(...args) {
         dfpScriptDirective.apply(null, args.concat($injector));
       }
     };
@@ -1154,8 +1135,7 @@ let angularDfpVideo = angular.module('angularDfp');
     return {
       restrict: 'AE',
       scope: {adTag: '@'},
-      link: function() {
-        const args = Array.prototype.slice.call(arguments, 0, 4);
+      link: function(...args) {
         dfpVideoDirective.apply(null, args.concat($injector));
       }
     };

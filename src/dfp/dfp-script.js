@@ -51,8 +51,7 @@
       restrict: 'E',
       require: '^^dfpAd',
       scope: {slotAs: '@', scope: '='},
-      link: function() {
-        const args = Array.prototype.slice.call(arguments, 0, 4);
+      link: function(...args) {
         dfpScriptDirective.apply(null, args.concat($injector));
       }
     };

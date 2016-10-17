@@ -33,20 +33,6 @@ googletag.cmd = googletag.cmd || [];
 var angularDfp = angular.module('angularDfp', []);
 
 (function (module) {
-  function dfpFormat(string) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    return string.replace(/{(\d+)}/g, function (match, index) {
-      return index < args.length ? args[index] : match;
-    });
-  }
-
-  module.factory('dfpFormat', [function () {
-    return dfpFormat;
-  }]);
-})(angularDfp);
-
-(function (module) {
   'use strict';
 
   function httpErrorFactory($log) {
@@ -77,13 +63,13 @@ var angularDfp = angular.module('angularDfp', []);
     function DFPDurationError(interval) {
       _classCallCheck(this, DFPDurationError);
 
-      return _possibleConstructorReturn(this, (DFPDurationError.__proto__ || Object.getPrototypeOf(DFPDurationError)).call(this, 'Invalid interval: \'' + interval + '\''));
+      return _possibleConstructorReturn(this, (DFPDurationError.__proto__ || Object.getPrototypeOf(DFPDurationError)).call(this, 'Invalid interval: \'' + interval + '\'ls'));
     }
 
     return DFPDurationError;
   }(Error);
 
-  function parseDurationFactory(format) {
+  function parseDurationFactory() {
     function convertToMilliseconds(time, unit) {
       console.assert(/^(m?s|min|h)$/g.test(unit));
 
@@ -108,7 +94,7 @@ var angularDfp = angular.module('angularDfp', []);
       }
 
       if (typeof interval !== 'string') {
-        throw new TypeError(format("'{0}' must be of number or string type", interval));
+        throw new TypeError('\'' + interval + '\' must be of number or string type');
       }
 
       var match = interval.match(/(\d+)(m?s|min|h)?/);
@@ -123,7 +109,7 @@ var angularDfp = angular.module('angularDfp', []);
     return parseDuration;
   }
 
-  module.factory('parseDuration', ['dfpFormat', parseDurationFactory]);
+  module.factory('parseDuration', parseDurationFactory);
 })(angularDfp);
 
 (function (module) {
@@ -461,7 +447,10 @@ googletag.cmd = googletag.cmd || [];
       controllerAs: 'controller',
       bindToController: true,
       link: function link() {
-        var args = Array.prototype.slice.call(arguments, 0, 4);
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
         dfpAdDirective.apply(null, args.concat($injector));
       },
       scope: {
@@ -1058,7 +1047,10 @@ googletag.cmd = googletag.cmd || [];
       require: '^^dfpAd',
       scope: { slotAs: '@', scope: '=' },
       link: function link() {
-        var args = Array.prototype.slice.call(arguments, 0, 4);
+        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
         dfpScriptDirective.apply(null, args.concat($injector));
       }
     };
@@ -1167,7 +1159,10 @@ var angularDfpVideo = angular.module('angularDfp');
       restrict: 'AE',
       scope: { adTag: '@' },
       link: function link() {
-        var args = Array.prototype.slice.call(arguments, 0, 4);
+        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
+        }
+
         dfpVideoDirective.apply(null, args.concat($injector));
       }
     };

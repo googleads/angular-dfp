@@ -257,8 +257,7 @@ googletag.cmd = googletag.cmd || [];
       controller: dfpAdController,
       controllerAs: 'controller',
       bindToController: true,
-      link: function() {
-        const args = Array.prototype.slice.call(arguments, 0, 4);
+      link: function(...args) {
         dfpAdDirective.apply(null, args.concat($injector));
       },
       scope: {
