@@ -1,4 +1,11 @@
 /**
+* @file Enables video ads on a video element.
+*
+* This directive uses the [videojs]{@link http://videojs.com/} library to serve
+* video ads on an HTML5 video tag. The ad tag must be supplied as an attribute.
+*
+* TODO: example
+*
 * @module dfp-video
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
@@ -42,6 +49,8 @@ let angularDfpVideo = angular.module('angularDfp');
      // Unpack jQuery object
     element = element[0];
 
+    console.assert(element.tagName === 'VIDEO');
+
      // Generate an ID or check for uniqueness of an existing one (true = forVideo)
     dfpIDGenerator(element, true);
 
@@ -61,7 +70,7 @@ let angularDfpVideo = angular.module('angularDfp');
 
   module.directive('dfpVideo', ['$injector', function($injector) {
     return {
-      restrict: 'AE',
+      restrict: 'A',
       scope: {adTag: '@'},
       link: function(...args) {
         dfpVideoDirective.apply(null, args.concat($injector));

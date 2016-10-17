@@ -1,4 +1,18 @@
 /**
+* @file Defines a value for a category exclusion
+*
+* This directive allows specifying a category exclusion label, such that ads
+* from that category exclusion will not show in this slot. This ensures, for
+* example, that airline ads don't show next to articles of an airplane
+* accident.
+*
+* The value itself is taken from the inner contents of the `dfp-exclusion` tag.
+*
+* @example <caption>Example usage of the `dfp-exclusion` directive.</caption>
+* <dfp-ad ad-unit="/path/to/my/ad-unit">
+*   <dfp-exclusion>airlines</dfp-exclusion>
+* </dfp-ad>
+*
 * @module dfp-exclusion
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
@@ -23,11 +37,6 @@
 
   /**
   * The `dfp-exclusion` directive.
-  *
-  * This directive allows specifying a category exclusion label, such that ads
-  * from that category exclusion will not show in this slot. This ensures, for
-  * example, that airline ads don't show next
-  * to articles of an airplane accident.
   *
   * @private
   * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/2627086?hl=en}
