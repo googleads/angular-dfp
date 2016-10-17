@@ -1,5 +1,5 @@
 /**
- * @file An ID generating service.
+ * @module dfp-id-generator
  * @author Peter Goldsborough <peter@goldsborough.me>
  * @license Apache
  * Copyright 2016 Google Inc.
@@ -17,9 +17,14 @@
  * limitations under the License.
  */
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp-id-generator */ function(module) {
+  'use strict';
+
   /**
-  * [dfpIDGeneratorFactory description]
+  * Returns the `dfpIDGenerator` service.
+  *
+  * @private
   * @return {Function} The dfpIDGenerator service.
   */
   function dfpIDGeneratorFactory() {

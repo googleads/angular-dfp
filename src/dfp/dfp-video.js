@@ -1,5 +1,5 @@
 /**
-* @file Defines the `dfp-video` directive.
+* @module dfp-video
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -20,13 +20,17 @@
 // eslint-disable-next-line no-undef, no-unused-vars
 let angularDfpVideo = angular.module('angularDfp');
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp-video */ function(module) {
+  'use strict';
+
   /**
   * The `dfp-video` directive.
   *
   * This directive enables video ads to be shown over videos,
   * using `videojs` and the IMA SDK.
   *
+  * @private
   * @param {Object} scope The angular scope.
   * @param {Object} element The HTML element on which the directive is defined.
   * @param {Object} attributes The attributes of the element.

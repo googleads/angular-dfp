@@ -18,17 +18,11 @@
 */
 
 const gulp = require('gulp');
-const esdoc = require('gulp-esdoc');
+const jsdoc = require('gulp-jsdoc3');
 
 const config = require('../config').docs;
 
-gulp.task('docs', () => {
+gulp.task('docs', callback => {
   gulp.src(config.src)
-    .pipe(esdoc({
-      destination: config.dest,
-      unexportIdentifier: true,
-      autoPrivate: true,
-      access: ['public', 'protected', 'private'],
-      includeSource: true
-    }));
+      .pipe(jsdoc(require('../../jsdoc.json'), callback));
 });

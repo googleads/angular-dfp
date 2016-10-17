@@ -1,5 +1,5 @@
 /**
-* @file Defines the doubleClick service.
+* @module dfp
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -21,8 +21,9 @@
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-(function(module) {
-  "use strict";
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp */ function(module) {
+  'use strict';
 
   class DFPConfigurationError extends Error {}
 

@@ -1,5 +1,5 @@
 /**
-* @file Defines the `scriptInjector` service.
+* @module http-error
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -17,11 +17,14 @@
 * limitations under the License.
 */
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:http-error */ function(module) {
   'use strict';
 
   /**
  * The factory for the `httpError` service.
+ *
+ * @private
  * @param  {Function} $log    The Angular `$log` service.
  * @return {Function} The `httpError` service.
  */

@@ -1,5 +1,5 @@
 /**
-* @file
+* @module dfp-refresh
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -21,9 +21,13 @@
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp-refresh */ function(module) {
+  'use strict';
+
   /**
   * An error thrown by the `dfpRefresh` service.
+  * @private
   */
   class DFPRefreshError extends Error {}
 
@@ -36,6 +40,7 @@ googletag.cmd = googletag.cmd || [];
  * built in, such as being able to buffer refresh calls and flush at certain
  * intervals, or have refresh call "barriers" (a fixed number of calls to wait
  * for) and global refresh intervals.
+ * @private
  */
   function dfpRefreshProvider() {
       // Store reference

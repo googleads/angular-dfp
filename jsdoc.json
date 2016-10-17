@@ -1,7 +1,7 @@
 {
     "tags": {
         "allowUnknownTags": true,
-        "dictionaries": ["jsdoc","closure"]
+        "dictionaries": ["jsdoc", "closure"]
     },
     "source": {
         "includePattern": ".+\\.js(doc|x)?$",
@@ -11,5 +11,9 @@
     "templates": {
         "cleverLinks": false,
         "monospaceLinks": false
+    },
+    "opts": {
+      "destination": "./docs",
+      "private": false
     }
 }

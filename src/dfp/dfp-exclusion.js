@@ -1,5 +1,5 @@
 /**
-* @file Defines the `dfp-exclusion` directive.
+* @module dfp-exclusion
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -17,7 +17,10 @@
 * limitations under the License.
 */
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp-targeting */ function(module) {
+  'use strict';
+
   /**
   * The `dfp-exclusion` directive.
   *
@@ -26,6 +29,7 @@
   * example, that airline ads don't show next
   * to articles of an airplane accident.
   *
+  * @private
   * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/2627086?hl=en}
   *
   * @param {Object} scope The angular scope.

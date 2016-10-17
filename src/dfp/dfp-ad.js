@@ -1,5 +1,5 @@
 /**
-* @file Defines the `dfp-ad` directive.
+* @module dfp-ad
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -21,11 +21,14 @@
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-(function(module) {
-  "use strict";
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp-ad */ function(module) {
+  'use strict';
+
 
   /**
   * The controller for the `dfp-ad` directive.
+  * @private
   */
   function dfpAdController() {
     /**
@@ -154,6 +157,7 @@ googletag.cmd = googletag.cmd || [];
   * standalone except for the necessity of (at least) one nested `dfp-size`
   * directive.
   *
+  * @private
   * @param {Object} scope          The Angular element scope.
   * @param {Object} element        The jQuery/jQlite element of the directive.
   * @param {Object} attributes     The attributes defined on the element.

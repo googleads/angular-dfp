@@ -1,5 +1,25 @@
 /**
-* @file Defines the controller and directive for the dfp-targeting tag.
+* @file A directive for specifying DFP key/value targeting.
+*
+* DFP has a concept of "key/values" to allow targeting of ads against slots that
+* have certain values for certain keys. This directive enables adding one or
+* more such key/value pairs for an ad slot.
+*
+* The `dfp-targeting` directive must nested in a `dfp-ad` tag. It may then be
+* used either by directly passing a `key` and a `value` via attributes, or
+* alternatively by specifying only a `key` attribute and adding values via
+* nested `dfp-value` tags.
+*
+* @example
+* <dfp-ad ad-unit="/35096353/pub-showcase">
+*   <dfp-targeting key="sport" value="quidditch"></dfp-targeting>
+*   <dfp-targeting key="food">
+*     <dfp-value>chicken</dfp-value>
+*     <dfp-value>meatballs</dfp-value>
+*   </dfp-targeting>
+* </dfp-ad>
+*
+* @module dfp-targeting
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -17,13 +37,17 @@
 * limitations under the License.
 */
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp-targeting */ function(module) {
+  'use strict';
+
   /**
   * The controller for DFP targeting (key-value) directives.
   *
   * This controller makes an `addValue` function available that allows the
   * `dfp-value` directive to add values for a single key attribute defined in
   * the directive.
+  * @private
   */
   function dfpTargetingController() {
     /**
@@ -72,6 +96,7 @@
   * alternatively by specifying only a key and adding values via nested
   * `dfp-value` tags.
   *
+  * @private
   * @param {Object} scope The angular scope.
   * @param {Object} element The HTML element on which the directive is defined.
   * @param {Object} attributes The attributes of the element.

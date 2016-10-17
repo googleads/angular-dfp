@@ -1,5 +1,5 @@
 /**
-* @file Defines the `parseDuration` service.
+* @module parse-duration
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -17,9 +17,13 @@
 * limitations under the License.
 */
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:parse-duration */ function(module) {
+  'use strict';
+
   /**
   * An error thrown by the `parseDuration` service.
+  * @private
   */
   class DFPDurationError extends Error {
     constructor(interval) {
@@ -33,6 +37,7 @@
   * This service allows parsing of strings specifying
   * durations, such as '2s' or '5min'.
   *
+  * @private
   * @return {Function} The `parseDuration` service.
   */
   function parseDurationFactory() {

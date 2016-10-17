@@ -28,7 +28,7 @@ gulp.task('compile', ['concat'], () => {
     .pipe(closureCompiler({
       fileName: config.output,
       compilerFlags: {
-        warning_level: 'DEFAULT',
+        warning_level: 'VERBOSE',
         language_in: 'ES6',
         language_out: 'ES5',
         jscomp_off: 'checkVars'

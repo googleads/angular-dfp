@@ -1,5 +1,5 @@
 /**
-* @file
+* @module dfp-size
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -17,7 +17,10 @@
 * limitations under the License.
 */
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp-size */ function(module) {
+  'use strict';
+
   /**
   * The `dfp-size` directive.
   *
@@ -26,6 +29,7 @@
   * width and height dimension via attributes, or as any valid string size
   * (e.g. 'fluid') between the tags.
   *
+  * @private
   * @param {Object} scope The angular scope.
   * @param {Object} element The HTML element on which the directive is defined.
   * @param {Object} attributes The attributes of the element.

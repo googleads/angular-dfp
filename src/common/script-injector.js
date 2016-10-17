@@ -1,5 +1,5 @@
 /**
-* @file Defines the `scriptInjector` service.
+* @module script-injector
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -17,11 +17,14 @@
 * limitations under the License.
 */
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:script-injector */ function(module) {
   'use strict';
 
   /**
   * The factory for the `scriptInjector` service.
+  *
+  * @private
   * @param {Function} $q The Angular `$q` service.
   * @param {Function} httpError The `httpError` service.
   * @return {Function} The `scriptInjector` service.

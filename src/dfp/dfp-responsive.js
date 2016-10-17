@@ -1,5 +1,5 @@
 /**
-* @file
+* @module dfp-responsive
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -17,9 +17,13 @@
 * limitations under the License.
 */
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp-responsive */ function(module) {
+  'use strict';
+
   /**
   * The controller for the `dfp-responsive` directive.
+  * @private
   */
   function DFPResponsiveController() {
     /**
@@ -75,6 +79,8 @@
 
   /**
   * The directive for the responsive mapping.
+  *
+  * @private
   * @param {Object} scope The angular scope.
   * @param {Object} element The HTML element on which the directive is defined.
   * @param {Object} attributes The attributes of the element.

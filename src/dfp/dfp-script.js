@@ -1,5 +1,5 @@
 /**
-* @file Defines the `dfp-script` directive.
+* @module dfp-script
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -17,7 +17,10 @@
 * limitations under the License.
 */
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp-script */ function(module) {
+  'use strict';
+
   /**
   * Defines the `dfp-script` directive.
   *
@@ -27,6 +30,7 @@
   * renamed, optionally) as well as a custom (optional) scope, to then perform
   * any further customizations.
   *
+  * @private
   * @param {Object} scope The angular scope.
   * @param {Object} element The HTML element on which the directive is defined.
   * @param {Object} attributes The attributes of the element.

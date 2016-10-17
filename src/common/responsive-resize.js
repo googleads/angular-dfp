@@ -1,5 +1,5 @@
 /**
-* @file Defines the responsiveResize service.
+* @module responsive-resize
 * @author Peter Goldsborough <peter@goldsborough.me>
 * @license Apache
 * Copyright 2016 Google Inc.
@@ -17,7 +17,10 @@
 * limitations under the License.
 */
 
-(function(module) {
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:responsive-resize */ function(module) {
+  'use strict';
+
   /**
   * The factory of the `responsiveResize` service.
   *
@@ -25,6 +28,8 @@
   * defined always have iframes that fit their ad's dimensions and not their
   * containers' width. This ensures that centering ads, which is essential to
   * responsive ads, works well.
+  *
+  * @private
   *
   * @param  {Function} $interval {@link http://docs.angularjs.org/api/ng.$interval}
   * @param  {Function} $timeout  {@link http://docs.angularjs.org/api/ng.$timeout}
