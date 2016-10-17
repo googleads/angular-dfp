@@ -23,7 +23,7 @@
   */
   class DFPDurationError extends Error {
     constructor(interval) {
-      super("Invalid interval: '" + interval + "'");
+      super(`Invalid interval: '${interval}'`);
     }
   }
 

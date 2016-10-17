@@ -1,35 +1,30 @@
 module.exports = {
   concat: {
     src: 'src/**',
-    output: 'angular-dfp.es6',
-    dest: '.'
+    output: 'angular-dfp.es6.js',
+    dest: './bin'
   },
   transpile: {
-    src: 'angular-dfp.es6',
-    dest: '.'
+    src: './bin/angular-dfp.es6.js',
+    dest: './bin'
   },
   compile: {
-    src: 'angular-dfp.es6',
+    src: './bin/angular-dfp.es6.js',
     output: 'angular-dfp.min.js',
-    dest: '.'
+    dest: './bin'
   },
   docs: {
     src: './src',
     dest: './docs'
   },
   demo: {
-    src: 'angular-dfp*.js',
+    src: './bin/angular-dfp*.js',
     dest: 'demo/static'
   },
   lint: {
     src: 'src/**'
   },
   clean: {
-    files: [
-      'angular-dfp.min.js',
-      'angular-dfp.js',
-      'docs',
-      'angular-dfp.es6'
-    ]
+    files: ['bin', 'docs']
   }
 };
