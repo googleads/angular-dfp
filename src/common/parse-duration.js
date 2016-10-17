@@ -23,7 +23,7 @@
   */
   class DFPDurationError extends Error {
     constructor(interval) {
-      super(`Invalid interval: '${interval}'`);
+      super(`Invalid interval: '${interval}'ls`);
     }
   }
 
@@ -33,10 +33,9 @@
   * This service allows parsing of strings specifying
   * durations, such as '2s' or '5min'.
   *
-  * @param {Function} format The `format` service.
   * @return {Function} The `parseDuration` service.
   */
-  function parseDurationFactory(format) {
+  function parseDurationFactory() {
     /**
     * Converts a given time in a given unit to milliseconds.
     * @param  {!number} time A time number in a certain unit.
@@ -80,9 +79,7 @@
       }
 
       if (typeof interval !== 'string') {
-        throw new TypeError(
-          format("'{0}' must be of number or string type", interval)
-        );
+        throw new TypeError(`'${interval}' must be of number or string type`);
       }
 
       // Convert any allowed time format into milliseconds
@@ -98,7 +95,7 @@
     return parseDuration;
   }
 
-  module.factory('parseDuration', ['dfpFormat', parseDurationFactory]);
+  module.factory('parseDuration', parseDurationFactory);
 
 // eslint-disable-next-line
 })(angularDfp);
