@@ -144,7 +144,7 @@
       }
 
       /**
-      * @return {Number} The initial width of the iframe.
+      * @return {number} The initial width of the iframe.
       */
       function getIframeDimensions() {
         const iframe = queryIFrame();
@@ -275,9 +275,14 @@
     return responsiveResize;
   }
 
-  module.factory('responsiveResize',
-                    ['$interval', '$timeout', '$window', 'dfpRefresh',
-                     responsiveResizeFactory]);
+  responsiveResizeFactory.$inject = [
+    '$interval',
+    '$timeout',
+    '$window',
+    'dfpRefresh'
+  ];
+
+  module.factory('responsiveResize', responsiveResizeFactory);
 
   // eslint-disable-next-line
 })(angularDfp);

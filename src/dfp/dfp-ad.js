@@ -86,7 +86,7 @@ googletag.cmd = googletag.cmd || [];
     // TODO: Throw exceptions rather than asserting
     /**
     * Tests if the state of the directive is valid and complete.
-    * @return {Boolean} True if the ad slot may be created, else false.
+    * @return {boolean} True if the ad slot may be created, else false.
     */
     this.isValid = function() {
       if (sizes.length === 0) return false;
@@ -248,7 +248,7 @@ googletag.cmd = googletag.cmd || [];
 
       addResponsiveMapping(slot);
 
-      ad.targeting.forEach(targeting => {
+      ad.targetings.forEach(targeting => {
         slot.setTargeting(targeting.key, targeting.values);
       });
 
@@ -284,7 +284,7 @@ googletag.cmd = googletag.cmd || [];
       controllerAs: 'controller',
       bindToController: true,
       link: function(...args) {
-        dfpAdDirective.apply(null, args.concat($injector));
+        dfpAdDirective.apply(null, args.slice(0, 4).concat($injector));
       },
       scope: {
         adUnit: '@',

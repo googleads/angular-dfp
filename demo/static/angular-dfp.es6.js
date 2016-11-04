@@ -23,7 +23,7 @@ googletag.cmd = googletag.cmd || [];
 let angularDfp = angular.module('angularDfp', []);
 
 
-(function(module) {
+( function(module) {
   'use strict';
 
   function httpErrorFactory($log) {
@@ -49,7 +49,9 @@ let angularDfp = angular.module('angularDfp', []);
 })(angularDfp);
 
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   class DFPDurationError extends Error {
     constructor(interval) {
       super(`Invalid interval: '${interval}'ls`);
@@ -101,7 +103,9 @@ let angularDfp = angular.module('angularDfp', []);
 })(angularDfp);
 
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
     $window = angular.element($window);
 
@@ -225,14 +229,19 @@ let angularDfp = angular.module('angularDfp', []);
     return responsiveResize;
   }
 
-  module.factory('responsiveResize',
-                    ['$interval', '$timeout', '$window', 'dfpRefresh',
-                     responsiveResizeFactory]);
+  responsiveResizeFactory.$inject = [
+    '$interval',
+    '$timeout',
+    '$window',
+    'dfpRefresh'
+  ];
+
+  module.factory('responsiveResize', responsiveResizeFactory);
 
 })(angularDfp);
 
 
-(function(module) {
+( function(module) {
   'use strict';
 
   function scriptInjectorFactory($q, httpError) {
@@ -299,8 +308,8 @@ let angularDfp = angular.module('angularDfp', []);
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-(function(module) {
-  "use strict";
+( function(module) {
+  'use strict';
 
   function dfpAdController() {
     const sizes = [];
@@ -322,16 +331,16 @@ googletag.cmd = googletag.cmd || [];
     this.getState = function() {
       console.assert(this.isValid());
       return Object.freeze({
-        sizes: sizes,
-        responsiveMapping: responsiveMapping,
-        targeting: targetings,
-        exclusions: exclusions,
+        sizes,
+        responsiveMapping,
+        targetings,
+        exclusions,
         adUnit: this.adUnit,
         forceSafeFrame: this.forceSafeFrame,
         safeFrameConfig: this.safeFrameConfig,
         clickUrl: this.clickUrl,
         refresh: this.refresh,
-        scripts: scripts,
+        scripts,
         collapseIfEmpty: this.collapseIfEmpty
       });
     };
@@ -403,7 +412,7 @@ googletag.cmd = googletag.cmd || [];
 
       addResponsiveMapping(slot);
 
-      ad.targeting.forEach(targeting => {
+      ad.targetings.forEach(targeting => {
         slot.setTargeting(targeting.key, targeting.values);
       });
 
@@ -434,7 +443,7 @@ googletag.cmd = googletag.cmd || [];
       controllerAs: 'controller',
       bindToController: true,
       link: function(...args) {
-        dfpAdDirective.apply(null, args.concat($injector));
+        dfpAdDirective.apply(null, args.slice(0, 4).concat($injector));
       },
       scope: {
         adUnit: '@',
@@ -451,7 +460,9 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   function dfpAudiencePixelDirective(scope, element, attributes) {
     const axel = String(Math.random());
     const random = axel * 10000000000000;
@@ -490,7 +501,9 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   function dfpExclusionDirective(scope, element, attributes, ad) {
     ad.addExclusion(element.html());
   }
@@ -506,7 +519,9 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   function dfpIDGeneratorFactory() {
     const generatedIDs = {};
 
@@ -553,7 +568,9 @@ googletag.cmd = googletag.cmd || [];
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   class DFPRefreshError extends Error {}
 
   function dfpRefreshProvider() {
@@ -599,7 +616,7 @@ googletag.cmd = googletag.cmd || [];
 
         function dfpRefresh(slot, interval, defer) {
           const deferred = $q.defer();
-          const task = {slot: slot, deferred: deferred};
+          const task = {slot, deferred};
 
           if (interval) {
             addSlotInterval(task, interval);
@@ -956,7 +973,9 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   function DFPResponsiveController() {
     const browserSize = Object.seal([
       this.browserWidth,
@@ -977,8 +996,8 @@ googletag.cmd = googletag.cmd || [];
     this.getState = function() {
       console.assert(isValid());
       return Object.freeze({
-        browserSize: browserSize,
-        adSizes: adSizes
+        browserSize,
+        adSizes
       });
     };
   }
@@ -1003,7 +1022,10 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 
-(function(module) {
+
+( function(module) {
+  'use strict';
+
   function dfpScriptDirective(scope, element, attributes, ad, $injector) {
     const format = $injector.get('dfpFormat');
     const script = format(
@@ -1029,7 +1051,9 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   function DFPSizeDirective(scope, element, attributes, parent) {
     parent = parent[1] || parent[0];
 
@@ -1054,7 +1078,9 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   function dfpTargetingController() {
     const values = this.value ? [this.value] : [];
 
@@ -1068,7 +1094,7 @@ googletag.cmd = googletag.cmd || [];
       console.assert(this.isValid());
       return Object.freeze({
         key: this.key,
-        values: values
+        values
       });
     };
 
@@ -1099,7 +1125,9 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   function dfpValueDirective(scope, element, attributes, parent) {
     parent.addValue(element.html());
   }
@@ -1116,11 +1144,15 @@ googletag.cmd = googletag.cmd || [];
 
 let angularDfpVideo = angular.module('angularDfp');
 
-(function(module) {
+( function(module) {
+  'use strict';
+
   function dfpVideoDirective(scope, element, attributes, $injector) {
     const dfpIDGenerator = $injector.get('dfpIDGenerator');
 
     element = element[0];
+
+    console.assert(element.tagName === 'VIDEO');
 
     dfpIDGenerator(element, true);
 
@@ -1133,7 +1165,7 @@ let angularDfpVideo = angular.module('angularDfp');
 
   module.directive('dfpVideo', ['$injector', function($injector) {
     return {
-      restrict: 'AE',
+      restrict: 'A',
       scope: {adTag: '@'},
       link: function(...args) {
         dfpVideoDirective.apply(null, args.concat($injector));
@@ -1149,8 +1181,8 @@ let angularDfpVideo = angular.module('angularDfp');
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-(function(module) {
-  "use strict";
+( function(module) {
+  'use strict';
 
   class DFPConfigurationError extends Error {}
 

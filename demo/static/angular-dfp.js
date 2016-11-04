@@ -57,6 +57,8 @@ var angularDfp = angular.module('angularDfp', []);
 })(angularDfp);
 
 (function (module) {
+  'use strict';
+
   var DFPDurationError = function (_Error) {
     _inherits(DFPDurationError, _Error);
 
@@ -113,6 +115,8 @@ var angularDfp = angular.module('angularDfp', []);
 })(angularDfp);
 
 (function (module) {
+  'use strict';
+
   function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
     $window = angular.element($window);
 
@@ -242,7 +246,9 @@ var angularDfp = angular.module('angularDfp', []);
     return responsiveResize;
   }
 
-  module.factory('responsiveResize', ['$interval', '$timeout', '$window', 'dfpRefresh', responsiveResizeFactory]);
+  responsiveResizeFactory.$inject = ['$interval', '$timeout', '$window', 'dfpRefresh'];
+
+  module.factory('responsiveResize', responsiveResizeFactory);
 })(angularDfp);
 
 (function (module) {
@@ -311,7 +317,7 @@ var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
 (function (module) {
-  "use strict";
+  'use strict';
 
   function dfpAdController() {
     var sizes = [];
@@ -335,7 +341,7 @@ googletag.cmd = googletag.cmd || [];
       return Object.freeze({
         sizes: sizes,
         responsiveMapping: responsiveMapping,
-        targeting: targetings,
+        targetings: targetings,
         exclusions: exclusions,
         adUnit: this.adUnit,
         forceSafeFrame: this.forceSafeFrame,
@@ -414,7 +420,7 @@ googletag.cmd = googletag.cmd || [];
 
       addResponsiveMapping(slot);
 
-      ad.targeting.forEach(function (targeting) {
+      ad.targetings.forEach(function (targeting) {
         slot.setTargeting(targeting.key, targeting.values);
       });
 
@@ -451,7 +457,7 @@ googletag.cmd = googletag.cmd || [];
           args[_key] = arguments[_key];
         }
 
-        dfpAdDirective.apply(null, args.concat($injector));
+        dfpAdDirective.apply(null, args.slice(0, 4).concat($injector));
       },
       scope: {
         adUnit: '@',
@@ -466,6 +472,8 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 (function (module) {
+  'use strict';
+
   function dfpAudiencePixelDirective(scope, element, attributes) {
     var axel = String(Math.random());
     var random = axel * 10000000000000;
@@ -503,6 +511,8 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 (function (module) {
+  'use strict';
+
   function dfpExclusionDirective(scope, element, attributes, ad) {
     ad.addExclusion(element.html());
   }
@@ -517,6 +527,8 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 (function (module) {
+  'use strict';
+
   function dfpIDGeneratorFactory() {
     var generatedIDs = {};
 
@@ -562,6 +574,8 @@ var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
 (function (module) {
+  'use strict';
+
   var DFPRefreshError = function (_Error2) {
     _inherits(DFPRefreshError, _Error2);
 
@@ -990,6 +1004,8 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 (function (module) {
+  'use strict';
+
   function DFPResponsiveController() {
     var browserSize = Object.seal([this.browserWidth, this.browserHeight || 0]);
 
@@ -1034,6 +1050,8 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 (function (module) {
+  'use strict';
+
   function dfpScriptDirective(scope, element, attributes, ad, $injector) {
     var format = $injector.get('dfpFormat');
     var script = format('(function(scope, {0}) { {1} })', scope.slotAs || 'slot', element.html().trim());
@@ -1058,6 +1076,8 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 (function (module) {
+  'use strict';
+
   function DFPSizeDirective(scope, element, attributes, parent) {
     parent = parent[1] || parent[0];
 
@@ -1081,6 +1101,8 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 (function (module) {
+  'use strict';
+
   function dfpTargetingController() {
     var values = this.value ? [this.value] : [];
 
@@ -1124,6 +1146,8 @@ googletag.cmd = googletag.cmd || [];
 })(angularDfp);
 
 (function (module) {
+  'use strict';
+
   function dfpValueDirective(scope, element, attributes, parent) {
     parent.addValue(element.html());
   }
@@ -1140,10 +1164,14 @@ googletag.cmd = googletag.cmd || [];
 var angularDfpVideo = angular.module('angularDfp');
 
 (function (module) {
+  'use strict';
+
   function dfpVideoDirective(scope, element, attributes, $injector) {
     var dfpIDGenerator = $injector.get('dfpIDGenerator');
 
     element = element[0];
+
+    console.assert(element.tagName === 'VIDEO');
 
     dfpIDGenerator(element, true);
 
@@ -1156,7 +1184,7 @@ var angularDfpVideo = angular.module('angularDfp');
 
   module.directive('dfpVideo', ['$injector', function ($injector) {
     return {
-      restrict: 'AE',
+      restrict: 'A',
       scope: { adTag: '@' },
       link: function link() {
         for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
@@ -1175,7 +1203,7 @@ var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
 (function (module) {
-  "use strict";
+  'use strict';
 
   var DFPConfigurationError = function (_Error3) {
     _inherits(DFPConfigurationError, _Error3);
