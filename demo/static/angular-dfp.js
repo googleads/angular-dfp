@@ -457,10 +457,6 @@ googletag.cmd = googletag.cmd || [];
       scope.$on('$destroy', function () {
         console.assert(googletag.destroySlots([slot]));
       });
-
-      setTimeout(function () {
-        scope.$destroy();
-      }, 3000);
     }
 
     dfp.then(defineSlot);
@@ -501,20 +497,22 @@ googletag.cmd = googletag.cmd || [];
     var axel = String(Math.random());
     var random = axel * 10000000000000;
 
+
     var adUnit = '';
     if (scope.adUnit) {
-      adUnit = 'dc_iu=' + scope.adUnit;
+      adUnit = 'dc_iu=' + scope['adUnit'];
     }
 
     var ppid = '';
     if (scope.ppid) {
-      ppid = 'ppid=' + scope.ppid;
+      ppid = 'ppid=' + scope['ppid'];
     }
 
     var pixel = document.createElement('img');
 
     pixel.src = 'https://pubads.g.doubleclick.net/activity;ord=';
-    pixel.src += random + ';dc_seg=' + scope.segmentId + ';' + adUnit + ppid;
+    pixel.src += random + ';dc_seg=' + scope['segmentId'] + ';' + adUnit + ppid;
+
 
     pixel.width = 1;
     pixel.height = 1;
@@ -527,8 +525,8 @@ googletag.cmd = googletag.cmd || [];
   module.directive('dfpAudiencePixel', [function () {
     return {
       restrict: 'E',
-      scope: { adUnit: '@', segmentId: '@', ppid: '@' },
-      link: dfpAudiencePixelDirective
+      link: dfpAudiencePixelDirective,
+      scope: { 'adUnit': '@', 'segmentId': '@', 'ppid': '@' }
     };
   }]);
 
@@ -1240,7 +1238,7 @@ var angularDfpVideo = angular.module('angularDfp');
 
     var player = videojs(element.id);
 
-    player.ima({ id: element.id, adTagUrl: scope.adTag });
+    player.ima({ id: element.id, adTagUrl: scope['adTag'] });
     player.ima.requestAds();
     player.ima.initializeAdDisplayContainer();
   }
@@ -1248,7 +1246,7 @@ var angularDfpVideo = angular.module('angularDfp');
   module.directive('dfpVideo', ['$injector', function ($injector) {
     return {
       restrict: 'A',
-      scope: { adTag: '@' },
+      scope: { 'adTag': '@' },
       link: function link() {
         for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
           args[_key3] = arguments[_key3];
