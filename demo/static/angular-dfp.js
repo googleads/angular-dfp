@@ -131,7 +131,7 @@ var angularDfp = angular.module('angularDfp', []);
   'use strict';
 
 
-  function responsiveResizeFactory($interval, $timeout, $window) {
+  function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
     $window = angular.element($window);
 
     function responsiveResize(element, slot, boundaries) {
@@ -219,14 +219,12 @@ var angularDfp = angular.module('angularDfp', []);
 
         function couldGrow() {
           if (index + 1 >= boundaries.length) return false;
-          if ($window.innerWidth < boundaries[index + 1]) return false;
-          return true;
+          return window.innerWidth >= boundaries[index + 1];
         }
 
         function couldShrink() {
-          if (index - 1 < 0) return false;
-          if ($window.innerWidth >= boundaries[index]) return false;
-          return true;
+          if (index === 0) return false;
+          return window.innerWidth < boundaries[index];
         }
 
         function transition(delta) {
@@ -236,6 +234,9 @@ var angularDfp = angular.module('angularDfp', []);
           index += delta;
           hideElement();
 
+          dfpRefresh(slot).then(function () {
+            watchResize();
+          });
 
           console.assert(index >= 0 && index < boundaries.length);
         }
@@ -458,7 +459,7 @@ googletag.cmd = googletag.cmd || [];
 
       dfpRefresh(slot, ad.refresh).then(function () {
         if (ad.responsiveMapping.length > 0) {
-          responsiveResize(jQueryElement);
+          responsiveResize(jQueryElement, slot);
         }
       });
 
@@ -1257,7 +1258,7 @@ var angularDfpVideo = angular.module('angularDfp');
 
     console.assert(element.tagName === 'VIDEO');
 
-    dfpIDGenerator(element, true);
+    dfpIDGenerator(element);
 
     var player = videojs(element.id);
 

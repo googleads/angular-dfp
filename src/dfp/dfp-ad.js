@@ -287,7 +287,7 @@ googletag.cmd = googletag.cmd || [];
       // Send to the refresh proxy
       dfpRefresh(slot, ad.refresh).then(() => {
         if (ad.responsiveMapping.length > 0) {
-          responsiveResize(jQueryElement);
+          responsiveResize(jQueryElement, slot);
         }
       });
 

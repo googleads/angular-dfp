@@ -238,9 +238,10 @@ let angularDfp = angular.module('angularDfp', []);
   * @param  {Function} $interval {@link http://docs.angularjs.org/api/ng.$interval}
   * @param  {Function} $timeout  {@link http://docs.angularjs.org/api/ng.$timeout}
   * @param  {Object} $window  {@link http://docs.angularjs.org/api/ng.$window}
+  * @param  {Function} dfpRefresh The `dfpRefresh` service.
   * @return {Function} The `responsiveResize` service.
   */
-  function responsiveResizeFactory($interval, $timeout, $window) {
+  function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
     // Turn into jQLite element
     // eslint-disable-next-line
     $window = angular.element($window);
@@ -423,8 +424,7 @@ let angularDfp = angular.module('angularDfp', []);
         */
         function couldGrow() {
           if (index + 1 >= boundaries.length) return false;
-          if ($window.innerWidth < boundaries[index + 1]) return false;
-          return true;
+          return window.innerWidth >= boundaries[index + 1];
         }
 
         /**
@@ -436,9 +436,8 @@ let angularDfp = angular.module('angularDfp', []);
         *                   decremented by one, else false.
         */
         function couldShrink() {
-          if (index - 1 < 0) return false;
-          if ($window.innerWidth >= boundaries[index]) return false;
-          return true;
+          if (index === 0) return false;
+          return window.innerWidth < boundaries[index];
         }
 
         /**
@@ -453,7 +452,7 @@ let angularDfp = angular.module('angularDfp', []);
           hideElement();
 
           // Refresh the ad slot now
-          // dfpRefresh(slot).then(() => { watchResize(); });
+          dfpRefresh(slot).then(() => { watchResize(); });
 
           console.assert(index >= 0 && index < boundaries.length);
         }
@@ -901,7 +900,7 @@ googletag.cmd = googletag.cmd || [];
       // Send to the refresh proxy
       dfpRefresh(slot, ad.refresh).then(() => {
         if (ad.responsiveMapping.length > 0) {
-          responsiveResize(jQueryElement);
+          responsiveResize(jQueryElement, slot);
         }
       });
 
@@ -2620,8 +2619,8 @@ let angularDfpVideo = angular.module('angularDfp');
     // TODO: exception here
     console.assert(element.tagName === 'VIDEO');
 
-     // Generate an ID or check for uniqueness of an existing one (true = forVideo)
-    dfpIDGenerator(element, true);
+     // Generate an ID or check for uniqueness of an existing one
+    dfpIDGenerator(element);
 
     // eslint-disable-next-line no-undef
     const player = videojs(element.id);

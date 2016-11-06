@@ -35,9 +35,10 @@
   * @param  {Function} $interval {@link http://docs.angularjs.org/api/ng.$interval}
   * @param  {Function} $timeout  {@link http://docs.angularjs.org/api/ng.$timeout}
   * @param  {Object} $window  {@link http://docs.angularjs.org/api/ng.$window}
+  * @param  {Function} dfpRefresh The `dfpRefresh` service.
   * @return {Function} The `responsiveResize` service.
   */
-  function responsiveResizeFactory($interval, $timeout, $window) {
+  function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
     // Turn into jQLite element
     // eslint-disable-next-line
     $window = angular.element($window);
@@ -220,8 +221,7 @@
         */
         function couldGrow() {
           if (index + 1 >= boundaries.length) return false;
-          if ($window.innerWidth < boundaries[index + 1]) return false;
-          return true;
+          return window.innerWidth >= boundaries[index + 1];
         }
 
         /**
@@ -233,9 +233,8 @@
         *                   decremented by one, else false.
         */
         function couldShrink() {
-          if (index - 1 < 0) return false;
-          if ($window.innerWidth >= boundaries[index]) return false;
-          return true;
+          if (index === 0) return false;
+          return window.innerWidth < boundaries[index];
         }
 
         /**
@@ -250,7 +249,7 @@
           hideElement();
 
           // Refresh the ad slot now
-          // dfpRefresh(slot).then(() => { watchResize(); });
+          dfpRefresh(slot).then(() => { watchResize(); });
 
           console.assert(index >= 0 && index < boundaries.length);
         }
