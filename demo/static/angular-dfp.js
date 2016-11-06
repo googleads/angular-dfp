@@ -1,13 +1,3 @@
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 /**
  * @author Peter Goldsborough <peter@goldsborough.me>
  * @author Jaime González García <vintharas@google.com>
@@ -26,14 +16,26 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
 var angularDfp = angular.module('angularDfp', []);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   function httpErrorFactory($log) {
     function httpError(response, message) {
@@ -54,10 +56,13 @@ var angularDfp = angular.module('angularDfp', []);
   }
 
   module.factory('httpError', ['$log', httpErrorFactory]);
+
 })(angularDfp);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   var DFPDurationError = function (_Error) {
     _inherits(DFPDurationError, _Error);
@@ -70,6 +75,8 @@ var angularDfp = angular.module('angularDfp', []);
 
     return DFPDurationError;
   }(Error);
+
+
 
   function parseDurationFactory() {
     function convertToMilliseconds(time, unit) {
@@ -112,10 +119,13 @@ var angularDfp = angular.module('angularDfp', []);
   }
 
   module.factory('parseDuration', parseDurationFactory);
+
 })(angularDfp);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
     $window = angular.element($window);
@@ -124,9 +134,9 @@ var angularDfp = angular.module('angularDfp', []);
       boundaries = boundaries || [320, 780, 1480];
       console.assert(Array.isArray(boundaries));
 
-      var POLL_INTERVAL = 100;
+      var POLL_INTERVAL = 100; 
 
-      var POLL_DURATION = 2500;
+      var POLL_DURATION = 2500; 
 
       function queryIFrame() {
         return element.find('div iframe');
@@ -249,10 +259,13 @@ var angularDfp = angular.module('angularDfp', []);
   responsiveResizeFactory.$inject = ['$interval', '$timeout', '$window', 'dfpRefresh'];
 
   module.factory('responsiveResize', responsiveResizeFactory);
+
 })(angularDfp);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   function scriptInjectorFactory($q, httpError) {
     function createScript(url) {
@@ -311,13 +324,16 @@ var angularDfp = angular.module('angularDfp', []);
   }
 
   module.factory('scriptInjector', ['$q', 'httpError', scriptInjectorFactory]);
+
 })(angularDfp);
+
 
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-(function (module) {
+( function (module) {
   'use strict';
+
 
   function dfpAdController() {
     var sizes = [];
@@ -469,10 +485,13 @@ googletag.cmd = googletag.cmd || [];
       }
     };
   }]);
+
 })(angularDfp);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   function dfpAudiencePixelDirective(scope, element, attributes) {
     var axel = String(Math.random());
@@ -508,10 +527,13 @@ googletag.cmd = googletag.cmd || [];
       link: dfpAudiencePixelDirective
     };
   }]);
+
 })(angularDfp);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   function dfpExclusionDirective(scope, element, attributes, ad) {
     ad.addExclusion(element.html());
@@ -524,10 +546,13 @@ googletag.cmd = googletag.cmd || [];
       link: dfpExclusionDirective
     };
   }]);
+
 })(angularDfp);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   function dfpIDGeneratorFactory() {
     var generatedIDs = {};
@@ -568,13 +593,16 @@ googletag.cmd = googletag.cmd || [];
   }
 
   module.factory('dfpIDGenerator', [dfpIDGeneratorFactory]);
+
 })(angularDfp);
+
 
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-(function (module) {
+( function (module) {
   'use strict';
+
 
   var DFPRefreshError = function (_Error2) {
     _inherits(DFPRefreshError, _Error2);
@@ -588,6 +616,8 @@ googletag.cmd = googletag.cmd || [];
     return DFPRefreshError;
   }(Error);
 
+
+
   function dfpRefreshProvider() {
     var self = this;
 
@@ -597,7 +627,7 @@ googletag.cmd = googletag.cmd || [];
 
     self.oneShotBarrier = true;
 
-    self.refreshInterval = 60 * 60 * 1000;
+    self.refreshInterval = 60 * 60 * 1000; 
 
     self.priority = {
       REFRESH: 1,
@@ -1003,8 +1033,10 @@ googletag.cmd = googletag.cmd || [];
   module.provider('dfpRefresh', [dfpRefreshProvider]);
 })(angularDfp);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   function DFPResponsiveController() {
     var browserSize = Object.seal([this.browserWidth, this.browserHeight || 0]);
@@ -1047,10 +1079,14 @@ googletag.cmd = googletag.cmd || [];
       scope: { browserWidth: '=', browserHeight: '=' }
     };
   }]);
+
 })(angularDfp);
 
-(function (module) {
+
+
+( function (module) {
   'use strict';
+
 
   function dfpScriptDirective(scope, element, attributes, ad, $injector) {
     var format = $injector.get('dfpFormat');
@@ -1073,10 +1109,13 @@ googletag.cmd = googletag.cmd || [];
       }
     };
   }]);
+
 })(angularDfp);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   function DFPSizeDirective(scope, element, attributes, parent) {
     parent = parent[1] || parent[0];
@@ -1098,10 +1137,13 @@ googletag.cmd = googletag.cmd || [];
       link: DFPSizeDirective
     };
   }]);
+
 })(angularDfp);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   function dfpTargetingController() {
     var values = this.value ? [this.value] : [];
@@ -1135,7 +1177,7 @@ googletag.cmd = googletag.cmd || [];
   module.directive('dfpTargeting', [function () {
     return {
       restrict: 'E',
-      require: '^^dfpAd',
+      require: '^^dfpAd', 
       controller: dfpTargetingController,
       controllerAs: 'controller',
       bindToController: true,
@@ -1143,10 +1185,13 @@ googletag.cmd = googletag.cmd || [];
       link: dfpTargetingDirective
     };
   }]);
+
 })(angularDfp);
 
-(function (module) {
+
+( function (module) {
   'use strict';
+
 
   function dfpValueDirective(scope, element, attributes, parent) {
     parent.addValue(element.html());
@@ -1161,10 +1206,12 @@ googletag.cmd = googletag.cmd || [];
   }]);
 })(angularDfp);
 
+
 var angularDfpVideo = angular.module('angularDfp');
 
-(function (module) {
+( function (module) {
   'use strict';
+
 
   function dfpVideoDirective(scope, element, attributes, $injector) {
     var dfpIDGenerator = $injector.get('dfpIDGenerator');
@@ -1197,12 +1244,14 @@ var angularDfpVideo = angular.module('angularDfp');
   }]);
 
   return module;
+
 })(angularDfpVideo);
+
 
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
-(function (module) {
+( function (module) {
   'use strict';
 
   var DFPConfigurationError = function (_Error3) {
@@ -1217,20 +1266,16 @@ googletag.cmd = googletag.cmd || [];
     return DFPConfigurationError;
   }(Error);
 
+
+
   module.constant('GPT_LIBRARY_URL', '//www.googletagservices.com/tag/js/gpt.js');
 
   function dfpProvider(GPT_LIBRARY_URL) {
     var self = this;
 
-    self.enableSingleRequestArchitecture = true;
-
     self.enableVideoAds = true;
 
     self.collapseIfEmpty = true;
-
-    self.disableInitialLoad = true;
-
-    self.enableSyncRendering = false;
 
     self.centering = false;
 
@@ -1297,10 +1342,6 @@ googletag.cmd = googletag.cmd || [];
       function setup() {
         var pubads = googletag.pubads();
 
-        if (self.enableSingleRequestArchitecture) {
-          pubads.enableSingleRequest();
-        }
-
         if (self.enableVideoAds) {
           pubads.enableVideoAds();
         }
@@ -1309,14 +1350,7 @@ googletag.cmd = googletag.cmd || [];
           pubads.collapseEmptyDivs();
         }
 
-        if (self.disableInitialLoad) {
-          pubads.disableInitialLoad();
-        }
-
-        if (self.enableSyncRendering) {
-          pubads.enableSyncRendering();
-        }
-
+        pubads.disableInitialLoad();
         pubads.setForceSafeFrame(self.forceSafeFrame);
         pubads.setCentering(self.centering);
 
@@ -1351,4 +1385,5 @@ googletag.cmd = googletag.cmd || [];
   }
 
   module.provider('dfp', ['GPT_LIBRARY_URL', dfpProvider]);
+
 })(angularDfp);
