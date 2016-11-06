@@ -208,6 +208,12 @@ googletag.Slot.prototype.setCollapseEmptyDiv =
   function(collapse, opt_collapseBeforeAdFetch) {};
 
 /**
+ * @param  {Array<!googletag.Slot>=} opt_slots
+ * @return {boolean}
+ */
+googletag.destroySlots = function(opt_slots) {};
+
+/**
  * @interface
  */
 googletag.CommandArray = function() {};

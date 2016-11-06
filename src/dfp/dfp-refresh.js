@@ -821,6 +821,7 @@ googletag.cmd = googletag.cmd || [];
 
         // Unregister all listeners when the root scope dies
         $rootScope.$on('$destroy', function() {
+          console.log('destroy!');
           // eslint-disable-next-line no-undef
           intervals.forEach(promise => {
             $interval.cancel(promise);

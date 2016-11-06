@@ -886,6 +886,14 @@ googletag.cmd = googletag.cmd || [];
           responsiveResize(jQueryElement);
         }
       });
+
+      scope.$on('$destroy', () => {
+        // Release resources allocated for the slot and assert
+        // that it really did destroy the slot
+        console.assert(googletag.destroySlots([slot]));
+      });
+
+      setTimeout(() => { scope.$destroy(); }, 3000);
     }
 
     // Push the ad slot definition into the command queue.
@@ -1988,6 +1996,7 @@ googletag.cmd = googletag.cmd || [];
 
         // Unregister all listeners when the root scope dies
         $rootScope.$on('$destroy', function() {
+          console.log('destroy!');
           // eslint-disable-next-line no-undef
           intervals.forEach(promise => {
             $interval.cancel(promise);

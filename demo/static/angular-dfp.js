@@ -453,6 +453,14 @@ googletag.cmd = googletag.cmd || [];
           responsiveResize(jQueryElement);
         }
       });
+
+      scope.$on('$destroy', function () {
+        console.assert(googletag.destroySlots([slot]));
+      });
+
+      setTimeout(function () {
+        scope.$destroy();
+      }, 3000);
     }
 
     dfp.then(defineSlot);
@@ -1024,6 +1032,7 @@ googletag.cmd = googletag.cmd || [];
       }
 
       $rootScope.$on('$destroy', function () {
+        console.log('destroy!');
         intervals.forEach(function (promise) {
           $interval.cancel(promise);
         });

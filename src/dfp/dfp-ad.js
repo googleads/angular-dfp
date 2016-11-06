@@ -277,6 +277,12 @@ googletag.cmd = googletag.cmd || [];
           responsiveResize(jQueryElement);
         }
       });
+
+      scope.$on('$destroy', () => {
+        // Release resources allocated for the slot and assert
+        // that it really did destroy the slot
+        console.assert(googletag.destroySlots([slot]));
+      });
     }
 
     // Push the ad slot definition into the command queue.
