@@ -170,6 +170,10 @@ let angularDfp = angular.module('angularDfp', []);
     * @return {number} The corresponding number of milliseconds.
     */
     function parseDuration(interval) {
+      if (interval === undefined || interval === null) {
+        throw new DFPDurationError(interval);
+      }
+
       if (typeof interval === 'number') {
         return interval;
       }
@@ -1401,6 +1405,8 @@ googletag.cmd = googletag.cmd || [];
         * @return {Function} The current `dfpRefresh` instance.
         */
         dfpRefresh.setBufferInterval = function(interval) {
+          // Maybe warn for too low an interval
+          console.assert(interval !== null && interval > 0);
           self.bufferInterval = parseDuration(interval);
           prioritize();
 
@@ -1561,6 +1567,8 @@ googletag.cmd = googletag.cmd || [];
         * @return {Function} The current `dfpRefresh` instance.
         */
         dfpRefresh.setRefreshInterval = function(interval) {
+          // Maybe warn for too low an interval
+          console.assert(interval !== null && interval > 0);
           self.refreshInterval = parseDuration(interval);
           enableRefreshInterval();
           prioritize();
@@ -2024,8 +2032,14 @@ googletag.cmd = googletag.cmd || [];
           });
         });
 
-        self.refreshInterval = parseDuration(self.refreshInterval);
-        self.bufferInterval = parseDuration(self.bufferInterval);
+        if (self.refreshInterval) {
+          self.refreshInterval = parseDuration(self.refreshInterval);
+        }
+
+        if (self.bufferInterval) {
+          self.bufferInterval = parseDuration(self.bufferInterval);
+        }
+
         prioritize();
 
         return dfpRefresh;

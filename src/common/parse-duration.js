@@ -80,6 +80,11 @@
     * @return {number} The corresponding number of milliseconds.
     */
     function parseDuration(interval) {
+      // The interval may well be zero so don't just write !interval
+      if (interval === undefined || interval === null) {
+        throw new DFPDurationError(interval);
+      }
+
       if (typeof interval === 'number') {
         return interval;
       }
