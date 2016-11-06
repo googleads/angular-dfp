@@ -4,9 +4,30 @@
 
 Semantic DoubleClick for Publishers (DFP by Google) integration with AngularJS.
 
-## Example
+```HTML
+<dfp-ad force-safe-frame collapse-if-empty ad-unit="/path/to/my/ad-unit">
+  <dfp-size width="728" height="90"></dfp-size>
+</dfp-ad>
+```
 
-Ever seen DFP like this?
+## Description
+
+AngularDfp allows you to interact with Google's GPT library and DFP services using only Angular directives, effectively replacing any JavaScript to define and customize your ad slots, as you usually would. Also, it was built especially with infinite-scroll and other dynamic content strategies in mind and has out-of-the-box support for it.
+
+## What does it solve?
+
+This library solves two problems:
+
+1. You can define your ad slots using only HTML, which is just plain sweet.
+2. It solves problems that are sometimes encountered with GPT and Single-Page-Applications (SPAs) by giving you manual control over when to fetch and refresh ads (typically on page redirects within Angular).
+
+## Examples
+
+We have defined (nested) directives that effectively cover all the functionality of the GPT library.
+
+### Simple Fixed Size Ad
+
+In the simplest case, you'll simply want to define an ad with a fixed size. In that case, you would simply have a `dfp-ad` directive, which requires at least one nested `dfp-size` directive. The `dfp-ad` directive additionally takes some optional attributes, such as the `collapseEmptyDiv` option you may be familiar with from the GPT library. For all options, refer to the [manual](www.example.com):
 
 ```HTML
 <dfp-ad force-safe-frame
@@ -14,24 +35,18 @@ Ever seen DFP like this?
         refresh='3s'
         ad-unit="/path/to/my/ad-unit">
   <dfp-size width="728" height="90"></dfp-size>
-  <dfp-targeting key="sport" value="football"></dfp-targeting>
-  <dfp-targeting key="food">
-    <dfp-value>chicken</dfp-value>
-    <dfp-value>meatballs</dfp-value>
-    <dfp-value>ice cream</dfp-value>
-  </dfp-targeting>
-  <dfp-responsive browser-width="320" browser-height="0">
-    <dfp-size width=320 height=50></dfp-size>
-  </dfp-responsive>
-  <dfp-responsive browser-width="768" browser-height="0">
-    <dfp-size width=728 height=90></dfp-size>
-  </dfp-responsive>
-  <dfp-responsive browser-width="1024" browser-height="0">
-    <dfp-size width=970 height=90></dfp-size>
-  </dfp-responsive>
 </dfp-ad>
-<dfp-audience-pixel></dfp-audience-pixel>
 ```
+
+### Responsive Ad
+
+Make note about responsiveResize.
+
+### Targeting
+
+### Video Ads
+
+### Audience Pixels
 
 ## Demo
 
@@ -39,10 +54,9 @@ A live demo can be found at [angular-dfp-demo.appspot.com](http://angular-dfp-de
 
 ## License
 
-This project is released under the [MIT License](http://goldsborough.mit-license.org). For more information, see the LICENSE file.
+This project is released under the [Apache License](https://www.apache.org/licenses/LICENSE-2.0). For more information, see the LICENSE file.
 
 ## Authors
 
-[Peter Goldsborough](http://goldsborough.me) + [cat](https://goo.gl/IpUmJn) :heart:
-
-<a href="https://gratipay.com/~goldsborough/"><img src="http://img.shields.io/gratipay/goldsborough.png?style=flat-square"></a>
+[Peter Goldsborough](http://github.com/goldsborough)
+[Jaime González García](http://github.com/vintharas)
