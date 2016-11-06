@@ -28,7 +28,7 @@ module.exports = {
     dest: './bin'
   },
   compile: {
-    src: './bin/angular-dfp.es6.js',
+    src: 'src/**/*.js',
     output: 'angular-dfp.min.js',
     dest: './bin'
   },

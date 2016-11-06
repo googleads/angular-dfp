@@ -20,6 +20,9 @@
 const gulp = require('gulp');
 const babel = require('gulp-babel');
 const rename = require('gulp-rename');
+const strip = require('gulp-strip-comments');
+const header = require('gulp-header');
+const fs = require('fs');
 
 const config = require('../config').transpile;
 
@@ -30,5 +33,7 @@ gulp.task('transpile', ['concat'], () =>
         path.basename = path.basename.replace(/\.es6/g, '');
         return path;
       }))
+      .pipe(strip())
+      .pipe(header(fs.readFileSync('gulp/license-header.txt', 'utf8')))
       .pipe(gulp.dest(config.dest))
 );

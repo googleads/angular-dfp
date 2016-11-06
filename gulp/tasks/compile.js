@@ -19,20 +19,25 @@
 
 const gulp = require('gulp');
 const closureCompiler = require('gulp-closure-compiler');
+const header = require('gulp-header');
+const fs = require('fs');
 
 const config = require('../config').compile;
 
 /* eslint-disable camelcase */
-gulp.task('compile', ['concat'], () => {
+gulp.task('compile', () => {
   return gulp.src(config.src)
     .pipe(closureCompiler({
       fileName: config.output,
       compilerFlags: {
         warning_level: 'VERBOSE',
+        compilation_level: 'ADVANCED_OPTIMIZATIONS',
         language_in: 'ES6',
         language_out: 'ES5',
-        jscomp_off: 'checkVars'
+        jscomp_off: 'checkVars',
+        externs: ['externs/*']
       }
     }))
+    .pipe(header(fs.readFileSync('gulp/license-header.txt', 'utf8')))
     .pipe(gulp.dest(config.dest));
 });

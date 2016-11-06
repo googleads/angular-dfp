@@ -19,16 +19,11 @@
 
 const gulp = require('gulp');
 const concat = require('gulp-concat');
-const strip = require('gulp-strip-comments');
-const header = require('gulp-header');
-const fs = require('fs');
 
 const config = require('../config.js').concat;
 
 gulp.task('concat', () => {
   return gulp.src(config.src)
-             .pipe(strip())
              .pipe(concat(config.output))
-             .pipe(header(fs.readFileSync('gulp/license-header.txt', 'utf8')))
              .pipe(gulp.dest(config.dest));
 });
