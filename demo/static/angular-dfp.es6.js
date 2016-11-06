@@ -67,7 +67,7 @@ let angularDfp = angular.module('angularDfp', []);
 
     /**
     * Tests if a given HTTP response status is an error code.
-    * @param  {Number|!string}  code The response status code.
+    * @param  {number|!string}  code The response status code.
     * @return {!boolean} True if the code is an error code, else false.
     */
     httpError.isErrorCode = function(code) {
@@ -243,7 +243,7 @@ let angularDfp = angular.module('angularDfp', []);
 
     /**
     * The `responsiveResize` service.
-    * @param  {!angularJQLite} element The element to make responsive.
+    * @param  {!angular.JQLite} element The element to make responsive.
     * @param {googletag.Slot} slot The ad slot to refresh responsively.
     * @param  {Array=} boundaries The browser width boundaries at which to refresh.
     */
@@ -267,7 +267,7 @@ let angularDfp = angular.module('angularDfp', []);
 
     /**
     * Retrieves the iframe of the ad of the element.
-    * @return {HTMLElement} An iframe HTML element.
+    * @return {angular.JQLite} An iframe HTML element.
     */
       function queryIFrame() {
         return element.find('div iframe');
@@ -283,8 +283,8 @@ let angularDfp = angular.module('angularDfp', []);
     * dimensions remain unchanged. This distorts the element. As such, we
     * simply normalize these two dimensionss here.
     *
-    * @param  {Object=} iframe Optionally, the iframe to normalize
-    *                         (else it is queried).
+    * @param  {angular.JQLite=} iframe Optionally, the iframe to normalize
+    *                           (else it is queried).
     */
       function normalizeIFrame(iframe) {
         iframe = iframe || queryIFrame();
@@ -342,7 +342,7 @@ let angularDfp = angular.module('angularDfp', []);
       }
 
       /**
-      * @return {number} The initial width of the iframe.
+      * @return {!{width: ?string, height: ?string}} The initial width of the iframe.
       */
       function getIframeDimensions() {
         const iframe = queryIFrame();
@@ -384,11 +384,10 @@ let angularDfp = angular.module('angularDfp', []);
 
       /**
       * Returns a function suitable for responsive resize-event watching.
-      * @param  {googletag.Slot} slot The slot to make responsive.
       * @return {Function} A function to pass as an event
       *                    listener for (window) resize events.
       */
-      function makeResponsive(slot) {
+      function makeResponsive() {
         /**
         * Determinates in which of the boundaries the element is.
         * @return {number} The current index.
@@ -450,7 +449,7 @@ let angularDfp = angular.module('angularDfp', []);
           hideElement();
 
           // Refresh the ad slot now
-          dfpRefresh(slot).then(() => { watchResize(index); });
+          dfpRefresh(slot).then(() => { watchResize(); });
 
           console.assert(index >= 0 && index < boundaries.length);
         }
@@ -467,7 +466,7 @@ let angularDfp = angular.module('angularDfp', []);
         };
       }
 
-      $window.on('resize', makeResponsive(element));
+      $window.on('resize', makeResponsive());
     }
 
     return responsiveResize;
@@ -513,7 +512,7 @@ let angularDfp = angular.module('angularDfp', []);
   * The factory for the `scriptInjector` service.
   *
   * @private
-  * @param {Function} $q The Angular `$q` service.
+  * @param {!angular.$q} $q The Angular `$q` service.
   * @param {Function} httpError The `httpError` service.
   * @return {Function} The `scriptInjector` service.
   */
@@ -521,7 +520,7 @@ let angularDfp = angular.module('angularDfp', []);
     /**
     * Creates an HTML script tag.
     * @param  {!string} url The string of the script to inject.
-    * @return {HTMLElement} An `HTMLElement` ready for injection.
+    * @return {Element} An `Element` ready for injection.
     */
     function createScript(url) {
       const script = document.createElement('script');
@@ -536,9 +535,9 @@ let angularDfp = angular.module('angularDfp', []);
 
     /**
     * Creates a promise, to be resolved after the script is loaded.
-    * @param  {HTMLElement} script The script tag.
+    * @param  {Element} script The script tag.
     * @param {!string} url The url of the request.
-    * @return {Promise} The promise for the asynchronous script injection.
+    * @return {angular.$q.Promise<null>} The promise for the asynchronous script injection.
     */
     function promiseScript(script, url) {
       const deferred = $q.defer();
@@ -583,7 +582,7 @@ let angularDfp = angular.module('angularDfp', []);
 
     /**
     * Injects a script tag into the DOM (at the end of <head>).
-    * @param  {HTMLElement} script The HTMLElement script.
+    * @param  {Element} script The Element script.
     */
     function injectScript(script) {
       const head = document.head || document.querySelector('head');
@@ -593,13 +592,13 @@ let angularDfp = angular.module('angularDfp', []);
     /**
     * The `scriptInjector` service.
     * @param  {!string} url The string to inject.
-    * @return {Promise} A promise, resolved after
+    * @return {angular.$q.Promise<null>} A promise, resolved after
     *                   loading the script or reject on error.
     */
     function scriptInjector(url) {
       const script = createScript(url);
       injectScript(script);
-      return promiseScript(script);
+      return promiseScript(script, url);
     }
 
     return scriptInjector;
@@ -855,7 +854,10 @@ googletag.cmd = googletag.cmd || [];
       }
 
       if (ad.safeFrameConfig !== undefined) {
-        slot.setSafeFrameConfig(JSON.parse(ad.safeFrameConfig));
+        slot.setSafeFrameConfig(
+          /** @type {googletag.SafeFrameConfig} */
+          (JSON.parse(ad.safeFrameConfig))
+        );
       }
 
       addResponsiveMapping(slot);
@@ -1096,7 +1098,7 @@ googletag.cmd = googletag.cmd || [];
 
     /**
     * Generates random IDs until unique one is found.
-    * @return {Number} The unique numeric ID.
+    * @return {string} The unique ID.
     */
     function generateID() {
       let id = null;
@@ -1119,7 +1121,7 @@ googletag.cmd = googletag.cmd || [];
     * is generated for the element.
     *
     * @param {Object} element The element whose ID to check or assign.
-    * @return {Number} The unique ID of the element, or a new generated one.
+    * @return {string} The unique ID of the element, or a new generated one.
     */
     function dfpIDGenerator(element) {
       if (element && element.id && !(element.id in generatedIDs)) {
@@ -1134,7 +1136,7 @@ googletag.cmd = googletag.cmd || [];
 
     /**
     * Tests if an ID is taken.
-    * @param  {Number} id The ID to test.
+    * @param  {number} id The ID to test.
     * @return {boolean} True if the ID is not unique, else false.
     * @see dfpIDGenerator.isUnique()
     */
@@ -1144,7 +1146,7 @@ googletag.cmd = googletag.cmd || [];
 
     /**
     * Tests if an ID is unique (not taken).
-    * @param  {Number} id The ID to test.
+    * @param  {number} id The ID to test.
     * @return {boolean} True if the ID is unique, else false.
     * @see dfpIDGenerator.isTaken()
     */
@@ -1212,7 +1214,7 @@ googletag.cmd = googletag.cmd || [];
     /**
     * The milliseconds to wait after receiving a refresh request
     * to see if more requests come that we can buffer.
-    * @type {Number}
+    * @type {?number}
     */
     self.bufferInterval = 1000;
 
@@ -1221,7 +1223,7 @@ googletag.cmd = googletag.cmd || [];
    * If a proxy timeout is set and times out but the amount has not
    * yet been reached, the timeout will*not* be respected. That is,
    * setting a barrier temporarily (disables) the timeout.
-   * @type {Number}
+   * @type {?number}
    */
     self.bufferBarrier = null;
 
@@ -1304,7 +1306,7 @@ googletag.cmd = googletag.cmd || [];
         * @param  {googletag.Slot} slot  The adslot to refresh.
         * @param  {string|number=} interval The interval at which to refresh.
         * @param  {!boolean=} defer If an interval is passed and defer is false, a regular refresh call will be made immediately.
-        * @return {promise} A promise, resolved after the refresh call.
+        * @return {Promise} A promise, resolved after the refresh call.
         */
         function dfpRefresh(slot, interval, defer) {
           const deferred = $q.defer();
@@ -1344,7 +1346,7 @@ googletag.cmd = googletag.cmd || [];
         * @return {!boolean} True if an interval is set for the slot, else false.
         */
         dfpRefresh.hasSlotInterval = function(slot) {
-          return slot in self.intervals;
+          return slot in intervals;
         };
 
         /**
@@ -1415,7 +1417,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Returns the buffer interval setting (may be null).
-        * @return {Number} The current buffer interval (in ms), if any.
+        * @return {?number} The current buffer interval (in ms), if any.
         */
         dfpRefresh.getBufferInterval = function() {
           return self.bufferInterval;
@@ -1435,8 +1437,8 @@ googletag.cmd = googletag.cmd || [];
         * this method and the service will wait for 3 refresh calls before
         * actually refreshing them.
         *
-        * @param {Number} numberOfAds The number of ads to wait for.
-        * @param {Boolean=} oneShot     Whether to uninstall the barrier after the first flush.
+        * @param {number} numberOfAds The number of ads to wait for.
+        * @param {boolean=} oneShot     Whether to uninstall the barrier after the first flush.
         * @return {Function} The current `dfpRefresh` instance.
         */
         dfpRefresh.setBufferBarrier = function(numberOfAds, oneShot) {
@@ -1466,7 +1468,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Returns the any buffer barrier set.
-        * @return {Number} The current barrier
+        * @return {number?} The current barrier
         *                  (number of ads to buffer before flushing).
         */
         dfpRefresh.getBufferBarrier = function() {
@@ -1567,7 +1569,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Returns the current refresh interval, if any (may be `null`).
-        * @return {Number} The current refresh interval.
+        * @return {number} The current refresh interval.
         */
         dfpRefresh.getRefreshInterval = function() {
           return self.refreshInterval;
@@ -1588,7 +1590,7 @@ googletag.cmd = googletag.cmd || [];
         * Installed does not mean active, as this is
         * determined by the prioritization algorithm.
         *
-        * @param  {String}  option What to test activation for.
+        * @param  {string}  option What to test activation for.
         * @return {!boolean} True if the given option was ever
         *                   installed, else false.
         */
@@ -1608,7 +1610,7 @@ googletag.cmd = googletag.cmd || [];
         * since to be enabled the mechanism must be set, but also installed
         * by the prioritization algorithm.
         *
-        * @param  {String}  option What to test for.
+        * @param  {string}  option What to test for.
         * @return {!boolean} True if the option is enabled, else false.
         * @see dfpRefresh.Options
         * @throws DFPRefreshError if the option is not one of
@@ -1629,8 +1631,8 @@ googletag.cmd = googletag.cmd || [];
         * all three will be enabled (because their priority is equal to the
         * maximum), but when one has higher priority only that will run.
         *
-        * @param {!String} option What to set the priority for.
-        * @param {Number} priority The priority to set.
+        * @param {!string} option What to set the priority for.
+        * @param {number} priority The priority to set.
         * @return {Function} The current dfpRefresh instance.
         * @see dfpRefresh.Options
         * @throws DFPRefreshError if the option is not one of
@@ -1646,8 +1648,8 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Gets the priority setting for a given option.
-        * @param  {String} option The option to check.
-        * @return {Number} The priority of the option.
+        * @param  {string} option The option to check.
+        * @return {number} The priority of the option.
         */
         dfpRefresh.getPriority = function(option) {
           ensureValidOption(option);
@@ -1656,14 +1658,15 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Sets the priority of the global refreshing mechanism.
-        * @param {Number} priority The priority to give.
+        * @param {number} priority The priority to give.
         */
         dfpRefresh.setRefreshPriority = function(priority) {
-          dfpRefresh.setPriority('refresh');
+          ensureValidPriority(priority);
+          dfpRefresh.setPriority('refresh', priority);
         };
 
         /**
-        * @return {Number} The priority of the global refreshing mechanism.
+        * @return {number} The priority of the global refreshing mechanism.
         */
         dfpRefresh.getRefreshPriority = function() {
           return dfpRefresh.getPriority('refresh');
@@ -1671,14 +1674,15 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Sets the priority of the buffer barrier.
-        * @param {Number} priority The priority to give.
+        * @param {number} priority The priority to give.
         */
         dfpRefresh.setBarrierPriority = function(priority) {
-          dfpRefresh.setPriority('barrier');
+          ensureValidPriority(priority);
+          dfpRefresh.setPriority('barrier', priority);
         };
 
         /**
-        * @return {Number} The priority of the buffer barrier.
+        * @return {number} The priority of the buffer barrier.
         */
         dfpRefresh.getBarrierPriority = function() {
           return dfpRefresh.getPriority('barrier');
@@ -1686,15 +1690,15 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Sets the priority of the buffer interval.
-        * @param {Number} priority The priority to give.
+        * @param {number} priority The priority to give.
         */
         dfpRefresh.setIntervalPriority = function(priority) {
           ensureValidPriority(priority);
-          dfpRefresh.setPriority('interval');
+          dfpRefresh.setPriority('interval', priority);
         };
 
         /**
-        * @return {Number} The priority of the buffer interval.
+        * @return {number} The priority of the buffer interval.
         */
         dfpRefresh.getIntervalPriority = function() {
           return dfpRefresh.getPriority('interval');
@@ -1702,7 +1706,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Utility function to check if an option is valid and throw if not.
-        * @param  {String} option The option to check.
+        * @param  {string} option The option to check.
         * @throws DFPRefreshError if the option is not valid.
         */
         function ensureValidOption(option) {
@@ -1724,7 +1728,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Enables or disables an option.
-        * @param  {String} option The option to check.
+        * @param  {string} option The option to check.
         * @param  {boolean=} yes Whether to enable or not.
         */
         function enable(option, yes) {
@@ -1743,7 +1747,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Disables the given option.
-        * @param  {String} option The option to disable.
+        * @param  {string} option The option to disable.
         */
         function disable(option) {
           switch (option) {
@@ -1786,7 +1790,7 @@ googletag.cmd = googletag.cmd || [];
 
           /**
           * The maximum priority.
-          * @type {Number}
+          * @type {number}
           */
           let maximum = priorities.reduce((a, b) => Math.max(a, b));
 
@@ -1849,8 +1853,8 @@ googletag.cmd = googletag.cmd || [];
           const task = function() {
             // Set the elments currently in the buffer to null,
             // since all ads will be refreshed, but the length
-            //  must remain unchanged in case the barrier is not yet fulfilled
-            buffer.fill(null);
+            // must remain unchanged in case the barrier is not yet fulfilled
+            nullifyBuffer();
 
             // Calling refresh() without any arguments
             // will refresh all registered ads on the site
@@ -1889,7 +1893,7 @@ googletag.cmd = googletag.cmd || [];
           // amount of space as before.
           const task = function() {
             refresh(buffer);
-            buffer.fill(null);
+            nullifyBuffer();
           };
 
           const promise = $interval(task, self.bufferInterval);
@@ -1927,6 +1931,16 @@ googletag.cmd = googletag.cmd || [];
         */
         function disableBufferBarrier() {
           isEnabled.barrier = false;
+        }
+
+        /**
+         * Fills the buffer with `null`.
+         * Needed because Closure does not recognize Array.prototype.fill.
+         */
+        function nullifyBuffer() {
+          for (let i = 0; i < buffer.length; ++i) {
+            buffer[i] = null;
+          }
         }
 
         /**
@@ -2047,6 +2061,7 @@ googletag.cmd = googletag.cmd || [];
   * @private
   */
   function DFPResponsiveController() {
+    /* eslint-disable dot-notation */
     /**
     * The size of the browser.
     *
@@ -2054,12 +2069,15 @@ googletag.cmd = googletag.cmd || [];
     * then many possible ad sizes viable for ad calls for those browser
     * dimensions.
     *
-    * @type {Array}
+    * @type {!Array<number>}
     */
     const browserSize = Object.seal([
-      this.browserWidth,
-      this.browserHeight || 0
+      this['browserWidth'],
+      this['browserHeight'] || 0
     ]);
+    /* eslint-enable dot-notation */
+
+    console.log(browserSize, this);
 
     /**
     * The ad sizes for the browser dimensions.
@@ -2073,6 +2091,7 @@ googletag.cmd = googletag.cmd || [];
     *                   ready to be fetched, else false.
     */
     function isValid() {
+      console.log(this);
       if (browserSize.some(value => typeof value !== 'number')) return false;
       return adSizes.length > 0;
     }
@@ -2098,6 +2117,8 @@ googletag.cmd = googletag.cmd || [];
     };
   }
 
+  DFPResponsiveController.$inject = ['$scope'];
+
   /**
   * The directive for the responsive mapping.
   *
@@ -2108,6 +2129,7 @@ googletag.cmd = googletag.cmd || [];
   * @param {Object} ad The parent `dfp-ad` controller.
   */
   function dfpResponsiveDirective(scope, element, attributes, ad) {
+    console.log(scope);
     const mapping = scope.controller.getState();
     ad.addResponsiveMapping(mapping);
   }
@@ -2120,7 +2142,8 @@ googletag.cmd = googletag.cmd || [];
       controllerAs: 'controller',
       bindToController: true,
       link: dfpResponsiveDirective,
-      scope: {browserWidth: '=', browserHeight: '='}
+      // eslint-disable-next-line quote-props
+      scope: {'browserWidth': '=', 'browserHeight': '='}
     };
   }]);
 
@@ -2370,7 +2393,7 @@ googletag.cmd = googletag.cmd || [];
     *                   else false.
     */
     this.isValid = function() {
-      if (!('key' in this)) return false;
+      if (this.key === undefined) return false;
       if (values.length === 0) return false;
       return true;
     };
@@ -2556,13 +2579,8 @@ let angularDfpVideo = angular.module('angularDfp');
      // Generate an ID or check for uniqueness of an existing one (true = forVideo)
     dfpIDGenerator(element, true);
 
-    /* eslint-disable no-undef*/
-    /**
-    * The videojs player object.
-    * @type {Player}
-    */
+    // eslint-disable-next-line no-undef
     const player = videojs(element.id);
-    /* eslint-enable no-undef*/
 
      // Register the video slot with the IMA SDK
     player.ima({id: element.id, adTagUrl: scope.adTag});
@@ -2668,14 +2686,14 @@ googletag.cmd = googletag.cmd || [];
     * numbers or a freefrom address string. You must enable usage of this
     * information in DFP.
     *
-    * @type {?Array|String}
+    * @type {?Array|string}
     * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_setLocation}
     */
     self.location = null;
 
     /**
     * Your Publisher-Provided Identifier, if you have any.
-    * @type {?String}
+    * @type {?string}
     * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_setPublisherProvidedId}
     */
     self.ppid = null;
@@ -2705,7 +2723,7 @@ googletag.cmd = googletag.cmd || [];
     *   allowPushExpansion: true,
     *   sandbox: true
     *};
-    * @type {?Object}
+    * @type {?googletag.SafeFrameConfig}
     */
     self.safeFrameConfig = null;
 

@@ -54,6 +54,7 @@
   * @private
   */
   function DFPResponsiveController() {
+    /* eslint-disable dot-notation */
     /**
     * The size of the browser.
     *
@@ -61,12 +62,13 @@
     * then many possible ad sizes viable for ad calls for those browser
     * dimensions.
     *
-    * @type {Array}
+    * @type {!Array<number>}
     */
     const browserSize = Object.seal([
-      this.browserWidth,
-      this.browserHeight || 0
+      this['browserWidth'],
+      this['browserHeight'] || 0
     ]);
+    /* eslint-enable dot-notation */
 
     /**
     * The ad sizes for the browser dimensions.
@@ -80,6 +82,7 @@
     *                   ready to be fetched, else false.
     */
     function isValid() {
+      console.log(this);
       if (browserSize.some(value => typeof value !== 'number')) return false;
       return adSizes.length > 0;
     }
@@ -105,6 +108,8 @@
     };
   }
 
+  DFPResponsiveController.$inject = ['$scope'];
+
   /**
   * The directive for the responsive mapping.
   *
@@ -127,7 +132,9 @@
       controllerAs: 'controller',
       bindToController: true,
       link: dfpResponsiveDirective,
-      scope: {browserWidth: '=', browserHeight: '='}
+      // Need to quote props to avoid closure compiler renaming
+      // eslint-disable-next-line quote-props
+      scope: {'browserWidth': '=', 'browserHeight': '='}
     };
   }]);
 

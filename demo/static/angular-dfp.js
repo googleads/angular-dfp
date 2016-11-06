@@ -199,7 +199,7 @@ var angularDfp = angular.module('angularDfp', []);
         showElement();
       }
 
-      function makeResponsive(slot) {
+      function makeResponsive() {
         function determineIndex() {
           var width = $window.innerWidth;
           var last = boundaries.length - 1;
@@ -233,7 +233,7 @@ var angularDfp = angular.module('angularDfp', []);
           hideElement();
 
           dfpRefresh(slot).then(function () {
-            watchResize(index);
+            watchResize();
           });
 
           console.assert(index >= 0 && index < boundaries.length);
@@ -250,7 +250,7 @@ var angularDfp = angular.module('angularDfp', []);
         };
       }
 
-      $window.on('resize', makeResponsive(element));
+      $window.on('resize', makeResponsive());
     }
 
     return responsiveResize;
@@ -317,7 +317,7 @@ var angularDfp = angular.module('angularDfp', []);
     function scriptInjector(url) {
       var script = createScript(url);
       injectScript(script);
-      return promiseScript(script);
+      return promiseScript(script, url);
     }
 
     return scriptInjector;
@@ -431,7 +431,8 @@ googletag.cmd = googletag.cmd || [];
       }
 
       if (ad.safeFrameConfig !== undefined) {
-        slot.setSafeFrameConfig(JSON.parse(ad.safeFrameConfig));
+        slot.setSafeFrameConfig(
+        JSON.parse(ad.safeFrameConfig));
       }
 
       addResponsiveMapping(slot);
@@ -681,7 +682,7 @@ googletag.cmd = googletag.cmd || [];
       };
 
       dfpRefresh.hasSlotInterval = function (slot) {
-        return slot in self.intervals;
+        return slot in intervals;
       };
 
       dfpRefresh.setBufferInterval = function (interval) {
@@ -820,7 +821,8 @@ googletag.cmd = googletag.cmd || [];
       };
 
       dfpRefresh.setRefreshPriority = function (priority) {
-        dfpRefresh.setPriority('refresh');
+        ensureValidPriority(priority);
+        dfpRefresh.setPriority('refresh', priority);
       };
 
       dfpRefresh.getRefreshPriority = function () {
@@ -828,7 +830,8 @@ googletag.cmd = googletag.cmd || [];
       };
 
       dfpRefresh.setBarrierPriority = function (priority) {
-        dfpRefresh.setPriority('barrier');
+        ensureValidPriority(priority);
+        dfpRefresh.setPriority('barrier', priority);
       };
 
       dfpRefresh.getBarrierPriority = function () {
@@ -837,7 +840,7 @@ googletag.cmd = googletag.cmd || [];
 
       dfpRefresh.setIntervalPriority = function (priority) {
         ensureValidPriority(priority);
-        dfpRefresh.setPriority('interval');
+        dfpRefresh.setPriority('interval', priority);
       };
 
       dfpRefresh.getIntervalPriority = function () {
@@ -942,7 +945,7 @@ googletag.cmd = googletag.cmd || [];
         console.assert(dfpRefresh.hasRefreshInterval());
 
         var task = function task() {
-          buffer.fill(null);
+          nullifyBuffer();
 
           refresh();
         };
@@ -965,7 +968,7 @@ googletag.cmd = googletag.cmd || [];
 
         var task = function task() {
           refresh(buffer);
-          buffer.fill(null);
+          nullifyBuffer();
         };
 
         var promise = $interval(task, self.bufferInterval);
@@ -988,6 +991,12 @@ googletag.cmd = googletag.cmd || [];
 
       function disableBufferBarrier() {
         isEnabled.barrier = false;
+      }
+
+      function nullifyBuffer() {
+        for (var i = 0; i < buffer.length; ++i) {
+          buffer[i] = null;
+        }
       }
 
       function addSlotInterval(task, interval) {
@@ -1039,11 +1048,14 @@ googletag.cmd = googletag.cmd || [];
 
 
   function DFPResponsiveController() {
-    var browserSize = Object.seal([this.browserWidth, this.browserHeight || 0]);
+    var browserSize = Object.seal([this['browserWidth'], this['browserHeight'] || 0]);
+
+    console.log(browserSize, this);
 
     var adSizes = [];
 
     function isValid() {
+      console.log(this);
       if (browserSize.some(function (value) {
         return typeof value !== 'number';
       })) return false;
@@ -1063,7 +1075,10 @@ googletag.cmd = googletag.cmd || [];
     };
   }
 
+  DFPResponsiveController.$inject = ['$scope'];
+
   function dfpResponsiveDirective(scope, element, attributes, ad) {
+    console.log(scope);
     var mapping = scope.controller.getState();
     ad.addResponsiveMapping(mapping);
   }
@@ -1076,7 +1091,7 @@ googletag.cmd = googletag.cmd || [];
       controllerAs: 'controller',
       bindToController: true,
       link: dfpResponsiveDirective,
-      scope: { browserWidth: '=', browserHeight: '=' }
+      scope: { 'browserWidth': '=', 'browserHeight': '=' }
     };
   }]);
 
@@ -1149,7 +1164,7 @@ googletag.cmd = googletag.cmd || [];
     var values = this.value ? [this.value] : [];
 
     this.isValid = function () {
-      if (!('key' in this)) return false;
+      if (this.key === undefined) return false;
       if (values.length === 0) return false;
       return true;
     };

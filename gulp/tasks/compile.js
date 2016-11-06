@@ -19,8 +19,6 @@
 
 const gulp = require('gulp');
 const closureCompiler = require('gulp-closure-compiler');
-const header = require('gulp-header');
-const fs = require('fs');
 
 const config = require('../config').compile;
 
@@ -38,6 +36,5 @@ gulp.task('compile', () => {
         externs: ['externs/*']
       }
     }))
-    .pipe(header(fs.readFileSync('gulp/license-header.txt', 'utf8')))
     .pipe(gulp.dest(config.dest));
 });

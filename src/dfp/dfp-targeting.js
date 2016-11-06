@@ -63,7 +63,7 @@
     *                   else false.
     */
     this.isValid = function() {
-      if (!('key' in this)) return false;
+      if (this.key === undefined) return false;
       if (values.length === 0) return false;
       return true;
     };
