@@ -233,10 +233,9 @@ let angularDfp = angular.module('angularDfp', []);
   * @param  {Function} $interval {@link http://docs.angularjs.org/api/ng.$interval}
   * @param  {Function} $timeout  {@link http://docs.angularjs.org/api/ng.$timeout}
   * @param  {Object} $window  {@link http://docs.angularjs.org/api/ng.$window}
-  * @param {Function} dfpRefresh The dfpRefresh service.
   * @return {Function} The `responsiveResize` service.
   */
-  function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
+  function responsiveResizeFactory($interval, $timeout, $window) {
     // Turn into jQLite element
     // eslint-disable-next-line
     $window = angular.element($window);
@@ -449,7 +448,7 @@ let angularDfp = angular.module('angularDfp', []);
           hideElement();
 
           // Refresh the ad slot now
-          dfpRefresh(slot).then(() => { watchResize(); });
+          // dfpRefresh(slot).then(() => { watchResize(); });
 
           console.assert(index >= 0 && index < boundaries.length);
         }
@@ -472,14 +471,13 @@ let angularDfp = angular.module('angularDfp', []);
     return responsiveResize;
   }
 
-  responsiveResizeFactory.$inject = [
+  module.factory('responsiveResize', [
     '$interval',
     '$timeout',
     '$window',
-    'dfpRefresh'
-  ];
-
-  module.factory('responsiveResize', responsiveResizeFactory);
+    'dfpRefresh',
+    responsiveResizeFactory
+  ]);
 
   // eslint-disable-next-line
 })(angularDfp);
@@ -701,10 +699,12 @@ googletag.cmd = googletag.cmd || [];
     */
     this.isValid = function() {
       if (sizes.length === 0) return false;
-      if (!this.adUnit) return false;
+      // eslint-disable-next-line dot-notation
+      if (!this['adUnit']) return false;
       return true;
     };
 
+    /* eslint-disable dot-notation */
     /**
     * Returns the public state of the controller for use by the directive.
     * @return {Object} An object of all properties the directive will
@@ -717,15 +717,16 @@ googletag.cmd = googletag.cmd || [];
         responsiveMapping,
         targetings,
         exclusions,
-        adUnit: this.adUnit,
-        forceSafeFrame: this.forceSafeFrame,
-        safeFrameConfig: this.safeFrameConfig,
-        clickUrl: this.clickUrl,
-        refresh: this.refresh,
+        adUnit: this['adUnit'],
+        forceSafeFrame: this['forceSafeFrame'],
+        safeFrameConfig: this['safeFrameConfig'],
+        clickUrl: this['clickUrl'],
+        refresh: this['refresh'],
         scripts,
-        collapseIfEmpty: this.collapseIfEmpty
+        collapseIfEmpty: this['collapseIfEmpty']
       });
     };
+    /* eslint-enable dot-notation */
 
     /**
     * Registers a (fixed) size for the ad slot.
@@ -900,14 +901,16 @@ googletag.cmd = googletag.cmd || [];
       link: function(...args) {
         dfpAdDirective.apply(null, args.slice(0, 4).concat($injector));
       },
+      /* eslint-disable quote-props */
       scope: {
-        adUnit: '@',
-        clickUrl: '@',
-        forceSafeFrame: '@',
-        safeFrameConfig: '@',
-        refresh: '@',
-        collapseIfEmpty: '@'
+        'adUnit': '@',
+        'clickUrl': '@',
+        'forceSafeFrame': '@',
+        'safeFrameConfig': '@',
+        'refresh': '@',
+        'collapseIfEmpty': '@'
       }
+      /* eslint-enable quote-props */
     };
   }
   ]);
@@ -1260,16 +1263,27 @@ googletag.cmd = googletag.cmd || [];
       'parseDuration',
       function($rootScope, $interval, $q, parseDuration) {
         /**
-        * The possible buffering/refreshing options
+        * The possible buffering/refreshing options (as an "enum")
         * @type {!Object}
         */
         const Options = Object.freeze({
-          REFRESH: 'REFRESH',
-          INTERVAL: 'INTERVAL',
-          BARRIER: 'BARRIER'
+          REFRESH: 'refresh',
+          INTERVAL: 'interval',
+          BARRIER: 'barrier'
         });
 
-        dfpRefresh.Options = Options;
+        /**
+        * This external enum has string keys so that the closure compiler
+        * does not rename them, while we can still use dot-notation internally.
+        * @type {!Object}
+        */
+        /* eslint-disable quote-props */
+        dfpRefresh.Options = Object.freeze({
+          'REFRESH': Options.REFRESH,
+          'INTERVAL': Options.INTERVAL,
+          'BARRIER': Options.BARRIER
+        });
+        /* eslint-enable quote-props */
 
         /**
         * The buffered ads waiting to be refreshed.
@@ -1289,11 +1303,13 @@ googletag.cmd = googletag.cmd || [];
         * Stores the activity status of the buffering/refreshing options.
         * @type {Object}
         */
+        /* eslint-disable quote-props */
         const isEnabled = Object.seal({
           refresh: self.refreshInterval !== null,
           interval: self.bufferInterval !== null,
           barrier: self.bufferBarrier !== null
         });
+        /* eslint-enable quote-props */
 
         /**
         * The main interfacing function to the `dfpRefresh` proxy.
@@ -1581,7 +1597,7 @@ googletag.cmd = googletag.cmd || [];
         *                   interval are enabled, else false
         */
         dfpRefresh.isBuffering = function() {
-          return [Options.BARRIER, Options.INTERVAL].some(dfpRefresh.isEnabled);
+          return isEnabled.buffer || isEnabled.interval;
         };
 
         /**
@@ -1601,24 +1617,6 @@ googletag.cmd = googletag.cmd || [];
             case Options.BARRIER: return dfpRefresh.hasBufferBarrier();
             default: throw new DFPRefreshError(`Invalid option '${option}'`);
           }
-        };
-
-        /**
-        * Tests if the given refreshing/buffering mechanisms is active.
-        *
-        * Note that being enabled is stronger than being installed (`has`),
-        * since to be enabled the mechanism must be set, but also installed
-        * by the prioritization algorithm.
-        *
-        * @param  {string}  option What to test for.
-        * @return {!boolean} True if the option is enabled, else false.
-        * @see dfpRefresh.Options
-        * @throws DFPRefreshError if the option is not one of
-        *         the DFPRefresh.Options members.
-        */
-        dfpRefresh.isEnabled = function(option) {
-          ensureValidOption(option);
-          return isEnabled[option];
         };
 
         /**
@@ -1772,9 +1770,10 @@ googletag.cmd = googletag.cmd || [];
         function prioritize() {
           /**
           * The options theoretically possible.
+          * Closure does not yet recognize Object.values.
           * @type {Array}
           */
-          let options = Object.keys(Options);
+          let options = Object.keys(Options).map(key => Options[key]);
 
           /**
           * The options available (installed).
@@ -2077,8 +2076,6 @@ googletag.cmd = googletag.cmd || [];
     ]);
     /* eslint-enable dot-notation */
 
-    console.log(browserSize, this);
-
     /**
     * The ad sizes for the browser dimensions.
     * @type {Array}
@@ -2091,7 +2088,6 @@ googletag.cmd = googletag.cmd || [];
     *                   ready to be fetched, else false.
     */
     function isValid() {
-      console.log(this);
       if (browserSize.some(value => typeof value !== 'number')) return false;
       return adSizes.length > 0;
     }
@@ -2129,7 +2125,6 @@ googletag.cmd = googletag.cmd || [];
   * @param {Object} ad The parent `dfp-ad` controller.
   */
   function dfpResponsiveDirective(scope, element, attributes, ad) {
-    console.log(scope);
     const mapping = scope.controller.getState();
     ad.addResponsiveMapping(mapping);
   }
@@ -2142,6 +2137,7 @@ googletag.cmd = googletag.cmd || [];
       controllerAs: 'controller',
       bindToController: true,
       link: dfpResponsiveDirective,
+      // Need to quote props to avoid closure compiler renaming
       // eslint-disable-next-line quote-props
       scope: {'browserWidth': '=', 'browserHeight': '='}
     };

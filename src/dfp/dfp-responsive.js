@@ -82,7 +82,6 @@
     *                   ready to be fetched, else false.
     */
     function isValid() {
-      console.log(this);
       if (browserSize.some(value => typeof value !== 'number')) return false;
       return adSizes.length > 0;
     }

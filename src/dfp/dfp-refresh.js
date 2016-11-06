@@ -96,16 +96,27 @@ googletag.cmd = googletag.cmd || [];
       'parseDuration',
       function($rootScope, $interval, $q, parseDuration) {
         /**
-        * The possible buffering/refreshing options
+        * The possible buffering/refreshing options (as an "enum")
         * @type {!Object}
         */
         const Options = Object.freeze({
-          REFRESH: 'REFRESH',
-          INTERVAL: 'INTERVAL',
-          BARRIER: 'BARRIER'
+          REFRESH: 'refresh',
+          INTERVAL: 'interval',
+          BARRIER: 'barrier'
         });
 
-        dfpRefresh.Options = Options;
+        /**
+        * This external enum has string keys so that the closure compiler
+        * does not rename them, while we can still use dot-notation internally.
+        * @type {!Object}
+        */
+        /* eslint-disable quote-props */
+        dfpRefresh.Options = Object.freeze({
+          'REFRESH': Options.REFRESH,
+          'INTERVAL': Options.INTERVAL,
+          'BARRIER': Options.BARRIER
+        });
+        /* eslint-enable quote-props */
 
         /**
         * The buffered ads waiting to be refreshed.
@@ -125,11 +136,13 @@ googletag.cmd = googletag.cmd || [];
         * Stores the activity status of the buffering/refreshing options.
         * @type {Object}
         */
+        /* eslint-disable quote-props */
         const isEnabled = Object.seal({
           refresh: self.refreshInterval !== null,
           interval: self.bufferInterval !== null,
           barrier: self.bufferBarrier !== null
         });
+        /* eslint-enable quote-props */
 
         /**
         * The main interfacing function to the `dfpRefresh` proxy.
@@ -417,7 +430,7 @@ googletag.cmd = googletag.cmd || [];
         *                   interval are enabled, else false
         */
         dfpRefresh.isBuffering = function() {
-          return [Options.BARRIER, Options.INTERVAL].some(dfpRefresh.isEnabled);
+          return isEnabled.buffer || isEnabled.interval;
         };
 
         /**
@@ -437,24 +450,6 @@ googletag.cmd = googletag.cmd || [];
             case Options.BARRIER: return dfpRefresh.hasBufferBarrier();
             default: throw new DFPRefreshError(`Invalid option '${option}'`);
           }
-        };
-
-        /**
-        * Tests if the given refreshing/buffering mechanisms is active.
-        *
-        * Note that being enabled is stronger than being installed (`has`),
-        * since to be enabled the mechanism must be set, but also installed
-        * by the prioritization algorithm.
-        *
-        * @param  {string}  option What to test for.
-        * @return {!boolean} True if the option is enabled, else false.
-        * @see dfpRefresh.Options
-        * @throws DFPRefreshError if the option is not one of
-        *         the DFPRefresh.Options members.
-        */
-        dfpRefresh.isEnabled = function(option) {
-          ensureValidOption(option);
-          return isEnabled[option];
         };
 
         /**
@@ -608,9 +603,10 @@ googletag.cmd = googletag.cmd || [];
         function prioritize() {
           /**
           * The options theoretically possible.
+          * Closure does not yet recognize Object.values.
           * @type {Array}
           */
-          let options = Object.keys(Options);
+          let options = Object.keys(Options).map(key => Options[key]);
 
           /**
           * The options available (installed).

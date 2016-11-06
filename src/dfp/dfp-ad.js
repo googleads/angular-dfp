@@ -90,10 +90,12 @@ googletag.cmd = googletag.cmd || [];
     */
     this.isValid = function() {
       if (sizes.length === 0) return false;
-      if (!this.adUnit) return false;
+      // eslint-disable-next-line dot-notation
+      if (!this['adUnit']) return false;
       return true;
     };
 
+    /* eslint-disable dot-notation */
     /**
     * Returns the public state of the controller for use by the directive.
     * @return {Object} An object of all properties the directive will
@@ -106,15 +108,16 @@ googletag.cmd = googletag.cmd || [];
         responsiveMapping,
         targetings,
         exclusions,
-        adUnit: this.adUnit,
-        forceSafeFrame: this.forceSafeFrame,
-        safeFrameConfig: this.safeFrameConfig,
-        clickUrl: this.clickUrl,
-        refresh: this.refresh,
+        adUnit: this['adUnit'],
+        forceSafeFrame: this['forceSafeFrame'],
+        safeFrameConfig: this['safeFrameConfig'],
+        clickUrl: this['clickUrl'],
+        refresh: this['refresh'],
         scripts,
-        collapseIfEmpty: this.collapseIfEmpty
+        collapseIfEmpty: this['collapseIfEmpty']
       });
     };
+    /* eslint-enable dot-notation */
 
     /**
     * Registers a (fixed) size for the ad slot.
@@ -289,14 +292,16 @@ googletag.cmd = googletag.cmd || [];
       link: function(...args) {
         dfpAdDirective.apply(null, args.slice(0, 4).concat($injector));
       },
+      /* eslint-disable quote-props */
       scope: {
-        adUnit: '@',
-        clickUrl: '@',
-        forceSafeFrame: '@',
-        safeFrameConfig: '@',
-        refresh: '@',
-        collapseIfEmpty: '@'
+        'adUnit': '@',
+        'clickUrl': '@',
+        'forceSafeFrame': '@',
+        'safeFrameConfig': '@',
+        'refresh': '@',
+        'collapseIfEmpty': '@'
       }
+      /* eslint-enable quote-props */
     };
   }
   ]);

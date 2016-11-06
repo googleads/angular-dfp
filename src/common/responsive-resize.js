@@ -35,10 +35,9 @@
   * @param  {Function} $interval {@link http://docs.angularjs.org/api/ng.$interval}
   * @param  {Function} $timeout  {@link http://docs.angularjs.org/api/ng.$timeout}
   * @param  {Object} $window  {@link http://docs.angularjs.org/api/ng.$window}
-  * @param {Function} dfpRefresh The dfpRefresh service.
   * @return {Function} The `responsiveResize` service.
   */
-  function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
+  function responsiveResizeFactory($interval, $timeout, $window) {
     // Turn into jQLite element
     // eslint-disable-next-line
     $window = angular.element($window);
@@ -251,7 +250,7 @@
           hideElement();
 
           // Refresh the ad slot now
-          dfpRefresh(slot).then(() => { watchResize(); });
+          // dfpRefresh(slot).then(() => { watchResize(); });
 
           console.assert(index >= 0 && index < boundaries.length);
         }
@@ -274,14 +273,13 @@
     return responsiveResize;
   }
 
-  responsiveResizeFactory.$inject = [
+  module.factory('responsiveResize', [
     '$interval',
     '$timeout',
     '$window',
-    'dfpRefresh'
-  ];
-
-  module.factory('responsiveResize', responsiveResizeFactory);
+    'dfpRefresh',
+    responsiveResizeFactory
+  ]);
 
   // eslint-disable-next-line
 })(angularDfp);

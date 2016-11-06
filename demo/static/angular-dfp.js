@@ -127,7 +127,7 @@ var angularDfp = angular.module('angularDfp', []);
   'use strict';
 
 
-  function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
+  function responsiveResizeFactory($interval, $timeout, $window) {
     $window = angular.element($window);
 
     function responsiveResize(element, slot, boundaries) {
@@ -232,9 +232,6 @@ var angularDfp = angular.module('angularDfp', []);
           index += delta;
           hideElement();
 
-          dfpRefresh(slot).then(function () {
-            watchResize();
-          });
 
           console.assert(index >= 0 && index < boundaries.length);
         }
@@ -256,9 +253,7 @@ var angularDfp = angular.module('angularDfp', []);
     return responsiveResize;
   }
 
-  responsiveResizeFactory.$inject = ['$interval', '$timeout', '$window', 'dfpRefresh'];
-
-  module.factory('responsiveResize', responsiveResizeFactory);
+  module.factory('responsiveResize', ['$interval', '$timeout', '$window', 'dfpRefresh', responsiveResizeFactory]);
 
 })(angularDfp);
 
@@ -348,7 +343,7 @@ googletag.cmd = googletag.cmd || [];
 
     this.isValid = function () {
       if (sizes.length === 0) return false;
-      if (!this.adUnit) return false;
+      if (!this['adUnit']) return false;
       return true;
     };
 
@@ -359,13 +354,13 @@ googletag.cmd = googletag.cmd || [];
         responsiveMapping: responsiveMapping,
         targetings: targetings,
         exclusions: exclusions,
-        adUnit: this.adUnit,
-        forceSafeFrame: this.forceSafeFrame,
-        safeFrameConfig: this.safeFrameConfig,
-        clickUrl: this.clickUrl,
-        refresh: this.refresh,
+        adUnit: this['adUnit'],
+        forceSafeFrame: this['forceSafeFrame'],
+        safeFrameConfig: this['safeFrameConfig'],
+        clickUrl: this['clickUrl'],
+        refresh: this['refresh'],
         scripts: scripts,
-        collapseIfEmpty: this.collapseIfEmpty
+        collapseIfEmpty: this['collapseIfEmpty']
       });
     };
 
@@ -477,12 +472,12 @@ googletag.cmd = googletag.cmd || [];
         dfpAdDirective.apply(null, args.slice(0, 4).concat($injector));
       },
       scope: {
-        adUnit: '@',
-        clickUrl: '@',
-        forceSafeFrame: '@',
-        safeFrameConfig: '@',
-        refresh: '@',
-        collapseIfEmpty: '@'
+        'adUnit': '@',
+        'clickUrl': '@',
+        'forceSafeFrame': '@',
+        'safeFrameConfig': '@',
+        'refresh': '@',
+        'collapseIfEmpty': '@'
       }
     };
   }]);
@@ -638,12 +633,16 @@ googletag.cmd = googletag.cmd || [];
 
     self.$get = ['$rootScope', '$interval', '$q', 'parseDuration', function ($rootScope, $interval, $q, parseDuration) {
       var Options = Object.freeze({
-        REFRESH: 'REFRESH',
-        INTERVAL: 'INTERVAL',
-        BARRIER: 'BARRIER'
+        REFRESH: 'refresh',
+        INTERVAL: 'interval',
+        BARRIER: 'barrier'
       });
 
-      dfpRefresh.Options = Options;
+      dfpRefresh.Options = Object.freeze({
+        'REFRESH': Options.REFRESH,
+        'INTERVAL': Options.INTERVAL,
+        'BARRIER': Options.BARRIER
+      });
 
       var buffer = [];
 
@@ -786,7 +785,7 @@ googletag.cmd = googletag.cmd || [];
       };
 
       dfpRefresh.isBuffering = function () {
-        return [Options.BARRIER, Options.INTERVAL].some(dfpRefresh.isEnabled);
+        return isEnabled.buffer || isEnabled.interval;
       };
 
       dfpRefresh.has = function (option) {
@@ -800,11 +799,6 @@ googletag.cmd = googletag.cmd || [];
           default:
             throw new DFPRefreshError('Invalid option \'' + option + '\'');
         }
-      };
-
-      dfpRefresh.isEnabled = function (option) {
-        ensureValidOption(option);
-        return isEnabled[option];
       };
 
       dfpRefresh.setPriority = function (option, priority) {
@@ -891,7 +885,9 @@ googletag.cmd = googletag.cmd || [];
       }
 
       function prioritize() {
-        var options = Object.keys(Options);
+        var options = Object.keys(Options).map(function (key) {
+          return Options[key];
+        });
 
         var available = options.filter(dfpRefresh.has);
 
@@ -1050,12 +1046,9 @@ googletag.cmd = googletag.cmd || [];
   function DFPResponsiveController() {
     var browserSize = Object.seal([this['browserWidth'], this['browserHeight'] || 0]);
 
-    console.log(browserSize, this);
-
     var adSizes = [];
 
     function isValid() {
-      console.log(this);
       if (browserSize.some(function (value) {
         return typeof value !== 'number';
       })) return false;
@@ -1078,7 +1071,6 @@ googletag.cmd = googletag.cmd || [];
   DFPResponsiveController.$inject = ['$scope'];
 
   function dfpResponsiveDirective(scope, element, attributes, ad) {
-    console.log(scope);
     var mapping = scope.controller.getState();
     ad.addResponsiveMapping(mapping);
   }
