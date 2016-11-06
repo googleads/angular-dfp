@@ -59,7 +59,8 @@ let angularDfpVideo = angular.module('angularDfp');
     const player = videojs(element.id);
 
      // Register the video slot with the IMA SDK
-    player.ima({id: element.id, adTagUrl: scope.adTag});
+     // eslint-disable-next-line dot-notation
+    player.ima({id: element.id, adTagUrl: scope['adTag']});
     player.ima.requestAds();
     player.ima.initializeAdDisplayContainer();
   }
@@ -67,7 +68,8 @@ let angularDfpVideo = angular.module('angularDfp');
   module.directive('dfpVideo', ['$injector', function($injector) {
     return {
       restrict: 'A',
-      scope: {adTag: '@'},
+      // eslint-disable-next-line quote-props
+      scope: {'adTag': '@'},
       link: function(...args) {
         dfpVideoDirective.apply(null, args.concat($injector));
       }

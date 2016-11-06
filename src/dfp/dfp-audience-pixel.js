@@ -29,7 +29,7 @@
   * Audience pixels are useful for getting audience impressions on parts of a
   * page that do not show ads. Usually, audience impressions are generated when
   * a user sees an ad (unit) and is then eventually added to that audience
-  * segmenet. However, when you have no ads but still want to record an
+  * segment. However, when you have no ads but still want to record an
   * impression for an audience segment, you can add a transparent 1x1 pixel to
   * do so.
   *
@@ -44,20 +44,24 @@
     const axel = String(Math.random());
     const random = axel * 10000000000000;
 
+    /* eslint-disable dot-notation */
+
     let adUnit = '';
     if (scope.adUnit) {
-      adUnit = `dc_iu=${scope.adUnit}`;
+      adUnit = `dc_iu=${scope['adUnit']}`;
     }
 
     let ppid = '';
     if (scope.ppid) {
-      ppid = `ppid=${scope.ppid}`;
+      ppid = `ppid=${scope['ppid']}`;
     }
 
     const pixel = document.createElement('img');
 
     pixel.src = 'https://pubads.g.doubleclick.net/activity;ord=';
-    pixel.src += `${random};dc_seg=${scope.segmentId};${adUnit}${ppid}`;
+    pixel.src += `${random};dc_seg=${scope['segmentId']};${adUnit}${ppid}`;
+
+    /* eslint-enable dot-notation */
 
     pixel.width = 1;
     pixel.height = 1;
@@ -70,8 +74,9 @@
   module.directive('dfpAudiencePixel', [() => {
     return {
       restrict: 'E',
-      scope: {adUnit: '@', segmentId: '@', ppid: '@'},
-      link: dfpAudiencePixelDirective
+      link: dfpAudiencePixelDirective,
+      // eslint-disable-next-line quote-props
+      scope: {'adUnit': '@', 'segmentId': '@', 'ppid': '@'}
     };
   }]);
 
