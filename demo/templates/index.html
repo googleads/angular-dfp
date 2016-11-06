@@ -10,7 +10,6 @@
   <body ng-controller="DemoController" ng-cloak>
     <dfp-ad force-safe-frame
             collapse-if-empty
-            refresh='3s'
             ad-unit="/35096353/pub-showcase">
       <dfp-size width="728" height="90"></dfp-size>
       <dfp-targeting key="sport" value="football"></dfp-targeting>
@@ -28,6 +27,9 @@
       <dfp-responsive browser-width="1024" browser-height="0">
         <dfp-size width=970 height=90></dfp-size>
       </dfp-responsive>
+    </dfp-ad>
+    <dfp-ad force-safe-frame ad-unit="/35096353/pub-showcase">
+      <dfp-size width="728" height="90"></dfp-size>
     </dfp-ad>
     <dfp-audience-pixel></dfp-audience-pixel>
   </body>

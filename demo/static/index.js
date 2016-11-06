@@ -23,7 +23,7 @@
 let app = angular
   .module('angularDfpDemo', ['angularDfp'])
   .config(['dfpRefreshProvider', function(dfpRefreshProvider) {
-    dfpRefreshProvider.refreshInterval = 10000;
+    dfpRefreshProvider.refreshInterval = '10s';
   }]);
 
 // Configure angular expressions to use the {( ... )} instead of

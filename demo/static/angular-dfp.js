@@ -341,6 +341,10 @@ googletag.cmd = googletag.cmd || [];
 
     var scripts = [];
 
+    this.booleanProperty = function (name) {
+      return this[name] !== undefined;
+    };
+
     this.isValid = function () {
       if (sizes.length === 0) return false;
       if (!this['adUnit']) return false;
@@ -355,12 +359,12 @@ googletag.cmd = googletag.cmd || [];
         targetings: targetings,
         exclusions: exclusions,
         adUnit: this['adUnit'],
-        forceSafeFrame: this['forceSafeFrame'],
+        forceSafeFrame: this.booleanProperty('forceSafeFrame'),
         safeFrameConfig: this['safeFrameConfig'],
         clickUrl: this['clickUrl'],
         refresh: this['refresh'],
         scripts: scripts,
-        collapseIfEmpty: this['collapseIfEmpty']
+        collapseIfEmpty: this.booleanProperty('collapseIfEmpty')
       });
     };
 
@@ -421,11 +425,11 @@ googletag.cmd = googletag.cmd || [];
         slot.setClickUrl(ad.clickUrl);
       }
 
-      if (ad.collapseIfEmpty !== undefined) {
+      if (ad.collapseIfEmpty) {
         slot.setCollapseEmptyDiv(true, true);
       }
 
-      if (ad.safeFrameConfig !== undefined) {
+      if (ad.safeFrameConfig) {
         slot.setSafeFrameConfig(
         JSON.parse(ad.safeFrameConfig));
       }
@@ -623,18 +627,18 @@ googletag.cmd = googletag.cmd || [];
   function dfpRefreshProvider() {
     var self = this;
 
-    self.bufferInterval = 1000;
+    self.bufferInterval = null;
 
     self.bufferBarrier = null;
 
     self.oneShotBarrier = true;
 
-    self.refreshInterval = 60 * 60 * 1000; 
+    self.refreshInterval = null;
 
     self.priority = {
-      REFRESH: 1,
-      INTERVAL: 1,
-      BARRIER: 1
+      'refresh': 1,
+      'interval': 1,
+      'barrier': 1
     };
 
     self.$get = ['$rootScope', '$interval', '$q', 'parseDuration', function ($rootScope, $interval, $q, parseDuration) {
@@ -791,7 +795,7 @@ googletag.cmd = googletag.cmd || [];
       };
 
       dfpRefresh.isBuffering = function () {
-        return isEnabled.buffer || isEnabled.interval;
+        return isEnabled.barrier || isEnabled.interval;
       };
 
       dfpRefresh.has = function (option) {
@@ -918,14 +922,16 @@ googletag.cmd = googletag.cmd || [];
         console.assert(tasks === undefined || tasks !== null);
 
         if (tasks === undefined) {
-          googletag.pubads().refresh();
+          googletag.cmd.push(function () {
+            googletag.pubads().refresh();
+          });
           return;
         }
 
         if (tasks.length === 0) return;
 
         tasks = tasks.filter(function (pair) {
-          return pair.slot !== null;
+          return pair !== null;
         });
 
         googletag.cmd.push(function () {
@@ -947,7 +953,7 @@ googletag.cmd = googletag.cmd || [];
         console.assert(dfpRefresh.hasRefreshInterval());
 
         var task = function task() {
-          nullifyBuffer();
+          clearBufferRespectingBarrier();
 
           refresh();
         };
@@ -970,7 +976,7 @@ googletag.cmd = googletag.cmd || [];
 
         var task = function task() {
           refresh(buffer);
-          nullifyBuffer();
+          clearBufferRespectingBarrier();
         };
 
         var promise = $interval(task, self.bufferInterval);
@@ -995,9 +1001,13 @@ googletag.cmd = googletag.cmd || [];
         isEnabled.barrier = false;
       }
 
-      function nullifyBuffer() {
-        for (var i = 0; i < buffer.length; ++i) {
-          buffer[i] = null;
+      function clearBufferRespectingBarrier() {
+        if (isEnabled.barrier) {
+          for (var i = 0; i < buffer.length; ++i) {
+            buffer[i] = null;
+          }
+        } else {
+          buffer = [];
         }
       }
 
@@ -1030,12 +1040,13 @@ googletag.cmd = googletag.cmd || [];
       }
 
       $rootScope.$on('$destroy', function () {
-        console.log('destroy!');
         intervals.forEach(function (promise) {
           $interval.cancel(promise);
         });
       });
 
+      self.refreshInterval = parseDuration(self.refreshInterval);
+      self.bufferInterval = parseDuration(self.bufferInterval);
       prioritize();
 
       return dfpRefresh;

@@ -83,6 +83,19 @@ googletag.cmd = googletag.cmd || [];
     */
     const scripts = [];
 
+    /**
+     * Returns the boolean property defined on the controller.
+     *
+     * Boolean properties will either be undefined, or the empty string if
+     * they were defined on the directive (e.g. force-safe-frame). This function
+     * just gets a real boolean for their value.
+     * @param  {!string} name The name of the property to lookup.
+     * @return {boolean} True if the property was set, else false.
+     */
+    this.booleanProperty = function(name) {
+      return this[name] !== undefined;
+    };
+
     // TODO: Throw exceptions rather than asserting
     /**
     * Tests if the state of the directive is valid and complete.
@@ -109,12 +122,12 @@ googletag.cmd = googletag.cmd || [];
         targetings,
         exclusions,
         adUnit: this['adUnit'],
-        forceSafeFrame: this['forceSafeFrame'],
+        forceSafeFrame: this.booleanProperty('forceSafeFrame'),
         safeFrameConfig: this['safeFrameConfig'],
         clickUrl: this['clickUrl'],
         refresh: this['refresh'],
         scripts,
-        collapseIfEmpty: this['collapseIfEmpty']
+        collapseIfEmpty: this.booleanProperty('collapseIfEmpty')
       });
     };
     /* eslint-enable dot-notation */
@@ -241,11 +254,11 @@ googletag.cmd = googletag.cmd || [];
         slot.setClickUrl(ad.clickUrl);
       }
 
-      if (ad.collapseIfEmpty !== undefined) {
+      if (ad.collapseIfEmpty) {
         slot.setCollapseEmptyDiv(true, true);
       }
 
-      if (ad.safeFrameConfig !== undefined) {
+      if (ad.safeFrameConfig) {
         slot.setSafeFrameConfig(
           /** @type {googletag.SafeFrameConfig} */
           (JSON.parse(ad.safeFrameConfig))
