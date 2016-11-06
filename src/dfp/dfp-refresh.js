@@ -50,7 +50,7 @@ googletag.cmd = googletag.cmd || [];
     /**
     * The milliseconds to wait after receiving a refresh request
     * to see if more requests come that we can buffer.
-    * @type {Number}
+    * @type {?number}
     */
     self.bufferInterval = 1000;
 
@@ -59,7 +59,7 @@ googletag.cmd = googletag.cmd || [];
    * If a proxy timeout is set and times out but the amount has not
    * yet been reached, the timeout will*not* be respected. That is,
    * setting a barrier temporarily (disables) the timeout.
-   * @type {Number}
+   * @type {?number}
    */
     self.bufferBarrier = null;
 
@@ -142,7 +142,7 @@ googletag.cmd = googletag.cmd || [];
         * @param  {googletag.Slot} slot  The adslot to refresh.
         * @param  {string|number=} interval The interval at which to refresh.
         * @param  {!boolean=} defer If an interval is passed and defer is false, a regular refresh call will be made immediately.
-        * @return {promise} A promise, resolved after the refresh call.
+        * @return {Promise} A promise, resolved after the refresh call.
         */
         function dfpRefresh(slot, interval, defer) {
           const deferred = $q.defer();
@@ -182,7 +182,7 @@ googletag.cmd = googletag.cmd || [];
         * @return {!boolean} True if an interval is set for the slot, else false.
         */
         dfpRefresh.hasSlotInterval = function(slot) {
-          return slot in self.intervals;
+          return slot in intervals;
         };
 
         /**
@@ -253,7 +253,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Returns the buffer interval setting (may be null).
-        * @return {Number} The current buffer interval (in ms), if any.
+        * @return {?number} The current buffer interval (in ms), if any.
         */
         dfpRefresh.getBufferInterval = function() {
           return self.bufferInterval;
@@ -273,8 +273,8 @@ googletag.cmd = googletag.cmd || [];
         * this method and the service will wait for 3 refresh calls before
         * actually refreshing them.
         *
-        * @param {Number} numberOfAds The number of ads to wait for.
-        * @param {Boolean=} oneShot     Whether to uninstall the barrier after the first flush.
+        * @param {number} numberOfAds The number of ads to wait for.
+        * @param {boolean=} oneShot     Whether to uninstall the barrier after the first flush.
         * @return {Function} The current `dfpRefresh` instance.
         */
         dfpRefresh.setBufferBarrier = function(numberOfAds, oneShot) {
@@ -304,7 +304,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Returns the any buffer barrier set.
-        * @return {Number} The current barrier
+        * @return {number?} The current barrier
         *                  (number of ads to buffer before flushing).
         */
         dfpRefresh.getBufferBarrier = function() {
@@ -405,7 +405,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Returns the current refresh interval, if any (may be `null`).
-        * @return {Number} The current refresh interval.
+        * @return {number} The current refresh interval.
         */
         dfpRefresh.getRefreshInterval = function() {
           return self.refreshInterval;
@@ -426,7 +426,7 @@ googletag.cmd = googletag.cmd || [];
         * Installed does not mean active, as this is
         * determined by the prioritization algorithm.
         *
-        * @param  {String}  option What to test activation for.
+        * @param  {string}  option What to test activation for.
         * @return {!boolean} True if the given option was ever
         *                   installed, else false.
         */
@@ -446,7 +446,7 @@ googletag.cmd = googletag.cmd || [];
         * since to be enabled the mechanism must be set, but also installed
         * by the prioritization algorithm.
         *
-        * @param  {String}  option What to test for.
+        * @param  {string}  option What to test for.
         * @return {!boolean} True if the option is enabled, else false.
         * @see dfpRefresh.Options
         * @throws DFPRefreshError if the option is not one of
@@ -467,8 +467,8 @@ googletag.cmd = googletag.cmd || [];
         * all three will be enabled (because their priority is equal to the
         * maximum), but when one has higher priority only that will run.
         *
-        * @param {!String} option What to set the priority for.
-        * @param {Number} priority The priority to set.
+        * @param {!string} option What to set the priority for.
+        * @param {number} priority The priority to set.
         * @return {Function} The current dfpRefresh instance.
         * @see dfpRefresh.Options
         * @throws DFPRefreshError if the option is not one of
@@ -484,8 +484,8 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Gets the priority setting for a given option.
-        * @param  {String} option The option to check.
-        * @return {Number} The priority of the option.
+        * @param  {string} option The option to check.
+        * @return {number} The priority of the option.
         */
         dfpRefresh.getPriority = function(option) {
           ensureValidOption(option);
@@ -494,14 +494,15 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Sets the priority of the global refreshing mechanism.
-        * @param {Number} priority The priority to give.
+        * @param {number} priority The priority to give.
         */
         dfpRefresh.setRefreshPriority = function(priority) {
-          dfpRefresh.setPriority('refresh');
+          ensureValidPriority(priority);
+          dfpRefresh.setPriority('refresh', priority);
         };
 
         /**
-        * @return {Number} The priority of the global refreshing mechanism.
+        * @return {number} The priority of the global refreshing mechanism.
         */
         dfpRefresh.getRefreshPriority = function() {
           return dfpRefresh.getPriority('refresh');
@@ -509,14 +510,15 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Sets the priority of the buffer barrier.
-        * @param {Number} priority The priority to give.
+        * @param {number} priority The priority to give.
         */
         dfpRefresh.setBarrierPriority = function(priority) {
-          dfpRefresh.setPriority('barrier');
+          ensureValidPriority(priority);
+          dfpRefresh.setPriority('barrier', priority);
         };
 
         /**
-        * @return {Number} The priority of the buffer barrier.
+        * @return {number} The priority of the buffer barrier.
         */
         dfpRefresh.getBarrierPriority = function() {
           return dfpRefresh.getPriority('barrier');
@@ -524,15 +526,15 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Sets the priority of the buffer interval.
-        * @param {Number} priority The priority to give.
+        * @param {number} priority The priority to give.
         */
         dfpRefresh.setIntervalPriority = function(priority) {
           ensureValidPriority(priority);
-          dfpRefresh.setPriority('interval');
+          dfpRefresh.setPriority('interval', priority);
         };
 
         /**
-        * @return {Number} The priority of the buffer interval.
+        * @return {number} The priority of the buffer interval.
         */
         dfpRefresh.getIntervalPriority = function() {
           return dfpRefresh.getPriority('interval');
@@ -540,7 +542,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Utility function to check if an option is valid and throw if not.
-        * @param  {String} option The option to check.
+        * @param  {string} option The option to check.
         * @throws DFPRefreshError if the option is not valid.
         */
         function ensureValidOption(option) {
@@ -562,7 +564,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Enables or disables an option.
-        * @param  {String} option The option to check.
+        * @param  {string} option The option to check.
         * @param  {boolean=} yes Whether to enable or not.
         */
         function enable(option, yes) {
@@ -581,7 +583,7 @@ googletag.cmd = googletag.cmd || [];
 
         /**
         * Disables the given option.
-        * @param  {String} option The option to disable.
+        * @param  {string} option The option to disable.
         */
         function disable(option) {
           switch (option) {
@@ -624,7 +626,7 @@ googletag.cmd = googletag.cmd || [];
 
           /**
           * The maximum priority.
-          * @type {Number}
+          * @type {number}
           */
           let maximum = priorities.reduce((a, b) => Math.max(a, b));
 
@@ -687,8 +689,8 @@ googletag.cmd = googletag.cmd || [];
           const task = function() {
             // Set the elments currently in the buffer to null,
             // since all ads will be refreshed, but the length
-            //  must remain unchanged in case the barrier is not yet fulfilled
-            buffer.fill(null);
+            // must remain unchanged in case the barrier is not yet fulfilled
+            nullifyBuffer();
 
             // Calling refresh() without any arguments
             // will refresh all registered ads on the site
@@ -727,7 +729,7 @@ googletag.cmd = googletag.cmd || [];
           // amount of space as before.
           const task = function() {
             refresh(buffer);
-            buffer.fill(null);
+            nullifyBuffer();
           };
 
           const promise = $interval(task, self.bufferInterval);
@@ -765,6 +767,16 @@ googletag.cmd = googletag.cmd || [];
         */
         function disableBufferBarrier() {
           isEnabled.barrier = false;
+        }
+
+        /**
+         * Fills the buffer with `null`.
+         * Needed because Closure does not recognize Array.prototype.fill.
+         */
+        function nullifyBuffer() {
+          for (let i = 0; i < buffer.length; ++i) {
+            buffer[i] = null;
+          }
         }
 
         /**

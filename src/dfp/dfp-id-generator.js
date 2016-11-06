@@ -37,7 +37,7 @@
 
     /**
     * Generates random IDs until unique one is found.
-    * @return {Number} The unique numeric ID.
+    * @return {string} The unique ID.
     */
     function generateID() {
       let id = null;
@@ -60,7 +60,7 @@
     * is generated for the element.
     *
     * @param {Object} element The element whose ID to check or assign.
-    * @return {Number} The unique ID of the element, or a new generated one.
+    * @return {string} The unique ID of the element, or a new generated one.
     */
     function dfpIDGenerator(element) {
       if (element && element.id && !(element.id in generatedIDs)) {
@@ -75,7 +75,7 @@
 
     /**
     * Tests if an ID is taken.
-    * @param  {Number} id The ID to test.
+    * @param  {number} id The ID to test.
     * @return {boolean} True if the ID is not unique, else false.
     * @see dfpIDGenerator.isUnique()
     */
@@ -85,7 +85,7 @@
 
     /**
     * Tests if an ID is unique (not taken).
-    * @param  {Number} id The ID to test.
+    * @param  {number} id The ID to test.
     * @return {boolean} True if the ID is unique, else false.
     * @see dfpIDGenerator.isTaken()
     */

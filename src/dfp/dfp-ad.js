@@ -243,7 +243,10 @@ googletag.cmd = googletag.cmd || [];
       }
 
       if (ad.safeFrameConfig !== undefined) {
-        slot.setSafeFrameConfig(JSON.parse(ad.safeFrameConfig));
+        slot.setSafeFrameConfig(
+          /** @type {googletag.SafeFrameConfig} */
+          (JSON.parse(ad.safeFrameConfig))
+        );
       }
 
       addResponsiveMapping(slot);

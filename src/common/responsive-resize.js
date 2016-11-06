@@ -45,7 +45,7 @@
 
     /**
     * The `responsiveResize` service.
-    * @param  {HTMLElement} element The element to make responsive.
+    * @param  {!angular.JQLite} element The element to make responsive.
     * @param {googletag.Slot} slot The ad slot to refresh responsively.
     * @param  {Array=} boundaries The browser width boundaries at which to refresh.
     */
@@ -69,7 +69,7 @@
 
     /**
     * Retrieves the iframe of the ad of the element.
-    * @return {HTMLElement} An iframe HTML element.
+    * @return {angular.JQLite} An iframe HTML element.
     */
       function queryIFrame() {
         return element.find('div iframe');
@@ -85,8 +85,8 @@
     * dimensions remain unchanged. This distorts the element. As such, we
     * simply normalize these two dimensionss here.
     *
-    * @param  {Object} iframe Optionally, the iframe to normalize
-    *                         (else it is queried).
+    * @param  {angular.JQLite=} iframe Optionally, the iframe to normalize
+    *                           (else it is queried).
     */
       function normalizeIFrame(iframe) {
         iframe = iframe || queryIFrame();
@@ -144,7 +144,7 @@
       }
 
       /**
-      * @return {number} The initial width of the iframe.
+      * @return {!{width: ?string, height: ?string}} The initial width of the iframe.
       */
       function getIframeDimensions() {
         const iframe = queryIFrame();
@@ -186,11 +186,10 @@
 
       /**
       * Returns a function suitable for responsive resize-event watching.
-      * @param  {googletag.Slot} slot The slot to make responsive.
       * @return {Function} A function to pass as an event
       *                    listener for (window) resize events.
       */
-      function makeResponsive(slot) {
+      function makeResponsive() {
         /**
         * Determinates in which of the boundaries the element is.
         * @return {number} The current index.
@@ -252,7 +251,7 @@
           hideElement();
 
           // Refresh the ad slot now
-          dfpRefresh(slot).then(() => { watchResize(index); });
+          dfpRefresh(slot).then(() => { watchResize(); });
 
           console.assert(index >= 0 && index < boundaries.length);
         }
@@ -269,7 +268,7 @@
         };
       }
 
-      $window.on('resize', makeResponsive(element));
+      $window.on('resize', makeResponsive());
     }
 
     return responsiveResize;

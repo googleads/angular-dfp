@@ -54,13 +54,6 @@ googletag.cmd = googletag.cmd || [];
     const self = this;
 
     /**
-    * Whether to enable Single Request Architecture (SRA) mode.
-    * @type {boolean}
-    * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_enableSingleRequest}
-    */
-    self.enableSingleRequestArchitecture = true;
-
-    /**
     * Whether to enable video ads.
     * @type {!boolean}
     * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_enableVideoAds}
@@ -73,26 +66,6 @@ googletag.cmd = googletag.cmd || [];
     * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_collapseEmptyDivs}
     */
     self.collapseIfEmpty = true;
-
-    /**
-    * Whether to enable the initial load of ads.
-    *
-    * This is necessary if you want to be able to
-    * manually refresh ads with refresh().
-    *
-    * @type {boolean}
-    * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_disableInitialLoad}
-    */
-    self.disableInitialLoad = true;
-
-    /**
-    * Whether to enable synchronous rendering.
-    *
-    * Rendering is asynchronous by default.
-    * @type {boolean}
-    * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_enableSyncRendering}
-    */
-    self.enableSyncRendering = false;
 
     /**
     * Enables ad centering instead of left-alignment.
@@ -108,14 +81,14 @@ googletag.cmd = googletag.cmd || [];
     * numbers or a freefrom address string. You must enable usage of this
     * information in DFP.
     *
-    * @type {?Array|String}
+    * @type {?Array|string}
     * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_setLocation}
     */
     self.location = null;
 
     /**
     * Your Publisher-Provided Identifier, if you have any.
-    * @type {?String}
+    * @type {?string}
     * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_setPublisherProvidedId}
     */
     self.ppid = null;
@@ -145,7 +118,7 @@ googletag.cmd = googletag.cmd || [];
     *   allowPushExpansion: true,
     *   sandbox: true
     *};
-    * @type {?Object}
+    * @type {?googletag.SafeFrameConfig}
     */
     self.safeFrameConfig = null;
 
@@ -231,10 +204,6 @@ googletag.cmd = googletag.cmd || [];
       function setup() {
         const pubads = googletag.pubads();
 
-        if (self.enableSingleRequestArchitecture) {
-          pubads.enableSingleRequest();
-        }
-
         if (self.enableVideoAds) {
           pubads.enableVideoAds();
         }
@@ -243,14 +212,8 @@ googletag.cmd = googletag.cmd || [];
           pubads.collapseEmptyDivs();
         }
 
-        if (self.disableInitialLoad) {
-          pubads.disableInitialLoad();
-        }
-
-        if (self.enableSyncRendering) {
-          pubads.enableSyncRendering();
-        }
-
+        // We always refresh ourselves
+        pubads.disableInitialLoad();
         pubads.setForceSafeFrame(self.forceSafeFrame);
         pubads.setCentering(self.centering);
 

@@ -26,7 +26,7 @@
   * The factory for the `scriptInjector` service.
   *
   * @private
-  * @param {Function} $q The Angular `$q` service.
+  * @param {!angular.$q} $q The Angular `$q` service.
   * @param {Function} httpError The `httpError` service.
   * @return {Function} The `scriptInjector` service.
   */
@@ -34,7 +34,7 @@
     /**
     * Creates an HTML script tag.
     * @param  {!string} url The string of the script to inject.
-    * @return {HTMLElement} An `HTMLElement` ready for injection.
+    * @return {Element} An `Element` ready for injection.
     */
     function createScript(url) {
       const script = document.createElement('script');
@@ -49,9 +49,9 @@
 
     /**
     * Creates a promise, to be resolved after the script is loaded.
-    * @param  {HTMLElement} script The script tag.
+    * @param  {Element} script The script tag.
     * @param {!string} url The url of the request.
-    * @return {Promise} The promise for the asynchronous script injection.
+    * @return {angular.$q.Promise<null>} The promise for the asynchronous script injection.
     */
     function promiseScript(script, url) {
       const deferred = $q.defer();
@@ -96,7 +96,7 @@
 
     /**
     * Injects a script tag into the DOM (at the end of <head>).
-    * @param  {HTMLElement} script The HTMLElement script.
+    * @param  {Element} script The Element script.
     */
     function injectScript(script) {
       const head = document.head || document.querySelector('head');
@@ -106,13 +106,13 @@
     /**
     * The `scriptInjector` service.
     * @param  {!string} url The string to inject.
-    * @return {Promise} A promise, resolved after
+    * @return {angular.$q.Promise<null>} A promise, resolved after
     *                   loading the script or reject on error.
     */
     function scriptInjector(url) {
       const script = createScript(url);
       injectScript(script);
-      return promiseScript(script);
+      return promiseScript(script, url);
     }
 
     return scriptInjector;

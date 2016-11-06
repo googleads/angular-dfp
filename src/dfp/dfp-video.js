@@ -55,13 +55,8 @@ let angularDfpVideo = angular.module('angularDfp');
      // Generate an ID or check for uniqueness of an existing one (true = forVideo)
     dfpIDGenerator(element, true);
 
-    /* eslint-disable no-undef*/
-    /**
-    * The videojs player object.
-    * @type {videojs.Player}
-    */
+    // eslint-disable-next-line no-undef
     const player = videojs(element.id);
-    /* eslint-enable no-undef*/
 
      // Register the video slot with the IMA SDK
     player.ima({id: element.id, adTagUrl: scope.adTag});

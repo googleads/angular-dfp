@@ -41,8 +41,8 @@
 
     /**
     * Tests if a given HTTP response status is an error code.
-    * @param  {Number|!String}  code The response status code.
-    * @return {!Boolean} True if the code is an error code, else false.
+    * @param  {number|!string}  code The response status code.
+    * @return {!boolean} True if the code is an error code, else false.
     */
     httpError.isErrorCode = function(code) {
       if (typeof code === 'number') {
