@@ -170,6 +170,7 @@ let angularDfp = angular.module('angularDfp', []);
     * @return {number} The corresponding number of milliseconds.
     */
     function parseDuration(interval) {
+      // The interval may well be zero so don't just write !interval
       if (interval === undefined || interval === null) {
         throw new DFPDurationError(interval);
       }
@@ -2616,6 +2617,7 @@ let angularDfpVideo = angular.module('angularDfp');
      // Unpack jQuery object
     element = element[0];
 
+    // TODO: exception here
     console.assert(element.tagName === 'VIDEO');
 
      // Generate an ID or check for uniqueness of an existing one (true = forVideo)
@@ -2637,7 +2639,7 @@ let angularDfpVideo = angular.module('angularDfp');
       // eslint-disable-next-line quote-props
       scope: {'adTag': '@'},
       link: function(...args) {
-        dfpVideoDirective.apply(null, args.concat($injector));
+        dfpVideoDirective.apply(null, args.slice(0, 3).concat($injector));
       }
     };
   }]);

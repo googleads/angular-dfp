@@ -1275,7 +1275,7 @@ var angularDfpVideo = angular.module('angularDfp');
           args[_key3] = arguments[_key3];
         }
 
-        dfpVideoDirective.apply(null, args.concat($injector));
+        dfpVideoDirective.apply(null, args.slice(0, 3).concat($injector));
       }
     };
   }]);

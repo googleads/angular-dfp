@@ -1,0 +1,14 @@
+.video {
+  width: 960px;
+  height: 400px;
+}
+
+.medium-rectangle {
+  width: 300px;
+  height: 250px;
+}
+
+.leaderboard {
+  max-width: 970px;
+  height: 90px;
+}

@@ -21,7 +21,7 @@
 
 // eslint-disable-next-line no-undef
 let app = angular
-  .module('angularDfpDemo', ['angularDfp'])
+  .module('angularDfpDemo', ['angularDfp', 'ngMaterial'])
   .config(['dfpRefreshProvider', function(dfpRefreshProvider) {
     dfpRefreshProvider.refreshInterval = '10s';
   }]);

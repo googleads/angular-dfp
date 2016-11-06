@@ -1,0 +1,24 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>AngularDfp Demo</title>
+
+<!-- VideoJS -->
+<script src="//vjs.zencdn.net/5.11.7/video.min.js"></script>
+<script src="//vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script>
+<link href="//vjs.zencdn.net/5.11.7/video-js.css" rel="stylesheet">
+
+<!-- IMA SDK plugin for VideoJS -->
+<script src="//cdn.rawgit.com/googleads/videojs-ima/master/src/videojs.ima.js"></script>
+<script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+<link href="//cdn.rawgit.com/googleads/videojs-ima/master/src/videojs.ima.css" rel="stylesheet">
+
+<!-- VideoJS Contrib Ads -->
+<script src="{{ url_for('static', filename='videojs.ads.min.js')}}"></script>
+<link href="{{ url_for('static', filename='videojs.ads.css')}}" rel="stylesheet">
+
+<!-- Angular Material -->
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+
+<!-- Demo  -->
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">

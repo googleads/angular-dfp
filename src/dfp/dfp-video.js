@@ -50,10 +50,11 @@ let angularDfpVideo = angular.module('angularDfp');
      // Unpack jQuery object
     element = element[0];
 
+    // TODO: exception here
     console.assert(element.tagName === 'VIDEO');
 
-     // Generate an ID or check for uniqueness of an existing one (true = forVideo)
-    dfpIDGenerator(element, true);
+     // Generate an ID or check for uniqueness of an existing one
+    dfpIDGenerator(element);
 
     // eslint-disable-next-line no-undef
     const player = videojs(element.id);
@@ -71,7 +72,7 @@ let angularDfpVideo = angular.module('angularDfp');
       // eslint-disable-next-line quote-props
       scope: {'adTag': '@'},
       link: function(...args) {
-        dfpVideoDirective.apply(null, args.concat($injector));
+        dfpVideoDirective.apply(null, args.slice(0, 3).concat($injector));
       }
     };
   }]);

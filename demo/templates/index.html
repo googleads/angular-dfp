@@ -1,36 +1,15 @@
 <!DOCTYPE html>
 <html ng-app="angularDfpDemo">
   <head>
-    <meta charset="utf-8">
-    <title>AngularDfp Demo</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.js"></script>
-    <script src="{{ url_for('static', filename='angular-dfp.js') }}"=></script>
-    <script src="{{ url_for('static', filename='index.js') }}"=></script>
+    {% include "head.html" %}
   </head>
   <body ng-controller="DemoController" ng-cloak>
-    <dfp-ad force-safe-frame
-            collapse-if-empty
-            ad-unit="/35096353/pub-showcase">
-      <dfp-size width="728" height="90"></dfp-size>
-      <dfp-targeting key="sport" value="football"></dfp-targeting>
-      <dfp-targeting key="food">
-        <dfp-value>chicken</dfp-value>
-        <dfp-value>meatballs</dfp-value>
-        <dfp-value>ice cream</dfp-value>
-      </dfp-targeting>
-      <dfp-responsive browser-width="320" browser-height="0">
-        <dfp-size width=320 height=50></dfp-size>
-      </dfp-responsive> -->
-      <dfp-responsive browser-width="768" browser-height="0">
-        <dfp-size width=728 height=90></dfp-size>
-      </dfp-responsive>
-      <dfp-responsive browser-width="1024" browser-height="0">
-        <dfp-size width=970 height=90></dfp-size>
-      </dfp-responsive>
-    </dfp-ad>
-    <dfp-ad force-safe-frame ad-unit="/35096353/pub-showcase">
-      <dfp-size width="728" height="90"></dfp-size>
-    </dfp-ad>
+    <md-content layout="column" layout-align="center center">
+      {% include "leaderboard.html" %}
+      {% include "medium-rectangle.html" %}
+      {% include "video.html" %}
+    </div>
     <dfp-audience-pixel></dfp-audience-pixel>
+    {% include "scripts.html" %}
   </body>
 </html>
