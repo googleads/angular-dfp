@@ -65,7 +65,7 @@
     * @return {!number} The converted milliseconds.
     */
     function convert(match) {
-      const time = parseInt(match[1], 10);
+      const time = parseFloat(match[1]);
 
        // No unit means milliseconds
        // Note: match[0] is the entire matched string
@@ -94,7 +94,7 @@
       }
 
       // Convert any allowed time format into milliseconds
-      const match = interval.match(/(\d+)(m?s|min|h)?/);
+      const match = interval.match(/((?:\d+)?.?\d+)(m?s|min|h)?/);
 
       if (!match) {
         throw new DFPDurationError(interval);
