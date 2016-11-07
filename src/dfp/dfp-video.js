@@ -33,6 +33,11 @@ let angularDfpVideo = angular.module('angularDfp');
   'use strict';
 
   /**
+   * An Error class for the dfp-video directive.
+   */
+  class DFPVideoError extends Error { }
+
+  /**
   * The `dfp-video` directive.
   *
   * This directive enables video ads to be shown over videos,
@@ -50,8 +55,11 @@ let angularDfpVideo = angular.module('angularDfp');
      // Unpack jQuery object
     element = element[0];
 
-    // TODO: exception here
-    console.assert(element.tagName === 'VIDEO');
+    if (element.tagName !== 'VIDEO') {
+      throw new DFPVideoError(
+        "'dfp-video' directive must be attached to a <video> tag."
+      );
+    }
 
      // Generate an ID or check for uniqueness of an existing one
     dfpIDGenerator(element);

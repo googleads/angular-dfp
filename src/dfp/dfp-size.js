@@ -59,13 +59,20 @@
   * @param {Object} element The HTML element on which the directive is defined.
   * @param {Object} attributes The attributes of the element.
   * @param {Object} parent     The parent controller.
+  * @param {Function} DFPMissingParentError The `DFPMissingParentError` service.
   */
-  function DFPSizeDirective(scope, element, attributes, parent) {
+  function DFPSizeDirective(scope,
+                            element,
+                            attributes,
+                            parent,
+                            DFPMissingParentError) {
     // Only one of the two possible parents will be `null`
     // Pick the most nested parent (`dfp-responsive`)
     parent = parent[1] || parent[0];
 
-    console.assert(parent);
+    if (!parent) {
+      throw new DFPMissingParentError('dfp-size', 'dfp-ad', 'dfp-responsive');
+    }
 
     if (scope.width && scope.height) {
       parent.addSize([scope.width, scope.height]);
@@ -74,14 +81,19 @@
     }
   }
 
-  module.directive('dfpSize', [function() {
-    return {
-      restrict: 'E',
-      require: ['?^^dfpAd', '?^^dfpResponsive'],
-      scope: {width: '=', height: '='},
-      link: DFPSizeDirective
-    };
-  }]);
+  module.directive('dfpSize', [
+    'DFPMissingParentError',
+    function(DFPMissingParentError) {
+      return {
+        restrict: 'E',
+        require: ['?^^dfpAd', '?^^dfpResponsive'],
+        scope: {width: '=', height: '='},
+        link: function(...args) {
+          args = args.slice(0, 4).concat(DFPMissingParentError);
+          DFPSizeDirective.apply(null, args);
+        }
+      };
+    }]);
 
 // eslint-disable-next-line
 })(angularDfp);

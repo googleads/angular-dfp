@@ -51,9 +51,11 @@
 
   /**
   * The controller for the `dfp-responsive` directive.
+  * @param {Function} DFPIncompleteError The `DFPIncompleteError` service.
+  * @param {Function} DFPTypeError The `DFPTypeError` service.
   * @private
   */
-  function DFPResponsiveController() {
+  function DFPResponsiveController(DFPIncompleteError, DFPTypeError) {
     /* eslint-disable dot-notation */
     /**
     * The size of the viewport.
@@ -78,13 +80,21 @@
 
     /**
     * Asserts if the state of the controller is valid.
-    * @return {!boolean} True if the state of the controller is
-    *                   ready to be fetched, else false.
+    * @throws {DFPTypeError|DFPIncompleteError} If the directive is not complete.
     */
-    function isValid() {
-      if (viewportSize.some(value => typeof value !== 'number')) return false;
-      return adSizes.length > 0;
-    }
+    this.checkValid = function() {
+      ['viewportWidth', 'viewportHeight'].forEach(dimension => {
+        const value = this[dimension];
+        if (typeof value !== 'number') {
+          dimension = dimension.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+          throw new DFPTypeError('dfp-responsive', dimension, value, 'number');
+        }
+      });
+
+      if (adSizes.length === 0) {
+        throw new DFPIncompleteError('dfp-responsive', 'dfp-size', false);
+      }
+    };
 
     /**
     * Adds an ad size to the responsive mapping.
@@ -99,7 +109,7 @@
     * @return {ResponsiveMapping} The state of the controller, for use by the directive.
     */
     this.getState = function() {
-      console.assert(isValid());
+      this.checkValid();
       return Object.freeze({
         viewportSize,
         adSizes
@@ -127,7 +137,11 @@
     return {
       restrict: 'E',
       require: '^^dfpAd',
-      controller: DFPResponsiveController,
+      controller: [
+        'DFPIncompleteError',
+        'DFPTypeError',
+        DFPResponsiveController
+      ],
       controllerAs: 'controller',
       bindToController: true,
       link: dfpResponsiveDirective,

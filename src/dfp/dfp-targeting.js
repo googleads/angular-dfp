@@ -48,9 +48,10 @@
   * This controller makes an `addValue` function available that allows the
   * `dfp-value` directive to add values for a single key attribute defined in
   * the directive.
+  * @param {Function} DFPIncompleteError The `DFPIncompleteError` service.
   * @private
   */
-  function dfpTargetingController() {
+  function dfpTargetingController(DFPIncompleteError) {
     /**
     * The values of the targeting.
     * @type {Array}
@@ -59,13 +60,16 @@
 
     /**
     * Verifies that the controller has a complete (valid) state.
-    * @return {!boolean} True if the directive has all required members,
-    *                   else false.
+    * @throws {DFPIncompleteError} If the directive is not complete.
     */
-    this.isValid = function() {
-      if (this.key === undefined) return false;
-      if (values.length === 0) return false;
-      return true;
+    this.checkValid = function() {
+      if (this.key === undefined) {
+        throw new DFPIncompleteError('dfp-targeting', 'key', true);
+      }
+
+      if (values.length === 0) {
+        throw new DFPIncompleteError('dfp-targeting', 'value', true);
+      }
     };
 
     /**
@@ -73,7 +77,7 @@
     * @return {Object} The key and an array of values for the targeting.
     */
     this.getState = function() {
-      console.assert(this.isValid());
+      this.checkValid();
       return Object.freeze({
         key: this.key,
         values
@@ -115,7 +119,7 @@
     return {
       restrict: 'E',
       require: '^^dfpAd', // require dfp-ad as parent
-      controller: dfpTargetingController,
+      controller: ['DFPIncompleteError', dfpTargetingController],
       controllerAs: 'controller',
       bindToController: true,
       scope: {key: '@', value: '@'},

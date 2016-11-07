@@ -50,9 +50,10 @@ googletag.cmd = googletag.cmd || [];
 
   /**
   * The controller for the `dfp-ad` directive.
+  * @param {Function} DFPIncompleteError The `DFPIncompleteError` service.
   * @private
   */
-  function dfpAdController() {
+  function dfpAdController(DFPIncompleteError) {
     /**
     * The fixed (non-responsive) sizes for the ad slot.
     * @type {Array}
@@ -96,16 +97,18 @@ googletag.cmd = googletag.cmd || [];
       return this[name] !== undefined;
     };
 
-    // TODO: Throw exceptions rather than asserting
     /**
     * Tests if the state of the directive is valid and complete.
-    * @return {boolean} True if the ad slot may be created, else false.
+    * @throws {DFPIncompleteError} If the ad slot definition is not complete.
     */
-    this.isValid = function() {
-      if (sizes.length === 0) return false;
+    this.checkValid = function() {
+      if (sizes.length === 0) {
+        throw new DFPIncompleteError('dfp-ad', 'dfp-size');
+      }
       // eslint-disable-next-line dot-notation
-      if (!this['adUnit']) return false;
-      return true;
+      if (!this['adUnit']) {
+        throw new DFPIncompleteError('dfp-ad', 'ad-unit', true);
+      }
     };
 
     /* eslint-disable dot-notation */
@@ -115,7 +118,7 @@ googletag.cmd = googletag.cmd || [];
     *                  need to create an ad slot.
     */
     this.getState = function() {
-      console.assert(this.isValid());
+      this.checkValid();
       return Object.freeze({
         sizes,
         responsiveMapping,
@@ -321,7 +324,7 @@ googletag.cmd = googletag.cmd || [];
   module.directive('dfpAd', ['$injector', function($injector) {
     return {
       restrict: 'AE',
-      controller: dfpAdController,
+      controller: ['DFPIncompleteError', dfpAdController],
       controllerAs: 'controller',
       bindToController: true,
       link: function(...args) {

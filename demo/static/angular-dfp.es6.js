@@ -25,6 +25,308 @@ googletag.cmd = googletag.cmd || [];
 let angularDfp = angular.module('angularDfp', []);
 
 /**
+* @module http-error
+* @author Peter Goldsborough <peter@goldsborough.me>
+* @author Jaime González García <vintharas@google.com>
+* @license Apache
+* Copyright 2016 Google Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:http-error */ function(module) {
+  'use strict';
+
+  /**
+ * The factory for the `httpError` service.
+ *
+ * @private
+ * @param  {Function} $log    The Angular `$log` service.
+ * @return {Function} The `httpError` service.
+ */
+  function httpErrorFactory($log) {
+    /**
+   * The `httpError` service.
+   * @param  {!Object} response An XHR response object.
+   * @param  {!string} message The error message to show.
+   */
+    function httpError(response, message) {
+      $log.error(`Error (${response.status})`);
+    }
+
+    /**
+    * Tests if a given HTTP response status is an error code.
+    * @param  {number|!string}  code The response status code.
+    * @return {!boolean} True if the code is an error code, else false.
+    */
+    httpError.isErrorCode = function(code) {
+      if (typeof code === 'number') {
+        return !(code >= 200 && code < 300);
+      }
+
+      console.assert(typeof code === 'string');
+
+      return code[0] !== '2';
+    };
+
+    return httpError;
+  }
+
+  module.factory('httpError', ['$log', httpErrorFactory]);
+
+  // eslint-disable-next-line
+})(angularDfp);
+
+/**
+* @module parse-duration
+* @author Peter Goldsborough <peter@goldsborough.me>
+* @author Jaime González García <vintharas@google.com>
+* @license Apache
+* Copyright 2016 Google Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:parse-duration */ function(module) {
+  'use strict';
+
+  /**
+  * An error thrown by the `parseDuration` service.
+  * @private
+  */
+  class DFPDurationError extends Error {
+    constructor(interval) {
+      super(`Invalid interval: '${interval}'ls`);
+    }
+  }
+
+  /**
+  * A factory for the `parseDuration` service.
+  *
+  * This service allows parsing of strings specifying
+  * durations, such as '2s' or '5min'.
+  *
+  * @private
+  * @return {Function} The `parseDuration` service.
+  */
+  function parseDurationFactory() {
+    /**
+    * Converts a given time in a given unit to milliseconds.
+    * @param  {!number} time A time number in a certain unit.
+    * @param  {!string} unit A string describing the unit (ms|s|min|h).
+    * @return {!number} The time, in milliseconds.
+    */
+    function convertToMilliseconds(time, unit) {
+      console.assert(/^(m?s|min|h)$/g.test(unit));
+
+      if (unit === 'ms') return time;
+      if (unit === 's') return time * 1000;
+      if (unit === 'min') return time * 60 * 1000;
+
+      // hours
+      return time * 60 * 60 * 1000;
+    }
+
+    /**
+    * Converts a regular expression match into a duration.
+    * @param  {!Array} match A regular expression match object.
+    * @return {!number} The converted milliseconds.
+    */
+    function convert(match) {
+      const time = parseFloat(match[1]);
+
+       // No unit means milliseconds
+       // Note: match[0] is the entire matched string
+      if (match.length === 2) return time;
+
+      return convertToMilliseconds(time, match[2]);
+    }
+
+    /**
+    * Given an interval string, returns the corresponding milliseconds.
+    * @param  {number|string} interval The string to parse.
+    * @return {number} The corresponding number of milliseconds.
+    */
+    function parseDuration(interval) {
+      // The interval may well be zero so don't just write !interval
+      if (interval === undefined || interval === null) {
+        throw new DFPDurationError(interval);
+      }
+
+      if (typeof interval === 'number') {
+        return interval;
+      }
+
+      if (typeof interval !== 'string') {
+        throw new TypeError(`'${interval}' must be of number or string type`);
+      }
+
+      // Convert any allowed time format into milliseconds
+      const match = interval.match(/((?:\d+)?.?\d+)(m?s|min|h)?/);
+
+      if (!match) {
+        throw new DFPDurationError(interval);
+      }
+
+      return convert(match);
+    }
+
+    return parseDuration;
+  }
+
+  module.factory('parseDuration', parseDurationFactory);
+
+// eslint-disable-next-line
+})(angularDfp);
+
+/**
+* @module script-injector
+* @author Peter Goldsborough <peter@goldsborough.me>
+* @author Jaime González García <vintharas@google.com>
+* @license Apache
+* Copyright 2016 Google Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:script-injector */ function(module) {
+  'use strict';
+
+  /**
+  * The factory for the `scriptInjector` service.
+  *
+  * @private
+  * @param {!angular.$q} $q The Angular `$q` service.
+  * @param {Function} httpError The `httpError` service.
+  * @return {Function} The `scriptInjector` service.
+  */
+  function scriptInjectorFactory($q, httpError) {
+    /**
+    * Creates an HTML script tag.
+    * @param  {!string} url The string of the script to inject.
+    * @return {Element} An `Element` ready for injection.
+    */
+    function createScript(url) {
+      const script = document.createElement('script');
+      const ssl = document.location.protocol === 'https:';
+
+      script.async = 'async';
+      script.type = 'text/javascript';
+      script.src = (ssl ? 'https:' : 'http:') + url;
+
+      return script;
+    }
+
+    /**
+    * Creates a promise, to be resolved after the script is loaded.
+    * @param  {Element} script The script tag.
+    * @param {!string} url The url of the request.
+    * @return {angular.$q.Promise<null>} The promise for the asynchronous script injection.
+    */
+    function promiseScript(script, url) {
+      const deferred = $q.defer();
+
+      /**
+      * Resolves the promise.
+      */
+      function resolve() {
+        deferred.resolve();
+      }
+
+      /**
+      * Rejects the promise for a given faulty response.
+      * @param  {?Object} response The response object.
+      */
+      function reject(response) {
+        response = response || {status: 400};
+        httpError(response, 'loading script "{0}".', url);
+
+        // Reject the promise and pass the reponse
+        // object to the error callback (if any)
+        deferred.reject(response);
+      }
+
+      // IE
+      script.onreadystatechange = function() {
+        if (this.readyState === 4) {
+          if (httpError.isErrorCode(this.status)) {
+            reject(this);
+          } else {
+            resolve();
+          }
+        }
+      };
+
+      // Other viewports
+      script.onload = resolve;
+      script.onerror = reject;
+
+      return deferred.promise;
+    }
+
+    /**
+    * Injects a script tag into the DOM (at the end of <head>).
+    * @param  {Element} script The Element script.
+    */
+    function injectScript(script) {
+      const head = document.head || document.querySelector('head');
+      head.appendChild(script);
+    }
+
+    /**
+    * The `scriptInjector` service.
+    * @param  {!string} url The string to inject.
+    * @return {angular.$q.Promise<null>} A promise, resolved after
+    *                   loading the script or reject on error.
+    */
+    function scriptInjector(url) {
+      const script = createScript(url);
+      injectScript(script);
+      return promiseScript(script, url);
+    }
+
+    return scriptInjector;
+  }
+
+  module.factory('scriptInjector', ['$q', 'httpError', scriptInjectorFactory]);
+
+// eslint-disable-next-line
+})(angularDfp);
+
+/**
 * @file The primary directive for specifying an ad slot using the library.
 *
 * This directive is repsponsible for collecting all nested configuration options
@@ -76,9 +378,10 @@ googletag.cmd = googletag.cmd || [];
 
   /**
   * The controller for the `dfp-ad` directive.
+  * @param {Function} DFPIncompleteError The `DFPIncompleteError` service.
   * @private
   */
-  function dfpAdController() {
+  function dfpAdController(DFPIncompleteError) {
     /**
     * The fixed (non-responsive) sizes for the ad slot.
     * @type {Array}
@@ -122,16 +425,18 @@ googletag.cmd = googletag.cmd || [];
       return this[name] !== undefined;
     };
 
-    // TODO: Throw exceptions rather than asserting
     /**
     * Tests if the state of the directive is valid and complete.
-    * @return {boolean} True if the ad slot may be created, else false.
+    * @throws {DFPIncompleteError} If the ad slot definition is not complete.
     */
-    this.isValid = function() {
-      if (sizes.length === 0) return false;
+    this.checkValid = function() {
+      if (sizes.length === 0) {
+        throw new DFPIncompleteError('dfp-ad', 'dfp-size');
+      }
       // eslint-disable-next-line dot-notation
-      if (!this['adUnit']) return false;
-      return true;
+      if (!this['adUnit']) {
+        throw new DFPIncompleteError('dfp-ad', 'ad-unit', true);
+      }
     };
 
     /* eslint-disable dot-notation */
@@ -141,7 +446,7 @@ googletag.cmd = googletag.cmd || [];
     *                  need to create an ad slot.
     */
     this.getState = function() {
-      console.assert(this.isValid());
+      this.checkValid();
       return Object.freeze({
         sizes,
         responsiveMapping,
@@ -347,7 +652,7 @@ googletag.cmd = googletag.cmd || [];
   module.directive('dfpAd', ['$injector', function($injector) {
     return {
       restrict: 'AE',
-      controller: dfpAdController,
+      controller: ['DFPIncompleteError', dfpAdController],
       controllerAs: 'controller',
       bindToController: true,
       link: function(...args) {
@@ -451,6 +756,104 @@ googletag.cmd = googletag.cmd || [];
       scope: {'adUnit': '@', 'segmentId': '@', 'ppid': '@'}
     };
   }]);
+
+// eslint-disable-next-line
+})(angularDfp);
+
+/**
+* @module dfp-incomplete-error
+* @author Peter Goldsborough <peter@goldsborough.me>
+* @author Jaime González García <vintharas@google.com>
+* @license Apache
+* Copyright 2016 Google Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+// eslint-disable-next-line valid-jsdoc
+(/** @lends module:dfp-incomplete-error */ function(module) {
+  'use strict';
+
+  /**
+  * Factory for the DFPIncompleteError service.
+  * @return {Function} The DFPIncompleteError service.
+  */
+  function dfpIncompleteErrorFactory() {
+    class DFPIncompleteError extends Error {
+      constructor(directiveName, missingName, isAttribute) {
+        super(
+          `Incomplete definition of '${directiveName}': ` +
+          `Missing ${isAttribute ? 'attribute' : 'child directive'} ` +
+          `'${missingName}'.`
+        );
+      }
+    }
+
+    return DFPIncompleteError;
+  }
+
+  /**
+  * Factory for the DFPTypeError service.
+  * @return {Function} The DFPTypeError service.
+  */
+  function dfpTypeErrorFactory() {
+    class DFPTypeError extends Error {
+      constructor(directiveName, attributeName, wrongValue, expectedType) {
+        super(
+          `Wrong type for attribute '${attributeName}' on ` +
+          `directive '${directiveName}': Expected ${expectedType}` +
+          `, got ${typeof wrongValue}`
+        );
+      }
+    }
+
+    return DFPTypeError;
+  }
+  /**
+  * Factory for the DFPMissingParentError service.
+  * @return {Function} The DFPMissingParentError service.
+  */
+  function dfpMissingParentErrorFactory() {
+    class DFPMissingParentError extends Error {
+      constructor(directiveName, ...parents) {
+        console.assert(parents && parents.length > 0);
+        if (Array.isArray(parents[0])) {
+          parents = parents[0];
+        }
+
+        let parentMessage;
+        if (parents.length > 1) {
+          parents = parents.map(p => `'${p}'`);
+          parentMessage = ', which must be ';
+          parentMessage += parents.slice(0, -1).join(', ');
+          parentMessage += ` or ${parents[parents.length - 1]}`;
+        } else {
+          parentMessage = ` '${parents[0]}'`;
+        }
+
+        super(
+          `Invalid use of '${directiveName}' directive. ` +
+          `Missing parent directive${parentMessage}.`
+        );
+      }
+    }
+
+    return DFPMissingParentError;
+  }
+
+  module.factory('DFPIncompleteError', dfpIncompleteErrorFactory);
+  module.factory('DFPTypeError', dfpTypeErrorFactory);
+  module.factory('DFPMissingParentError', dfpMissingParentErrorFactory);
 
 // eslint-disable-next-line
 })(angularDfp);
@@ -718,8 +1121,9 @@ googletag.cmd = googletag.cmd || [];
       '$rootScope',
       '$interval',
       '$q',
+      '$log',
       'parseDuration',
-      function($rootScope, $interval, $q, parseDuration) {
+      function($rootScope, $interval, $q, $log, parseDuration) {
         /**
         * The possible buffering/refreshing options (as an "enum")
         * @type {!Object}
@@ -829,13 +1233,11 @@ googletag.cmd = googletag.cmd || [];
         * The buffer interval is the interval at which
         * the proxy buffer is flushed.
         *
-        * @param {string|number} interval An interval string or number
+        * @param {!string|!number} interval An interval string or number
         *                                 (asis valid for `parseDuration`).
         * @return {Function} The current `dfpRefresh` instance.
         */
         dfpRefresh.setBufferInterval = function(interval) {
-          // Maybe warn for too low an interval
-          console.assert(interval !== null && interval > 0);
           self.bufferInterval = parseDuration(interval);
           prioritize();
 
@@ -991,14 +1393,14 @@ googletag.cmd = googletag.cmd || [];
         *
         * This is the interval at which all ads are refreshed.
         *
-        * @param {number|string} interval The new interval
+        * @param {!number|!string} interval The new interval
         *                        (as valid for the `parseDuration` service.)
         * @return {Function} The current `dfpRefresh` instance.
         */
         dfpRefresh.setRefreshInterval = function(interval) {
           // Maybe warn for too low an interval
-          console.assert(interval !== null && interval > 0);
           self.refreshInterval = parseDuration(interval);
+          validateInterval(self.refreshInterval, interval);
           enableRefreshInterval();
           prioritize();
 
@@ -1418,8 +1820,14 @@ googletag.cmd = googletag.cmd || [];
         * @param {string|number} interval The interval duration to set.
         */
         function addSlotInterval(task, interval) {
-          interval = parseDuration(interval);
-          const promise = $interval(() => { scheduleRefresh(task); }, interval);
+          const parsedInterval = parseDuration(interval);
+          validateInterval(parsedInterval, interval);
+
+          const promise = $interval(
+            () => { scheduleRefresh(task); },
+            parsedInterval
+          );
+
           intervals[task.slot] = promise;
         }
 
@@ -1453,6 +1861,21 @@ googletag.cmd = googletag.cmd || [];
             if (self.oneShotBarrier) {
               dfpRefresh.clearBufferBarrier();
             }
+          }
+        }
+
+        /**
+         * Validates a refresh interval passed.
+         *
+         * Just gives out a warning if the interval may be too low.
+         *
+         * @param  {?number} milliseconds  The interval, in milliseconds.
+         * @param  {!number|!string} beforeParsing The interval, before parsing.
+         */
+        function validateInterval(milliseconds, beforeParsing) {
+          console.assert(milliseconds);
+          if (milliseconds < 500) {
+            $log.warn('Careful: ${beforeParsing} is quite a low interval!');
           }
         }
 
@@ -1859,9 +2282,11 @@ googletag.cmd = googletag.cmd || [];
 
   /**
   * The controller for the `dfp-responsive` directive.
+  * @param {Function} DFPIncompleteError The `DFPIncompleteError` service.
+  * @param {Function} DFPTypeError The `DFPTypeError` service.
   * @private
   */
-  function DFPResponsiveController() {
+  function DFPResponsiveController(DFPIncompleteError, DFPTypeError) {
     /* eslint-disable dot-notation */
     /**
     * The size of the viewport.
@@ -1886,13 +2311,21 @@ googletag.cmd = googletag.cmd || [];
 
     /**
     * Asserts if the state of the controller is valid.
-    * @return {!boolean} True if the state of the controller is
-    *                   ready to be fetched, else false.
+    * @throws {DFPTypeError|DFPIncompleteError} If the directive is not complete.
     */
-    function isValid() {
-      if (viewportSize.some(value => typeof value !== 'number')) return false;
-      return adSizes.length > 0;
-    }
+    this.checkValid = function() {
+      ['viewportWidth', 'viewportHeight'].forEach(dimension => {
+        const value = this[dimension];
+        if (typeof value !== 'number') {
+          dimension = dimension.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+          throw new DFPTypeError('dfp-responsive', dimension, value, 'number');
+        }
+      });
+
+      if (adSizes.length === 0) {
+        throw new DFPIncompleteError('dfp-responsive', 'dfp-size', false);
+      }
+    };
 
     /**
     * Adds an ad size to the responsive mapping.
@@ -1907,7 +2340,7 @@ googletag.cmd = googletag.cmd || [];
     * @return {ResponsiveMapping} The state of the controller, for use by the directive.
     */
     this.getState = function() {
-      console.assert(isValid());
+      this.checkValid();
       return Object.freeze({
         viewportSize,
         adSizes
@@ -1935,7 +2368,11 @@ googletag.cmd = googletag.cmd || [];
     return {
       restrict: 'E',
       require: '^^dfpAd',
-      controller: DFPResponsiveController,
+      controller: [
+        'DFPIncompleteError',
+        'DFPTypeError',
+        DFPResponsiveController
+      ],
       controllerAs: 'controller',
       bindToController: true,
       link: dfpResponsiveDirective,
@@ -2099,13 +2536,20 @@ googletag.cmd = googletag.cmd || [];
   * @param {Object} element The HTML element on which the directive is defined.
   * @param {Object} attributes The attributes of the element.
   * @param {Object} parent     The parent controller.
+  * @param {Function} DFPMissingParentError The `DFPMissingParentError` service.
   */
-  function DFPSizeDirective(scope, element, attributes, parent) {
+  function DFPSizeDirective(scope,
+                            element,
+                            attributes,
+                            parent,
+                            DFPMissingParentError) {
     // Only one of the two possible parents will be `null`
     // Pick the most nested parent (`dfp-responsive`)
     parent = parent[1] || parent[0];
 
-    console.assert(parent);
+    if (!parent) {
+      throw new DFPMissingParentError('dfp-size', 'dfp-ad', 'dfp-responsive');
+    }
 
     if (scope.width && scope.height) {
       parent.addSize([scope.width, scope.height]);
@@ -2114,14 +2558,19 @@ googletag.cmd = googletag.cmd || [];
     }
   }
 
-  module.directive('dfpSize', [function() {
-    return {
-      restrict: 'E',
-      require: ['?^^dfpAd', '?^^dfpResponsive'],
-      scope: {width: '=', height: '='},
-      link: DFPSizeDirective
-    };
-  }]);
+  module.directive('dfpSize', [
+    'DFPMissingParentError',
+    function(DFPMissingParentError) {
+      return {
+        restrict: 'E',
+        require: ['?^^dfpAd', '?^^dfpResponsive'],
+        scope: {width: '=', height: '='},
+        link: function(...args) {
+          args = args.slice(0, 4).concat(DFPMissingParentError);
+          DFPSizeDirective.apply(null, args);
+        }
+      };
+    }]);
 
 // eslint-disable-next-line
 })(angularDfp);
@@ -2176,9 +2625,10 @@ googletag.cmd = googletag.cmd || [];
   * This controller makes an `addValue` function available that allows the
   * `dfp-value` directive to add values for a single key attribute defined in
   * the directive.
+  * @param {Function} DFPIncompleteError The `DFPIncompleteError` service.
   * @private
   */
-  function dfpTargetingController() {
+  function dfpTargetingController(DFPIncompleteError) {
     /**
     * The values of the targeting.
     * @type {Array}
@@ -2187,13 +2637,16 @@ googletag.cmd = googletag.cmd || [];
 
     /**
     * Verifies that the controller has a complete (valid) state.
-    * @return {!boolean} True if the directive has all required members,
-    *                   else false.
+    * @throws {DFPIncompleteError} If the directive is not complete.
     */
-    this.isValid = function() {
-      if (this.key === undefined) return false;
-      if (values.length === 0) return false;
-      return true;
+    this.checkValid = function() {
+      if (this.key === undefined) {
+        throw new DFPIncompleteError('dfp-targeting', 'key', true);
+      }
+
+      if (values.length === 0) {
+        throw new DFPIncompleteError('dfp-targeting', 'value', true);
+      }
     };
 
     /**
@@ -2201,7 +2654,7 @@ googletag.cmd = googletag.cmd || [];
     * @return {Object} The key and an array of values for the targeting.
     */
     this.getState = function() {
-      console.assert(this.isValid());
+      this.checkValid();
       return Object.freeze({
         key: this.key,
         values
@@ -2243,7 +2696,7 @@ googletag.cmd = googletag.cmd || [];
     return {
       restrict: 'E',
       require: '^^dfpAd', // require dfp-ad as parent
-      controller: dfpTargetingController,
+      controller: ['DFPIncompleteError', dfpTargetingController],
       controllerAs: 'controller',
       bindToController: true,
       scope: {key: '@', value: '@'},
@@ -2355,6 +2808,11 @@ let angularDfpVideo = angular.module('angularDfp');
   'use strict';
 
   /**
+   * An Error class for the dfp-video directive.
+   */
+  class DFPVideoError extends Error { }
+
+  /**
   * The `dfp-video` directive.
   *
   * This directive enables video ads to be shown over videos,
@@ -2372,8 +2830,11 @@ let angularDfpVideo = angular.module('angularDfp');
      // Unpack jQuery object
     element = element[0];
 
-    // TODO: exception here
-    console.assert(element.tagName === 'VIDEO');
+    if (element.tagName !== 'VIDEO') {
+      throw new DFPVideoError(
+        "'dfp-video' directive must be attached to a <video> tag."
+      );
+    }
 
      // Generate an ID or check for uniqueness of an existing one
     dfpIDGenerator(element);
@@ -2665,308 +3126,6 @@ googletag.cmd = googletag.cmd || [];
   }
 
   module.provider('dfp', ['GPT_LIBRARY_URL', dfpProvider]);
-
-// eslint-disable-next-line
-})(angularDfp);
-
-/**
-* @module http-error
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
-* @license Apache
-* Copyright 2016 Google Inc.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
-// eslint-disable-next-line valid-jsdoc
-(/** @lends module:http-error */ function(module) {
-  'use strict';
-
-  /**
- * The factory for the `httpError` service.
- *
- * @private
- * @param  {Function} $log    The Angular `$log` service.
- * @return {Function} The `httpError` service.
- */
-  function httpErrorFactory($log) {
-    /**
-   * The `httpError` service.
-   * @param  {!Object} response An XHR response object.
-   * @param  {!string} message The error message to show.
-   */
-    function httpError(response, message) {
-      $log.error(`Error (${response.status})`);
-    }
-
-    /**
-    * Tests if a given HTTP response status is an error code.
-    * @param  {number|!string}  code The response status code.
-    * @return {!boolean} True if the code is an error code, else false.
-    */
-    httpError.isErrorCode = function(code) {
-      if (typeof code === 'number') {
-        return !(code >= 200 && code < 300);
-      }
-
-      console.assert(typeof code === 'string');
-
-      return code[0] !== '2';
-    };
-
-    return httpError;
-  }
-
-  module.factory('httpError', ['$log', httpErrorFactory]);
-
-  // eslint-disable-next-line
-})(angularDfp);
-
-/**
-* @module parse-duration
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
-* @license Apache
-* Copyright 2016 Google Inc.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
-// eslint-disable-next-line valid-jsdoc
-(/** @lends module:parse-duration */ function(module) {
-  'use strict';
-
-  /**
-  * An error thrown by the `parseDuration` service.
-  * @private
-  */
-  class DFPDurationError extends Error {
-    constructor(interval) {
-      super(`Invalid interval: '${interval}'ls`);
-    }
-  }
-
-  /**
-  * A factory for the `parseDuration` service.
-  *
-  * This service allows parsing of strings specifying
-  * durations, such as '2s' or '5min'.
-  *
-  * @private
-  * @return {Function} The `parseDuration` service.
-  */
-  function parseDurationFactory() {
-    /**
-    * Converts a given time in a given unit to milliseconds.
-    * @param  {!number} time A time number in a certain unit.
-    * @param  {!string} unit A string describing the unit (ms|s|min|h).
-    * @return {!number} The time, in milliseconds.
-    */
-    function convertToMilliseconds(time, unit) {
-      console.assert(/^(m?s|min|h)$/g.test(unit));
-
-      if (unit === 'ms') return time;
-      if (unit === 's') return time * 1000;
-      if (unit === 'min') return time * 60 * 1000;
-
-      // hours
-      return time * 60 * 60 * 1000;
-    }
-
-    /**
-    * Converts a regular expression match into a duration.
-    * @param  {!Array} match A regular expression match object.
-    * @return {!number} The converted milliseconds.
-    */
-    function convert(match) {
-      const time = parseFloat(match[1]);
-
-       // No unit means milliseconds
-       // Note: match[0] is the entire matched string
-      if (match.length === 2) return time;
-
-      return convertToMilliseconds(time, match[2]);
-    }
-
-    /**
-    * Given an interval string, returns the corresponding milliseconds.
-    * @param  {number|string} interval The string to parse.
-    * @return {number} The corresponding number of milliseconds.
-    */
-    function parseDuration(interval) {
-      // The interval may well be zero so don't just write !interval
-      if (interval === undefined || interval === null) {
-        throw new DFPDurationError(interval);
-      }
-
-      if (typeof interval === 'number') {
-        return interval;
-      }
-
-      if (typeof interval !== 'string') {
-        throw new TypeError(`'${interval}' must be of number or string type`);
-      }
-
-      // Convert any allowed time format into milliseconds
-      const match = interval.match(/((?:\d+)?.?\d+)(m?s|min|h)?/);
-
-      if (!match) {
-        throw new DFPDurationError(interval);
-      }
-
-      return convert(match);
-    }
-
-    return parseDuration;
-  }
-
-  module.factory('parseDuration', parseDurationFactory);
-
-// eslint-disable-next-line
-})(angularDfp);
-
-/**
-* @module script-injector
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
-* @license Apache
-* Copyright 2016 Google Inc.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
-// eslint-disable-next-line valid-jsdoc
-(/** @lends module:script-injector */ function(module) {
-  'use strict';
-
-  /**
-  * The factory for the `scriptInjector` service.
-  *
-  * @private
-  * @param {!angular.$q} $q The Angular `$q` service.
-  * @param {Function} httpError The `httpError` service.
-  * @return {Function} The `scriptInjector` service.
-  */
-  function scriptInjectorFactory($q, httpError) {
-    /**
-    * Creates an HTML script tag.
-    * @param  {!string} url The string of the script to inject.
-    * @return {Element} An `Element` ready for injection.
-    */
-    function createScript(url) {
-      const script = document.createElement('script');
-      const ssl = document.location.protocol === 'https:';
-
-      script.async = 'async';
-      script.type = 'text/javascript';
-      script.src = (ssl ? 'https:' : 'http:') + url;
-
-      return script;
-    }
-
-    /**
-    * Creates a promise, to be resolved after the script is loaded.
-    * @param  {Element} script The script tag.
-    * @param {!string} url The url of the request.
-    * @return {angular.$q.Promise<null>} The promise for the asynchronous script injection.
-    */
-    function promiseScript(script, url) {
-      const deferred = $q.defer();
-
-      /**
-      * Resolves the promise.
-      */
-      function resolve() {
-        deferred.resolve();
-      }
-
-      /**
-      * Rejects the promise for a given faulty response.
-      * @param  {?Object} response The response object.
-      */
-      function reject(response) {
-        response = response || {status: 400};
-        httpError(response, 'loading script "{0}".', url);
-
-        // Reject the promise and pass the reponse
-        // object to the error callback (if any)
-        deferred.reject(response);
-      }
-
-      // IE
-      script.onreadystatechange = function() {
-        if (this.readyState === 4) {
-          if (httpError.isErrorCode(this.status)) {
-            reject(this);
-          } else {
-            resolve();
-          }
-        }
-      };
-
-      // Other viewports
-      script.onload = resolve;
-      script.onerror = reject;
-
-      return deferred.promise;
-    }
-
-    /**
-    * Injects a script tag into the DOM (at the end of <head>).
-    * @param  {Element} script The Element script.
-    */
-    function injectScript(script) {
-      const head = document.head || document.querySelector('head');
-      head.appendChild(script);
-    }
-
-    /**
-    * The `scriptInjector` service.
-    * @param  {!string} url The string to inject.
-    * @return {angular.$q.Promise<null>} A promise, resolved after
-    *                   loading the script or reject on error.
-    */
-    function scriptInjector(url) {
-      const script = createScript(url);
-      injectScript(script);
-      return promiseScript(script, url);
-    }
-
-    return scriptInjector;
-  }
-
-  module.factory('scriptInjector', ['$q', 'httpError', scriptInjectorFactory]);
 
 // eslint-disable-next-line
 })(angularDfp);

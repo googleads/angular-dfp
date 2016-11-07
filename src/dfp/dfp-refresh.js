@@ -94,8 +94,9 @@ googletag.cmd = googletag.cmd || [];
       '$rootScope',
       '$interval',
       '$q',
+      '$log',
       'parseDuration',
-      function($rootScope, $interval, $q, parseDuration) {
+      function($rootScope, $interval, $q, $log, parseDuration) {
         /**
         * The possible buffering/refreshing options (as an "enum")
         * @type {!Object}
@@ -205,13 +206,11 @@ googletag.cmd = googletag.cmd || [];
         * The buffer interval is the interval at which
         * the proxy buffer is flushed.
         *
-        * @param {string|number} interval An interval string or number
+        * @param {!string|!number} interval An interval string or number
         *                                 (asis valid for `parseDuration`).
         * @return {Function} The current `dfpRefresh` instance.
         */
         dfpRefresh.setBufferInterval = function(interval) {
-          // Maybe warn for too low an interval
-          console.assert(interval !== null && interval > 0);
           self.bufferInterval = parseDuration(interval);
           prioritize();
 
@@ -367,14 +366,14 @@ googletag.cmd = googletag.cmd || [];
         *
         * This is the interval at which all ads are refreshed.
         *
-        * @param {number|string} interval The new interval
+        * @param {!number|!string} interval The new interval
         *                        (as valid for the `parseDuration` service.)
         * @return {Function} The current `dfpRefresh` instance.
         */
         dfpRefresh.setRefreshInterval = function(interval) {
           // Maybe warn for too low an interval
-          console.assert(interval !== null && interval > 0);
           self.refreshInterval = parseDuration(interval);
+          validateInterval(self.refreshInterval, interval);
           enableRefreshInterval();
           prioritize();
 
@@ -794,8 +793,14 @@ googletag.cmd = googletag.cmd || [];
         * @param {string|number} interval The interval duration to set.
         */
         function addSlotInterval(task, interval) {
-          interval = parseDuration(interval);
-          const promise = $interval(() => { scheduleRefresh(task); }, interval);
+          const parsedInterval = parseDuration(interval);
+          validateInterval(parsedInterval, interval);
+
+          const promise = $interval(
+            () => { scheduleRefresh(task); },
+            parsedInterval
+          );
+
           intervals[task.slot] = promise;
         }
 
@@ -829,6 +834,21 @@ googletag.cmd = googletag.cmd || [];
             if (self.oneShotBarrier) {
               dfpRefresh.clearBufferBarrier();
             }
+          }
+        }
+
+        /**
+         * Validates a refresh interval passed.
+         *
+         * Just gives out a warning if the interval may be too low.
+         *
+         * @param  {?number} milliseconds  The interval, in milliseconds.
+         * @param  {!number|!string} beforeParsing The interval, before parsing.
+         */
+        function validateInterval(milliseconds, beforeParsing) {
+          console.assert(milliseconds);
+          if (milliseconds < 500) {
+            $log.warn('Careful: ${beforeParsing} is quite a low interval!');
           }
         }
 
