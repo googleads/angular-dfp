@@ -16,7 +16,7 @@
 *     <dfp-value>chicken</dfp-value>
 *     <dfp-value>meatballs</dfp-value>
 *   </dfp-targeting>
-*   <dfp-responsive browser-width="320" browser-height="0">
+*   <dfp-responsive viewport-width="320" viewport-height="0">
 *     <dfp-size width=320 height=50></dfp-size>
 *   </dfp-responsive>
 * </dfp-ad>
@@ -60,8 +60,8 @@ googletag.cmd = googletag.cmd || [];
     const sizes = [];
 
     /**
-    * Any `{browserSize, adSizes}` objects to create responsive mappings.
-    * @type {Array}
+    * Any `{viewportSize, adSizes}` objects to create responsive mappings.
+    * @type {Array<{viewportSize: Array<number>, adSizes: Array<number>}>}
     */
     const responsiveMapping = [];
 
@@ -145,7 +145,7 @@ googletag.cmd = googletag.cmd || [];
 
     /**
     * Registers a responsive mapping for the ad slot.
-    * @param {Object} mapping A `{browserSize, adSizes}` mapping.
+    * @param {Object} mapping A `{viewportSize, adSizes}` mapping.
     * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/3423562?hl=en}
     * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.SizeMappingBuilder}
     */
@@ -155,7 +155,7 @@ googletag.cmd = googletag.cmd || [];
 
     /**
     * Registers a targeting object for the ad slot.
-    * @param {Object} targeting A {browserSize, adSizes} object.
+    * @param {Object} targeting A {viewportSize, adSizes} object.
     * @see [Google DFP Support]{@link https://support.google.com/dfp_premium/answer/177383?hl=en}
     * @see [GPT Reference]{@link https://developers.google.com/doubleclick-gpt/reference#googletag.PassbackSlot_setTargeting}
     */
@@ -206,7 +206,7 @@ googletag.cmd = googletag.cmd || [];
     const dfp = $injector.get('dfp');
     const dfpIDGenerator = $injector.get('dfpIDGenerator');
     const dfpRefresh = $injector.get('dfpRefresh');
-    const responsiveResize = $injector.get('responsiveResize');
+    const dfpResponsiveResize = $injector.get('dfpResponsiveResize');
 
     const ad = controller.getState();
 
@@ -226,10 +226,25 @@ googletag.cmd = googletag.cmd || [];
       const sizeMapping = googletag.sizeMapping();
 
       ad.responsiveMapping.forEach(function(mapping) {
-        sizeMapping.addSize(mapping.browserSize, mapping.adSizes);
+        sizeMapping.addSize(mapping.viewportSize, mapping.adSizes);
       });
 
       slot.defineSizeMapping(sizeMapping.build());
+    }
+
+    /**
+     * Extracts the viewport dimensions from the responsive mapping.
+     *
+     * This is necessar7 to pass to the responsiveResize service.
+     *
+     * @param  {!Array<!ResponsiveMapping>} responsiveMappings The responsive mappings.
+     * @return {!Array<!ViewportDimensions>} An array containing objects with the viewport dimensions.
+     */
+    function extractViewportDimensions(responsiveMappings) {
+      return responsiveMappings.map(mapping => ({
+        width: mapping.viewportSize[0],
+        height: mapping.viewportSize[1]
+      }));
     }
 
     /**
@@ -287,7 +302,8 @@ googletag.cmd = googletag.cmd || [];
       // Send to the refresh proxy
       dfpRefresh(slot, ad.refresh).then(() => {
         if (ad.responsiveMapping.length > 0) {
-          responsiveResize(jQueryElement, slot);
+          const dimensions = extractViewportDimensions(ad.responsiveMapping);
+          dfpResponsiveResize(jQueryElement, slot, dimensions);
         }
       });
 

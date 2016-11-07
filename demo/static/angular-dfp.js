@@ -33,301 +33,6 @@ googletag.cmd = googletag.cmd || [];
 var angularDfp = angular.module('angularDfp', []);
 
 
-( function (module) {
-  'use strict';
-
-
-  function httpErrorFactory($log) {
-    function httpError(response, message) {
-      $log.error('Error (' + response.status + ')');
-    }
-
-    httpError.isErrorCode = function (code) {
-      if (typeof code === 'number') {
-        return !(code >= 200 && code < 300);
-      }
-
-      console.assert(typeof code === 'string');
-
-      return code[0] !== '2';
-    };
-
-    return httpError;
-  }
-
-  module.factory('httpError', ['$log', httpErrorFactory]);
-
-})(angularDfp);
-
-
-( function (module) {
-  'use strict';
-
-
-  var DFPDurationError = function (_Error) {
-    _inherits(DFPDurationError, _Error);
-
-    function DFPDurationError(interval) {
-      _classCallCheck(this, DFPDurationError);
-
-      return _possibleConstructorReturn(this, (DFPDurationError.__proto__ || Object.getPrototypeOf(DFPDurationError)).call(this, 'Invalid interval: \'' + interval + '\'ls'));
-    }
-
-    return DFPDurationError;
-  }(Error);
-
-
-
-  function parseDurationFactory() {
-    function convertToMilliseconds(time, unit) {
-      console.assert(/^(m?s|min|h)$/g.test(unit));
-
-      if (unit === 'ms') return time;
-      if (unit === 's') return time * 1000;
-      if (unit === 'min') return time * 60 * 1000;
-
-      return time * 60 * 60 * 1000;
-    }
-
-    function convert(match) {
-      var time = parseInt(match[1], 10);
-
-      if (match.length === 2) return time;
-
-      return convertToMilliseconds(time, match[2]);
-    }
-
-    function parseDuration(interval) {
-      if (interval === undefined || interval === null) {
-        throw new DFPDurationError(interval);
-      }
-
-      if (typeof interval === 'number') {
-        return interval;
-      }
-
-      if (typeof interval !== 'string') {
-        throw new TypeError('\'' + interval + '\' must be of number or string type');
-      }
-
-      var match = interval.match(/(\d+)(m?s|min|h)?/);
-
-      if (!match) {
-        throw new DFPDurationError(interval);
-      }
-
-      return convert(match);
-    }
-
-    return parseDuration;
-  }
-
-  module.factory('parseDuration', parseDurationFactory);
-
-})(angularDfp);
-
-
-( function (module) {
-  'use strict';
-
-
-  function responsiveResizeFactory($interval, $timeout, $window, dfpRefresh) {
-    $window = angular.element($window);
-
-    function responsiveResize(element, slot, boundaries) {
-      boundaries = boundaries || [320, 780, 1480];
-      console.assert(Array.isArray(boundaries));
-
-      var POLL_INTERVAL = 100; 
-
-      var POLL_DURATION = 2500; 
-
-      function queryIFrame() {
-        return element.find('div iframe');
-      }
-
-      function normalizeIFrame(iframe) {
-        iframe = iframe || queryIFrame();
-        iframe.css('width', iframe.attr('width') + 'px');
-        iframe.css('height', iframe.attr('height') + 'px');
-      }
-
-      function hideElement() {
-        element.addClass('hidden');
-      }
-
-      function showElement() {
-        $timeout(function () {
-          element.removeClass('hidden');
-        }, 1000);
-      }
-
-      function pollForChange(initial) {
-        var iframe = queryIFrame();
-
-        var change = ['width', 'height'].some(function (dimension) {
-          return iframe.attr(dimension) !== initial[dimension];
-        });
-
-        if (change) normalizeIFrame(iframe);
-      }
-
-      function startPolling(initial) {
-        var poll = $interval(function () {
-          return pollForChange(initial);
-        }, POLL_INTERVAL);
-
-        $timeout(function () {
-          return $interval.cancel(poll);
-        }, POLL_DURATION);
-      }
-
-      function getIframeDimensions() {
-        var iframe = queryIFrame();
-        var dimensions = [iframe.css('width'), iframe.css('height')];
-
-        var plain = dimensions.map(function (dimension) {
-          return dimension ? dimension.slice(0, -2) : null;
-        });
-
-        return { width: plain[0], height: plain[1] };
-      }
-
-      function watchResize() {
-        startPolling(getIframeDimensions());
-
-        $window.on('resize', function () {
-          normalizeIFrame();
-        });
-
-        showElement();
-      }
-
-      function makeResponsive() {
-        function determineIndex() {
-          var width = $window.innerWidth;
-          var last = boundaries.length - 1;
-
-          for (var _index = 0, _last; _index < _last; ++_index) {
-            if (width < boundaries[_index + 1]) return _index;
-          }
-
-          return last;
-        }
-
-        var index = determineIndex();
-
-        function couldGrow() {
-          if (index + 1 >= boundaries.length) return false;
-          return window.innerWidth >= boundaries[index + 1];
-        }
-
-        function couldShrink() {
-          if (index === 0) return false;
-          return window.innerWidth < boundaries[index];
-        }
-
-        function transition(delta) {
-          console.assert(index >= 0 && index < boundaries.length);
-          console.assert(delta === -1 || delta === +1);
-
-          index += delta;
-          hideElement();
-
-          dfpRefresh(slot).then(function () {
-            watchResize();
-          });
-
-          console.assert(index >= 0 && index < boundaries.length);
-        }
-
-        watchResize();
-
-        return function watchListener() {
-          if (couldGrow()) {
-            transition(+1);
-          } else if (couldShrink()) {
-            transition(-1);
-          }
-        };
-      }
-
-      $window.on('resize', makeResponsive());
-    }
-
-    return responsiveResize;
-  }
-
-  module.factory('responsiveResize', ['$interval', '$timeout', '$window', 'dfpRefresh', responsiveResizeFactory]);
-
-})(angularDfp);
-
-
-( function (module) {
-  'use strict';
-
-
-  function scriptInjectorFactory($q, httpError) {
-    function createScript(url) {
-      var script = document.createElement('script');
-      var ssl = document.location.protocol === 'https:';
-
-      script.async = 'async';
-      script.type = 'text/javascript';
-      script.src = (ssl ? 'https:' : 'http:') + url;
-
-      return script;
-    }
-
-    function promiseScript(script, url) {
-      var deferred = $q.defer();
-
-      function resolve() {
-        deferred.resolve();
-      }
-
-      function reject(response) {
-        response = response || { status: 400 };
-        httpError(response, 'loading script "{0}".', url);
-
-        deferred.reject(response);
-      }
-
-      script.onreadystatechange = function () {
-        if (this.readyState === 4) {
-          if (httpError.isErrorCode(this.status)) {
-            reject(this);
-          } else {
-            resolve();
-          }
-        }
-      };
-
-      script.onload = resolve;
-      script.onerror = reject;
-
-      return deferred.promise;
-    }
-
-    function injectScript(script) {
-      var head = document.head || document.querySelector('head');
-      head.appendChild(script);
-    }
-
-    function scriptInjector(url) {
-      var script = createScript(url);
-      injectScript(script);
-      return promiseScript(script, url);
-    }
-
-    return scriptInjector;
-  }
-
-  module.factory('scriptInjector', ['$q', 'httpError', scriptInjectorFactory]);
-
-})(angularDfp);
-
-
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 
@@ -398,7 +103,7 @@ googletag.cmd = googletag.cmd || [];
     var dfp = $injector.get('dfp');
     var dfpIDGenerator = $injector.get('dfpIDGenerator');
     var dfpRefresh = $injector.get('dfpRefresh');
-    var responsiveResize = $injector.get('responsiveResize');
+    var dfpResponsiveResize = $injector.get('dfpResponsiveResize');
 
     var ad = controller.getState();
 
@@ -413,10 +118,19 @@ googletag.cmd = googletag.cmd || [];
       var sizeMapping = googletag.sizeMapping();
 
       ad.responsiveMapping.forEach(function (mapping) {
-        sizeMapping.addSize(mapping.browserSize, mapping.adSizes);
+        sizeMapping.addSize(mapping.viewportSize, mapping.adSizes);
       });
 
       slot.defineSizeMapping(sizeMapping.build());
+    }
+
+    function extractViewportDimensions(responsiveMappings) {
+      return responsiveMappings.map(function (mapping) {
+        return {
+          width: mapping.viewportSize[0],
+          height: mapping.viewportSize[1]
+        };
+      });
     }
 
     function defineSlot() {
@@ -459,7 +173,8 @@ googletag.cmd = googletag.cmd || [];
 
       dfpRefresh(slot, ad.refresh).then(function () {
         if (ad.responsiveMapping.length > 0) {
-          responsiveResize(jQueryElement, slot);
+          var dimensions = extractViewportDimensions(ad.responsiveMapping);
+          dfpResponsiveResize(jQueryElement, slot, dimensions);
         }
       });
 
@@ -615,8 +330,8 @@ googletag.cmd = googletag.cmd || [];
   'use strict';
 
 
-  var DFPRefreshError = function (_Error2) {
-    _inherits(DFPRefreshError, _Error2);
+  var DFPRefreshError = function (_Error) {
+    _inherits(DFPRefreshError, _Error);
 
     function DFPRefreshError() {
       _classCallCheck(this, DFPRefreshError);
@@ -912,9 +627,12 @@ googletag.cmd = googletag.cmd || [];
           return self.priority[option];
         });
 
-        var maximum = priorities.reduce(function (a, b) {
-          return Math.max(a, b);
-        });
+        var maximum = null;
+        if (priorities.length > 0) {
+          maximum = priorities.reduce(function (a, b) {
+            return Math.max(a, b);
+          });
+        }
 
         for (var index = 0; index < available.length; ++index) {
           if (priorities[index] === maximum) {
@@ -1074,13 +792,172 @@ googletag.cmd = googletag.cmd || [];
   'use strict';
 
 
+  function dfpResponsiveResizeProvider() {
+    var self = this;
+
+    self.refreshDelay = 200;
+
+    this.$get = ['$interval', '$timeout', '$window', 'dfpRefresh', 'parseDuration', function ($interval, $timeout, $window, dfpRefresh, parseDuration) {
+      $window = angular.element($window);
+
+      self.refreshDelay = parseDuration(self.refreshDelay);
+
+      function responsiveResize(element, slot, dimensions) {
+        dimensions.sort(function (first, second) {
+          if (first.width < second.width) return -1;
+          if (first.width > second.width) return +1;
+
+          if (first.height < second.height) return -1;
+          if (first.height > second.height) return +1;
+
+          return 0;
+        });
+
+        var POLL_INTERVAL = 100; 
+
+        var POLL_DURATION = 2500; 
+
+        function queryIFrame() {
+          return element.find('div iframe');
+        }
+
+        function normalizeIFrame(iframe) {
+          iframe = iframe || queryIFrame();
+          iframe.css('width', iframe.attr('width') + 'px');
+          iframe.css('height', iframe.attr('height') + 'px');
+        }
+
+        function pollForChange(initial) {
+          var iframe = queryIFrame();
+
+          var change = ['width', 'height'].some(function (dimension) {
+            return iframe.attr(dimension) !== initial[dimension];
+          });
+
+          if (change) {
+            normalizeIFrame(iframe);
+            element.parent().removeClass('refreshing');
+          }
+        }
+
+        function startPolling(initial) {
+          var poll = $interval(function () {
+            return pollForChange(initial);
+          }, POLL_INTERVAL);
+
+          $timeout(function () {
+            return $interval.cancel(poll);
+          }, POLL_DURATION);
+        }
+
+        function getIframeDimensions() {
+          var iframe = queryIFrame();
+          var dimensions = [iframe.css('width'), iframe.css('height')];
+
+          var plain = dimensions.map(function (dimension) {
+            return dimension ? dimension.slice(0, -2) : null;
+          });
+
+          return { width: plain[0], height: plain[1] };
+        }
+
+        function watchResize() {
+          startPolling(getIframeDimensions());
+
+          $window.on('resize', function () {
+            normalizeIFrame();
+          });
+        }
+
+        function makeResponsive() {
+          function determineIndex() {
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            var numberOfDimensions = dimensions.length;
+
+            var index = 1;
+            for (; index < numberOfDimensions; ++index) {
+              if (width < dimensions[index].width) break;
+              if (height < dimensions[index].height) break;
+            }
+
+            return index - 1;
+          }
+
+          var index = determineIndex();
+
+          function couldGrow() {
+            if (index + 1 >= dimensions.length) return false;
+            if (window.innerWidth < dimensions[index + 1].width) {
+              return false;
+            }
+            if (window.innerHeight < dimensions[index + 1].height) {
+              return false;
+            }
+
+            return true;
+          }
+
+          function couldShrink() {
+            if (index === 0) return false;
+            if (window.innerWidth < dimensions[index].width) return true;
+            if (window.innerHeight < dimensions[index].height) return true;
+            return false;
+          }
+
+          function refresh() {
+            dfpRefresh(slot).then(function () {
+              watchResize();
+            });
+          }
+
+          function transition(delta) {
+            console.assert(index >= 0 && index < dimensions.length);
+            console.assert(delta === -1 || delta === +1);
+
+            index += delta;
+
+            element.parent().addClass('refreshing');
+
+            $timeout(refresh, self.refreshDelay);
+
+            console.assert(index >= 0 && index < dimensions.length);
+          }
+
+          watchResize();
+
+          return function watchListener() {
+            if (couldGrow()) {
+              transition(+1);
+            } else if (couldShrink()) {
+              transition(-1);
+            }
+          };
+        }
+
+        $window.on('resize', makeResponsive());
+      }
+
+      return responsiveResize;
+    }];
+  }
+
+  module.provider('dfpResponsiveResize', dfpResponsiveResizeProvider);
+
+})(angularDfp);
+
+
+( function (module) {
+  'use strict';
+
+
   function DFPResponsiveController() {
-    var browserSize = Object.seal([this['browserWidth'], this['browserHeight'] || 0]);
+    var viewportSize = Object.seal([this['viewportWidth'], this['viewportHeight'] || 0]);
 
     var adSizes = [];
 
     function isValid() {
-      if (browserSize.some(function (value) {
+      if (viewportSize.some(function (value) {
         return typeof value !== 'number';
       })) return false;
       return adSizes.length > 0;
@@ -1093,7 +970,7 @@ googletag.cmd = googletag.cmd || [];
     this.getState = function () {
       console.assert(isValid());
       return Object.freeze({
-        browserSize: browserSize,
+        viewportSize: viewportSize,
         adSizes: adSizes
       });
     };
@@ -1114,7 +991,7 @@ googletag.cmd = googletag.cmd || [];
       controllerAs: 'controller',
       bindToController: true,
       link: dfpResponsiveDirective,
-      scope: { 'browserWidth': '=', 'browserHeight': '=' }
+      scope: { 'viewportWidth': '=', 'viewportHeight': '=' }
     };
   }]);
 
@@ -1292,8 +1169,8 @@ googletag.cmd = googletag.cmd || [];
 ( function (module) {
   'use strict';
 
-  var DFPConfigurationError = function (_Error3) {
-    _inherits(DFPConfigurationError, _Error3);
+  var DFPConfigurationError = function (_Error2) {
+    _inherits(DFPConfigurationError, _Error2);
 
     function DFPConfigurationError() {
       _classCallCheck(this, DFPConfigurationError);
@@ -1423,5 +1300,164 @@ googletag.cmd = googletag.cmd || [];
   }
 
   module.provider('dfp', ['GPT_LIBRARY_URL', dfpProvider]);
+
+})(angularDfp);
+
+
+( function (module) {
+  'use strict';
+
+
+  function httpErrorFactory($log) {
+    function httpError(response, message) {
+      $log.error('Error (' + response.status + ')');
+    }
+
+    httpError.isErrorCode = function (code) {
+      if (typeof code === 'number') {
+        return !(code >= 200 && code < 300);
+      }
+
+      console.assert(typeof code === 'string');
+
+      return code[0] !== '2';
+    };
+
+    return httpError;
+  }
+
+  module.factory('httpError', ['$log', httpErrorFactory]);
+
+})(angularDfp);
+
+
+( function (module) {
+  'use strict';
+
+
+  var DFPDurationError = function (_Error3) {
+    _inherits(DFPDurationError, _Error3);
+
+    function DFPDurationError(interval) {
+      _classCallCheck(this, DFPDurationError);
+
+      return _possibleConstructorReturn(this, (DFPDurationError.__proto__ || Object.getPrototypeOf(DFPDurationError)).call(this, 'Invalid interval: \'' + interval + '\'ls'));
+    }
+
+    return DFPDurationError;
+  }(Error);
+
+
+
+  function parseDurationFactory() {
+    function convertToMilliseconds(time, unit) {
+      console.assert(/^(m?s|min|h)$/g.test(unit));
+
+      if (unit === 'ms') return time;
+      if (unit === 's') return time * 1000;
+      if (unit === 'min') return time * 60 * 1000;
+
+      return time * 60 * 60 * 1000;
+    }
+
+    function convert(match) {
+      var time = parseFloat(match[1]);
+
+      if (match.length === 2) return time;
+
+      return convertToMilliseconds(time, match[2]);
+    }
+
+    function parseDuration(interval) {
+      if (interval === undefined || interval === null) {
+        throw new DFPDurationError(interval);
+      }
+
+      if (typeof interval === 'number') {
+        return interval;
+      }
+
+      if (typeof interval !== 'string') {
+        throw new TypeError('\'' + interval + '\' must be of number or string type');
+      }
+
+      var match = interval.match(/((?:\d+)?.?\d+)(m?s|min|h)?/);
+
+      if (!match) {
+        throw new DFPDurationError(interval);
+      }
+
+      return convert(match);
+    }
+
+    return parseDuration;
+  }
+
+  module.factory('parseDuration', parseDurationFactory);
+
+})(angularDfp);
+
+
+( function (module) {
+  'use strict';
+
+
+  function scriptInjectorFactory($q, httpError) {
+    function createScript(url) {
+      var script = document.createElement('script');
+      var ssl = document.location.protocol === 'https:';
+
+      script.async = 'async';
+      script.type = 'text/javascript';
+      script.src = (ssl ? 'https:' : 'http:') + url;
+
+      return script;
+    }
+
+    function promiseScript(script, url) {
+      var deferred = $q.defer();
+
+      function resolve() {
+        deferred.resolve();
+      }
+
+      function reject(response) {
+        response = response || { status: 400 };
+        httpError(response, 'loading script "{0}".', url);
+
+        deferred.reject(response);
+      }
+
+      script.onreadystatechange = function () {
+        if (this.readyState === 4) {
+          if (httpError.isErrorCode(this.status)) {
+            reject(this);
+          } else {
+            resolve();
+          }
+        }
+      };
+
+      script.onload = resolve;
+      script.onerror = reject;
+
+      return deferred.promise;
+    }
+
+    function injectScript(script) {
+      var head = document.head || document.querySelector('head');
+      head.appendChild(script);
+    }
+
+    function scriptInjector(url) {
+      var script = createScript(url);
+      injectScript(script);
+      return promiseScript(script, url);
+    }
+
+    return scriptInjector;
+  }
+
+  module.factory('scriptInjector', ['$q', 'httpError', scriptInjectorFactory]);
 
 })(angularDfp);

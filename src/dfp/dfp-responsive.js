@@ -2,24 +2,24 @@
 * @file A directive for giving an ad responsive sizes.
 *
 * The `dfp-responsive` mapping is the `angular-dfp` pendant to GPT's
-* `sizeMapping` and allows mapping browser dimensions to ad sizes. More
+* `sizeMapping` and allows mapping viewport dimensions to ad sizes. More
 * precisely, the `dfp-responsive` directive allows nesting one or more
 * [`dfp-size`](@link module:dfp-size) tags, each specifying ad dimensions
-* allowed for the given browser width and height (and higher ones).
+* allowed for the given viewport width and height (and higher ones).
 *
 * Using such mappings you can, for example, render `320x50` mobile leaderboards
 * on smartphones and `728x90` leaderboards on desktops, all in the same ad slot.
 *
-* The browser height is optional and defaults to zero. It may not be required if
-* you only care about browser widths (phone, tablet, desktop screen sizes).
+* The viewport height is optional and defaults to zero. It may not be required if
+* you only care about viewport widths (phone, tablet, desktop screen sizes).
 *
 * @example <caption>Example usage of the `dfp-size` directive.</caption>
 * <dfp-ad ad-unit="path/to/my/ad-unit">
-*   <dfp-responsive browser-width=320>
+*   <dfp-responsive viewport-width=320>
 *     <dfp-size width=300 height=50></dfp-size>
 *     <dfp-size width=320 height=50></dfp-size>
 *   </dfp-responsive>
-*   <dfp-responsive browser-width=1024 browser-height=800>
+*   <dfp-responsive viewport-width=1024 viewport-height=800>
 *     <dfp-size width=970 height=90></dfp-size>
 *   </dfp-responsive>
 * </dfp-ad>
@@ -56,23 +56,23 @@
   function DFPResponsiveController() {
     /* eslint-disable dot-notation */
     /**
-    * The size of the browser.
+    * The size of the viewport.
     *
-    * A `dfp-responsive` tag always has one fixed browser width and height, and
-    * then many possible ad sizes viable for ad calls for those browser
+    * A `dfp-responsive` tag always has one fixed viewport width and height, and
+    * then many possible ad sizes viable for ad calls for those viewport
     * dimensions.
     *
-    * @type {!Array<number>}
+    * @type {!googletag.SingleSizeArray}
     */
-    const browserSize = Object.seal([
-      this['browserWidth'],
-      this['browserHeight'] || 0
+    const viewportSize = Object.seal([
+      this['viewportWidth'],
+      this['viewportHeight'] || 0
     ]);
     /* eslint-enable dot-notation */
 
     /**
-    * The ad sizes for the browser dimensions.
-    * @type {Array}
+    * The ad sizes for the viewport dimensions.
+    * @type {!googletag.MultiSize}
     */
     const adSizes = [];
 
@@ -82,13 +82,13 @@
     *                   ready to be fetched, else false.
     */
     function isValid() {
-      if (browserSize.some(value => typeof value !== 'number')) return false;
+      if (viewportSize.some(value => typeof value !== 'number')) return false;
       return adSizes.length > 0;
     }
 
     /**
     * Adds an ad size to the responsive mapping.
-    * @param {Array} size A `[width, height]` array to add.
+    * @param {!googletag.SingleSize} size The ad size to add for the viewport size.
     */
     this.addSize = function(size) {
       adSizes.push(size);
@@ -96,12 +96,12 @@
 
     /**
     * Retrieves the state of the controller.
-    * @return {Object} The state of the controller, for use by the directive.
+    * @return {ResponsiveMapping} The state of the controller, for use by the directive.
     */
     this.getState = function() {
       console.assert(isValid());
       return Object.freeze({
-        browserSize,
+        viewportSize,
         adSizes
       });
     };
@@ -133,7 +133,7 @@
       link: dfpResponsiveDirective,
       // Need to quote props to avoid closure compiler renaming
       // eslint-disable-next-line quote-props
-      scope: {'browserWidth': '=', 'browserHeight': '='}
+      scope: {'viewportWidth': '=', 'viewportHeight': '='}
     };
   }]);
 

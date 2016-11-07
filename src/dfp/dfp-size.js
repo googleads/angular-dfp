@@ -10,12 +10,12 @@
 * In the former case, the `dfp-size` directive specifies a fixed ad-slot size as
 * would be passed as the second parameter to the
 * `googletag.pubads().defineSlot()`` method. In the latter case, the directive
-* specifies a size mapping member for certain browser dimensions.
+* specifies a size mapping member for certain viewport dimensions.
 *
 * @example <caption>Example usage of the `dfp-size` directive.</caption>
 * <dfp-ad ad-unit="path/to/my/ad-unit">
 *   <dfp-size width=728 height=90></dfp-size>
-*   <dfp-responsive browser-width=1024 browser-height=800>
+*   <dfp-responsive viewport-width=1024 viewport-height=800>
 *     <dfp-size width=320 height=50></dfp-size>
 *   </dfp-responsive>
 * </dfp-ad>

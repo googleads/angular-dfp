@@ -87,7 +87,7 @@
         }
       };
 
-      // Other browsers
+      // Other viewports
       script.onload = resolve;
       script.onerror = reject;
 

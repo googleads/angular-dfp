@@ -1,3 +1,12 @@
-.leaderboard { max-width: 970px; }
+.leaderboard {
+  max-width: 970px;
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.leaderboard.refreshing {
+  opacity: 0;
+}
+
 .medium-rectangle { width: 300px; }
 .video { width: 960px; }

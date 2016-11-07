@@ -127,14 +127,14 @@ googletag.MultiSize;
 googletag.SizeMapping;
 
 /**
- * @typedef {Array<!googletag.GeneralSize>}
- */
-googletag.SizeMappingArray;
-
-/**
  * @typedef {(googletag.SingleSize|googletag.MultiSize)}
  */
 googletag.GeneralSize;
+
+/**
+ * @typedef {Array<!googletag.GeneralSize>}
+ */
+googletag.SizeMappingArray;
 
 /**
  * @interface

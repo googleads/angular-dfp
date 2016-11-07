@@ -22,8 +22,11 @@
 // eslint-disable-next-line no-undef
 let app = angular
   .module('angularDfpDemo', ['angularDfp', 'ngMaterial'])
-  .config(['dfpRefreshProvider', function(dfpRefreshProvider) {
-    dfpRefreshProvider.refreshInterval = '10s';
+  .config(['dfpRefreshProvider', dfpRefreshProvider => {
+    // dfpRefreshProvider.refreshInterval = '10s';
+  }])
+  .config(['dfpResponsiveResizeProvider', dfpResponsiveResizeProvider => {
+    dfpResponsiveResizeProvider.refreshDelay = '1s';
   }]);
 
 // Configure angular expressions to use the {( ... )} instead of
