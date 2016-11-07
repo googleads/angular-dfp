@@ -14,7 +14,7 @@
 * @example <caption>Example usage of the `dfp-script` directive.</caption>
 * <dfp-ad ad-unit="path/to/my/ad-unit">
 *   <dfp-script slot-as="mySlot" scope="{ path: 'spaghetti' }">
-*     if (mySlot.getAdUnitPath() == scope.path) {
+*     if (mySlot.getAdUnitPath() === scope.path) {
 *       mySlot.clearTargeting();
 *     }
 *   </dfp-script>
@@ -39,11 +39,21 @@
 * limitations under the License.
 */
 
-// TODO: allows specifying `src="/path/to/javascript"`
-
 // eslint-disable-next-line valid-jsdoc
 (/** @lends module:dfp-script */ function(module) {
   'use strict';
+
+  /**
+   * An error thrown when the `dfp-script` could not fetch a JS source.
+   */
+  class DFPScriptError extends Error {
+    constructor(response) {
+      super(
+        `Error (${response.status}): could not fetch ` +
+        `'dfp-script' source from '${response.config.url}'.`
+      );
+    }
+  }
 
   /**
   * Defines the `dfp-script` directive.
@@ -59,28 +69,53 @@
   * @param {Object} element The HTML element on which the directive is defined.
   * @param {Object} attributes The attributes of the element.
   * @param {Object} ad The parent `dfp-ad` controller.
-  * @param {Object} $injector The Angular `$injector` service.
+  * @param {!angular.$injector} $injector The Angular `$injector` service.
   */
   function dfpScriptDirective(scope, element, attributes, ad, $injector) {
-    const format = $injector.get('dfpFormat');
-    const script = format(
-       '(function(scope, {0}) { {1} })',
-       scope.slotAs || 'slot',
-       element.html().trim()
-     );
+    const $http = $injector.get('$http');
+    const $log = $injector.get('$log');
 
-    // Now we `eval` the script and bind the scope attribute (if any)
-    // eslint-disable-next-line no-eval
-    ad.addScript(eval(script).bind(null, scope.scope));
+    /* eslint-disable dot-notation */
+
+    /**
+     * Adds a script with the given contents to the parent `dfp-ad` controller.
+     * @param {!string} contents The contents of the script to add.
+     */
+    function addScript(contents) {
+      let script = `(function(scope, ${scope['slotAs']}){${contents}})`;
+
+      // Now we `eval` the script and bind the scope attribute (if any)
+      // eslint-disable-next-line no-eval
+      ad.addScript(eval(script).bind(null, scope['scope']));
+    }
+
+    if (scope['src']) {
+      if (element.html()) {
+        $log.warn(
+          'Ignoring inner HTML of dfp-script ' +
+          'in favor of src contents.'
+        );
+      }
+
+      $http.get(scope['src']).then(
+        response => { addScript(response.data); },
+        response => { throw new DFPScriptError(response); }
+      );
+    } else {
+      addScript(element.html().trim());
+    }
+
+    /* eslint-enable dot-notation */
   }
 
   module.directive('dfpScript', ['$injector', function($injector) {
     return {
       restrict: 'E',
       require: '^^dfpAd',
-      scope: {slotAs: '@', scope: '='},
+      // eslint-disable-next-line quote-props
+      scope: {'slotAs': '@', 'scope': '=', 'src': '@'},
       link: function(...args) {
-        dfpScriptDirective.apply(null, args.concat($injector));
+        dfpScriptDirective.apply(null, args.slice(0, 4).concat($injector));
       }
     };
   }]);

@@ -18,5 +18,10 @@
       <dfp-responsive viewport-width="1024" viewport-height="0">
         <dfp-size width=970 height=90></dfp-size>
       </dfp-responsive>
+      <dfp-script slot-as="mySlot" scope="{path: 'spaghetti'}">
+        if (mySlot.getAdUnitPath() !== scope.path) {
+          console.log(mySlot.getTargetingKeys());
+        }
+      </dfp-script>
     </dfp-ad>
 </md-card>
