@@ -627,9 +627,12 @@ googletag.cmd = googletag.cmd || [];
 
           /**
           * The maximum priority.
-          * @type {number}
+          * @type {?number}
           */
-          let maximum = priorities.reduce((a, b) => Math.max(a, b));
+          let maximum = null;
+          if (priorities.length > 0) {
+            maximum = priorities.reduce((a, b) => Math.max(a, b));
+          }
 
           for (let index = 0; index < available.length; ++index) {
             if (priorities[index] === maximum) {
