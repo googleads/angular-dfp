@@ -38,16 +38,6 @@ In the simplest case, you'll simply want to define an ad with a fixed size. In t
 </dfp-ad>
 ```
 
-### Responsive Ad
-
-Make note about responsiveResize.
-
-### Targeting
-
-### Video Ads
-
-### Audience Pixels
-
 ## Demo
 
 A live demo can be found at [angular-dfp-demo.appspot.com](http://angular-dfp-demo.appspot.com).
@@ -58,5 +48,5 @@ This project is released under the [Apache License](https://www.apache.org/licen
 
 ## Authors
 
-[Peter Goldsborough](http://github.com/goldsborough)
-[Jaime González García](http://github.com/vintharas)
+* [Peter Goldsborough](http://github.com/goldsborough)
+* [Jaime González García](http://github.com/vintharas)
