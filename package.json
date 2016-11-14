@@ -16,7 +16,6 @@
     "google",
     "ads"
   ],
-  "author": "Peter Goldsborough",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/goldsborough/angular-dfp/issues"

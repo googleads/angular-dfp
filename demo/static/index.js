@@ -1,6 +1,5 @@
 /**
  * @file Demo JavaScript.
- * @author Peter Goldsborough <peter@goldsborough.me>
  * @license Apache
  * Copyright 2016 Google Inc.
  *

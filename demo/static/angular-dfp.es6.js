@@ -1,6 +1,6 @@
 /**
- * @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
  * @license Apache
  * Copyright 2016 Google Inc.
  *
@@ -26,8 +26,8 @@ let angularDfp = angular.module('angularDfp', []);
 
 /**
 * @module http-error
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -90,8 +90,8 @@ let angularDfp = angular.module('angularDfp', []);
 
 /**
 * @module parse-duration
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -203,8 +203,8 @@ let angularDfp = angular.module('angularDfp', []);
 
 /**
 * @module script-injector
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -350,8 +350,8 @@ let angularDfp = angular.module('angularDfp', []);
 * </dfp-ad>
 *
 * @module dfp-ad
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -677,8 +677,8 @@ googletag.cmd = googletag.cmd || [];
 
 /**
 * @module dfp-audience-pixel
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -762,8 +762,8 @@ googletag.cmd = googletag.cmd || [];
 
 /**
 * @module dfp-incomplete-error
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -874,8 +874,8 @@ googletag.cmd = googletag.cmd || [];
 * </dfp-ad>
 *
 * @module dfp-exclusion
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -924,8 +924,8 @@ googletag.cmd = googletag.cmd || [];
 
 /**
  * @module dfp-id-generator
- * @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
  * @license Apache
  * Copyright 2016 Google Inc.
  *
@@ -1027,8 +1027,8 @@ googletag.cmd = googletag.cmd || [];
 
 /**
 * @module dfp-refresh
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -1907,8 +1907,8 @@ googletag.cmd = googletag.cmd || [];
 
 /**
 * @module responsive-resize
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -2258,8 +2258,8 @@ googletag.cmd = googletag.cmd || [];
 * @see [`dfp-size`](@link module:dfp-size)
 *
 * @module dfp-responsive
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -2408,8 +2408,8 @@ googletag.cmd = googletag.cmd || [];
 * </dfp-ad>
 *
 * @module dfp-script
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -2536,8 +2536,8 @@ googletag.cmd = googletag.cmd || [];
 * @see [dfp-responsive]{@link module:dfp-responsive}
 *
 * @module dfp-size
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -2632,8 +2632,8 @@ googletag.cmd = googletag.cmd || [];
 * </dfp-ad>
 *
 * @module dfp-targeting
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -2760,8 +2760,8 @@ googletag.cmd = googletag.cmd || [];
 * </dfp-ad>
 *
 * @module dfp-value
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -2817,8 +2817,8 @@ googletag.cmd = googletag.cmd || [];
 * TODO: example
 *
 * @module dfp-video
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
@@ -2902,8 +2902,8 @@ let angularDfpVideo = angular.module('angularDfp');
 
 /**
 * @module dfp
-* @author Peter Goldsborough <peter@goldsborough.me>
-* @author Jaime González García <vintharas@google.com>
+
+
 * @license Apache
 * Copyright 2016 Google Inc.
 *
