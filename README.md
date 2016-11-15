@@ -27,7 +27,7 @@ We have defined (nested) directives that effectively cover all the functionality
 
 ### Simple Fixed Size Ad
 
-In the simplest case, you'll simply want to define an ad with a fixed size. In that case, you would simply have a `dfp-ad` directive, which requires at least one nested `dfp-size` directive. The `dfp-ad` directive additionally takes some optional attributes, such as the `collapseEmptyDiv` option you may be familiar with from the GPT library. For all options, refer to the [manual](www.example.com):
+In the simplest case, you'll simply want to define an ad with a fixed size. In that case, you would have a `dfp-ad` directive, which requires at least one nested `dfp-size` directive. The `dfp-ad` directive additionally takes some optional attributes, such as the `collapseEmptyDiv` option you may be familiar with from the GPT library. For all options, refer to the documentation, which can be generated from jsdoc with `gulp docs`:
 
 ```HTML
 <dfp-ad force-safe-frame
