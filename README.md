@@ -60,8 +60,3 @@ A live demo can be found at
 This project is released under the [Apache
 License](https://www.apache.org/licenses/LICENSE-2.0). For more information, see
 the LICENSE file.
-
-## Authors
-
-* [Peter Goldsborough](http://github.com/goldsborough)
-* [Jaime González García](http://github.com/vintharas)
