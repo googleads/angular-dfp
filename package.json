@@ -1,14 +1,14 @@
 {
   "name": "angular-dfp",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Semantic DoubleClick integration with AngularJS",
-  "main": "angular-dfp.js",
+  "main": "bin/angular-dfp.min.js",
   "scripts": {
-    "build": "babel src --out-dir compiled"
+    "build": "gulp"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/goldsborough/angular-dfp.git"
+    "url": "git+https://github.com/googleads/angular-dfp.git"
   },
   "keywords": [
     "angular",
@@ -18,9 +18,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/goldsborough/angular-dfp/issues"
+    "url": "https://github.com/googleads/angular-dfp/issues"
   },
-  "homepage": "https://github.com/goldsborough/angular-dfp#readme",
+  "homepage": "https://github.com/googleads/angular-dfp#readme",
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.16.0",
