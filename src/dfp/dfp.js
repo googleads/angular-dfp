@@ -259,7 +259,6 @@ googletag.cmd = googletag.cmd || [];
   /**
    * In order to avoid local variable creation while using bundlers such as browserify
    * or webpack googletag variable is set as global explicitly.
-   * @type {{}}
    */
   window.googletag = googletag;
 

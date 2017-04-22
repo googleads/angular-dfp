@@ -1,0 +1,12 @@
+demo
+externs
+gulp
+node_modules
+.idea
+scripts
+.babelrc
+src
+.eslintrc
+.gitignore
+gulpfile.js
+jsdoc.json
