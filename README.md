@@ -1,3 +1,6 @@
+:warning: **Note**: This project is no longer actively maintained. Post any questions related to this project on the [Google Ad Manager API Forum](https://groups.google.com/g/google-doubleclick-for-publishers-api)
+
+
 # angular-dfp
 
 Semantic DoubleClick for Publishers (DFP by Google) integration with AngularJS.
